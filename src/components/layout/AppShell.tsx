@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Boxes, LifeBuoy, NotebookPen, Wrench, X } from "lucide-react";
 import { Outlet } from "react-router";
 
+import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
 import { TopBar } from "@/components/layout/TopBar";
+import { ONBOARDING_TOUR_SEEN_KEY } from "@/config/constants";
+import { Tour } from "@/features/onboarding/Tour";
+import { getKvFlag, setKvFlag } from "@/features/session/sessionRepository";
 import { cn } from "@/lib/utils";
 
 type DrawerId = "tools" | "notebook" | "models" | "help";
@@ -11,7 +15,8 @@ type DrawerDef = {
   id: DrawerId;
   label: string;
   icon: typeof Wrench;
-  body: string;
+  /** Placeholder body for the simple drawers (the Hilfe drawer has rich content). */
+  body?: string;
 };
 
 const DRAWERS: DrawerDef[] = [
@@ -33,32 +38,39 @@ const DRAWERS: DrawerDef[] = [
     icon: Boxes,
     body: "Kurze Erklärungen zu den verwendeten systemischen Modellen.",
   },
-  {
-    id: "help",
-    label: "Hilfe",
-    icon: LifeBuoy,
-    body: "Hinweise zur Bedienung der Anwendung.",
-  },
+  { id: "help", label: "Hilfe", icon: LifeBuoy },
 ];
 
 /**
  * AppShell — „Bühne mit Schubladen".
  *
  * Top bar + central stage (renders the <Outlet />) + a persistent right rail of
- * four collapsible drawers. Only one drawer is open at a time. Fully keyboard-
- * and screen-reader-friendly (aria-expanded / aria-controls, Esc to close,
- * focus returns to the triggering tab). On narrow viewports the open drawer
- * becomes an overlay (with a scrim) instead of a fixed side column.
+ * four collapsible drawers. Only one drawer is open at a time. Keyboard- and
+ * screen-reader-friendly (aria-expanded / aria-controls, Esc to close, focus
+ * returns to the triggering tab). On narrow viewports the open drawer becomes an
+ * overlay (with a scrim). The rail is hidden in the "Frei" persona via CSS.
  *
- * The rail is hidden in the "Frei" persona purely via CSS (.app-rail) — the
- * markup stays identical across personas.
+ * Mounting the AppShell means the work view is first visible — so it also kicks
+ * off the onboarding tour once (kv flag) and hosts the Hilfe drawer content.
  */
 export function AppShell() {
   const [openId, setOpenId] = useState<DrawerId | null>(null);
+  const [tourOpen, setTourOpen] = useState(false);
   const tabRefs = useRef<Partial<Record<DrawerId, HTMLButtonElement | null>>>(
     {},
   );
   const closeRef = useRef<HTMLButtonElement | null>(null);
+
+  // Auto-start the tour the first time the work view is visible (once per kv flag).
+  useEffect(() => {
+    let active = true;
+    void getKvFlag(ONBOARDING_TOUR_SEEN_KEY).then((seen) => {
+      if (active && !seen) setTourOpen(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Esc closes the open drawer and returns focus to its tab.
   useEffect(() => {
@@ -89,6 +101,16 @@ export function AppShell() {
   function close() {
     if (openId) tabRefs.current[openId]?.focus();
     setOpenId(null);
+  }
+
+  function startTour() {
+    setOpenId(null); // close any open drawer first
+    setTourOpen(true);
+  }
+
+  function handleTourClose(dontShowAgain: boolean) {
+    void setKvFlag(ONBOARDING_TOUR_SEEN_KEY, dontShowAgain);
+    setTourOpen(false);
   }
 
   return (
@@ -140,8 +162,12 @@ export function AppShell() {
               <X className="size-4" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 text-sm text-muted">
-            {openDrawer.body}
+          <div className="flex-1 overflow-y-auto p-4">
+            {openDrawer.id === "help" ? (
+              <HelpDrawerContent onStartTour={startTour} />
+            ) : (
+              <p className="text-sm text-muted">{openDrawer.body}</p>
+            )}
           </div>
         </section>
       ) : null}
@@ -177,6 +203,8 @@ export function AppShell() {
           );
         })}
       </nav>
+
+      <Tour open={tourOpen} onClose={handleTourClose} />
     </div>
   );
 }

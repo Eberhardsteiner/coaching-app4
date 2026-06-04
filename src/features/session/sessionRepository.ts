@@ -63,3 +63,14 @@ export async function setLastActiveId(id: string): Promise<void> {
 export async function clearLastActiveId(): Promise<void> {
   await db.kv.delete(LAST_ACTIVE_KEY);
 }
+
+/** Read a boolean flag from the kv table (false when unset). */
+export async function getKvFlag(key: string): Promise<boolean> {
+  const row = await db.kv.get(key);
+  return row?.value === true;
+}
+
+/** Write a boolean flag to the kv table. */
+export async function setKvFlag(key: string, value: boolean): Promise<void> {
+  await db.kv.put({ key, value });
+}
