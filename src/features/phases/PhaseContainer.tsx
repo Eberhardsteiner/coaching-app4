@@ -1,4 +1,5 @@
 import { Phase0View } from "@/features/phases/phase0/Phase0View";
+import { Phase1View } from "@/features/phases/phase1/Phase1View";
 import { PlaceholderPhase } from "@/features/phases/PlaceholderPhase";
 import { usePhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -37,6 +38,8 @@ export function PhaseContainer() {
       <div className="flex-1">
         {phaseDef.id === 0 ? (
           <Phase0View nav={nav} />
+        ) : phaseDef.id === 1 ? (
+          <Phase1View nav={nav} />
         ) : (
           <PlaceholderPhase nav={nav} />
         )}

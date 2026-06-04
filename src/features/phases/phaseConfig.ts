@@ -55,7 +55,28 @@ export const PHASES: PhaseDef[] = [
     id: 1,
     title: "IST verstehen",
     short: "Die heutige Situation sichtbar machen.",
-    steps: [{ id: "1.1", title: "IST verstehen" }],
+    steps: [
+      {
+        id: "1.1",
+        title: "Gefühl benennen",
+        intro: "Ein einziges Wort für deinen IST-Zustand.",
+      },
+      {
+        id: "1.2",
+        title: "Zusammenhänge sammeln",
+        intro: "Was hängt alles mit deinem IST-Zustand zusammen?",
+      },
+      {
+        id: "1.3",
+        title: "Perspektive wechseln",
+        intro: "Den Blick weiten (folgt im nächsten Paket).",
+      },
+      {
+        id: "1.4",
+        title: "Clustern & gewichten",
+        intro: "Karten gruppieren und gewichten (folgt im nächsten Paket).",
+      },
+    ],
   },
   {
     id: 2,

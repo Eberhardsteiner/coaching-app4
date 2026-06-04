@@ -83,6 +83,8 @@ export interface Cluster {
 
 export interface Phase1 {
   istWord: string;
+  /** Optional perceived burden 1..10 (Leidensdruck-Check). Undefined = unanswered. */
+  istBurden?: number;
   selectedModel?: string;
   cards: Card[];
   clusters: Cluster[];

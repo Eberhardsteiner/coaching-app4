@@ -19,6 +19,8 @@ export interface PhaseNavigation {
   goPrevStep: () => void;
   /** Jump to the start of a reachable phase (completed or current). */
   goToPhase: (phase: PhaseId) => void;
+  /** Jump to a specific step of a reachable phase. */
+  goTo: (phase: PhaseId, step: number) => void;
   /** A phase is reachable if completed or the current frontier. */
   isReachable: (phase: PhaseId) => boolean;
 }
@@ -90,6 +92,11 @@ export function usePhaseNavigation(): PhaseNavigation {
     setProgress((p) => ({ ...p, phase, step: 0 }));
   }
 
+  function goTo(phase: PhaseId, step: number) {
+    if (!isReachable(phase)) return;
+    setProgress((p) => ({ ...p, phase, step }));
+  }
+
   return {
     progress,
     phaseDef,
@@ -101,6 +108,7 @@ export function usePhaseNavigation(): PhaseNavigation {
     advance,
     goPrevStep,
     goToPhase,
+    goTo,
     isReachable,
   };
 }
