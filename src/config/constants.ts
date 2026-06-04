@@ -24,8 +24,8 @@ export const BRANCH_LABELS: Record<CoachingBranch, string> = {
 /** Short neutral descriptions shown on the branch-select cards. */
 export const BRANCH_DESCRIPTIONS: Record<CoachingBranch, string> = {
   coached:
-    "Begleitet durch eine ausgebildete Person — im Videogespräch und im gemeinsamen Tempo.",
-  self: "Eigenständig im eigenen Tempo — die App führt Schritt für Schritt durch den Prozess.",
+    "Begleitung durch einen Menschen per Videogespräch. Der Coach hält den Prozess — du entscheidest.",
+  self: "Allein und in deinem Tempo — mit Erklärtexten, kurzen Videos und KI-Impulsen an passenden Stellen.",
 };
 
 /** Narrow an unknown string (e.g. a URL param) to a CoachingBranch. */

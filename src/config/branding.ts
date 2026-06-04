@@ -17,6 +17,10 @@ export const BRANDING = {
   tagline: "‹TAGLINE›", // TODO: Claim / Untertitel später einsetzen
   /** Contact address for the footer / imprint. */
   contactEmail: "‹CONTACT_EMAIL›", // TODO: Kontaktadresse später einsetzen
+  /** Postal address shown in the Impressum. */
+  address: "‹ANSCHRIFT›", // TODO: vor Launch eintragen
+  /** Person responsible for the content (Impressum, i. S. d. P.). */
+  responsiblePerson: "‹VERANTWORTLICH›", // TODO: vor Launch eintragen
 } as const;
 
 export type Branding = typeof BRANDING;
