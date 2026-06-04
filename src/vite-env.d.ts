@@ -1,5 +1,8 @@
 /// <reference types="vite/client" />
 
+/** App version, injected at build time from package.json (see vite.config.ts). */
+declare const __APP_VERSION__: string;
+
 /**
  * @fontsource variable packages ship their @font-face CSS through the package
  * root. Declaring them as side-effect-only modules lets the bare imports in

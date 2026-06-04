@@ -1,16 +1,33 @@
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { BRANDING } from "@/config/branding";
+import { ImportButton } from "@/features/session/ImportButton";
+import { listSessions } from "@/features/session/sessionRepository";
 
 /**
  * Landing (placeholder). The full start page follows in WP2.
  *
- * Uses the hero gradient + three calm pulsing circles, a large serif headline
- * and a single main action ("Coaching starten" → /start). No app shell here.
+ * Hero gradient + three calm pulsing circles, a large serif headline and a
+ * single primary action ("Coaching starten" → /start). Subtle secondary
+ * entries — "Sitzung fortsetzen" (only when saved sessions exist) and
+ * "Sitzung importieren" — sit beneath it.
  */
 export function LandingPage() {
+  const [hasSessions, setHasSessions] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void listSessions().then((sessions) => {
+      if (active) setHasSessions(sessions.length > 0);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-hero-gradient text-white">
       {/* Calm pulsing circles (decorative). */}
@@ -42,13 +59,30 @@ export function LandingPage() {
           Ein ruhiger, geführter Weg durch die Phasen eines systemischen
           Coachings — in deinem Tempo.
         </p>
-        <div className="mt-10">
+
+        <div className="mt-10 flex flex-col items-start gap-5">
           <Button asChild size="lg">
             <Link to="/start">
               Coaching starten
               <ArrowRight />
             </Link>
           </Button>
+
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+            {hasSessions ? (
+              <Link
+                to="/sessions"
+                className="text-blue-100 underline-offset-4 hover:text-white hover:underline"
+              >
+                Sitzung fortsetzen
+              </Link>
+            ) : null}
+            <ImportButton
+              variant="link"
+              label="Sitzung importieren"
+              className="h-auto px-0 text-blue-100 hover:text-white"
+            />
+          </div>
         </div>
       </main>
 

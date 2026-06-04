@@ -122,3 +122,16 @@
     transform: translateX(0);
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Dialog/overlay fade — opacity-only (no transform), so it composes with
+ * static centering. Applied via `motion-safe:` so reduced-motion skips it.
+ * ------------------------------------------------------------------ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

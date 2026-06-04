@@ -58,3 +58,8 @@ export async function getLastActiveId(): Promise<string | null> {
 export async function setLastActiveId(id: string): Promise<void> {
   await db.kv.put({ key: LAST_ACTIVE_KEY, value: id });
 }
+
+/** Forget the most recently active session (e.g. after deleting it). */
+export async function clearLastActiveId(): Promise<void> {
+  await db.kv.delete(LAST_ACTIVE_KEY);
+}
