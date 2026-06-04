@@ -1,0 +1,36 @@
+/**
+ * Persona theming.
+ *
+ * ThemeProvider sets data-persona="ruhig|klar|frei" on <html>. Only the deltas
+ * from the default ("Ruhig") live here:
+ *   - the Ruhig accent stays in tokens.css (@theme --color-accent = green);
+ *   - the density defaults sit in :root below.
+ *
+ * Overrides are UNLAYERED, so they win over Tailwind's @theme :root values
+ * regardless of source order (the same trick a dark-mode class uses). Markup
+ * and data model stay identical across personas — only these variables change.
+ */
+
+/* Density defaults (Ruhig) — generous, calm. */
+:root {
+  --stage-padding: 3rem;
+  --stage-max-width: 60rem;
+}
+
+/* Klar — Akzent Blau (#185FA5), kompaktere Dichte. */
+:root[data-persona="klar"] {
+  --color-accent: #185fa5;
+  --stage-padding: 1.75rem;
+  --stage-max-width: 72rem;
+}
+
+/* Frei — stark reduziert: minimale Dichte, Schubladen-Leiste ausgeblendet. */
+:root[data-persona="frei"] {
+  --stage-padding: 1.5rem;
+  --stage-max-width: 64rem;
+}
+
+/* Frei hides the persistent drawer rail via CSS only (markup is unchanged). */
+:root[data-persona="frei"] .app-rail {
+  display: none;
+}

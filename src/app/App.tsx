@@ -1,12 +1,17 @@
-import { DesignSystem } from "@/routes/DesignSystem";
+import { RouterProvider } from "react-router";
+
+import { PersonaSwitcher } from "@/app/PersonaSwitcher";
+import { router } from "@/app/router";
 
 /**
- * Application root.
- *
- * For WP0 it renders the Design-System demo directly. Routing (the guided /
- * self-coaching branches and the app shell) arrives in Prompt 2 and will
- * replace this default view.
+ * Application root: renders the data router (inside the ThemeProvider supplied
+ * by providers.tsx) plus the DEV-only persona switcher.
  */
 export function App() {
-  return <DesignSystem />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      {import.meta.env.DEV ? <PersonaSwitcher /> : null}
+    </>
+  );
 }

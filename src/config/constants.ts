@@ -7,9 +7,32 @@
 export const STORAGE_PREFIX = "coaching-app";
 
 /**
- * The two branches of the coaching process. Wired into routing in Prompt 2.
- *   - "guided": geführtes Coaching
- *   - "self":   Selbstcoaching
+ * The two branches of the coaching process. Held in the URL (?branch=) for
+ * now; full session-state logic arrives in WP1.
+ *   - "coached": begleitet durch einen Remote-Coach
+ *   - "self":    Selbstcoaching
  */
-export const COACHING_BRANCHES = ["guided", "self"] as const;
+export const COACHING_BRANCHES = ["coached", "self"] as const;
 export type CoachingBranch = (typeof COACHING_BRANCHES)[number];
+
+/** Neutral, German display labels per branch (Wording-Regel: keine Eigennamen). */
+export const BRANCH_LABELS: Record<CoachingBranch, string> = {
+  coached: "Mit Coach (Remote)",
+  self: "Selbstcoaching",
+};
+
+/** Short neutral descriptions shown on the branch-select cards. */
+export const BRANCH_DESCRIPTIONS: Record<CoachingBranch, string> = {
+  coached:
+    "Begleitet durch eine ausgebildete Person — im Videogespräch und im gemeinsamen Tempo.",
+  self: "Eigenständig im eigenen Tempo — die App führt Schritt für Schritt durch den Prozess.",
+};
+
+/** Narrow an unknown string (e.g. a URL param) to a CoachingBranch. */
+export function isCoachingBranch(
+  value: string | null,
+): value is CoachingBranch {
+  return (
+    value !== null && (COACHING_BRANCHES as readonly string[]).includes(value)
+  );
+}

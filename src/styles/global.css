@@ -6,6 +6,7 @@
  */
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./personas.css";
 
 /* ------------------------------------------------------------------ *
  * Base / reset
@@ -104,5 +105,20 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse-calm {
     animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Drawer entrance — applied via the `motion-safe:` variant in the markup,
+ * so reduced-motion users get an instant (non-animated) open.
+ * ------------------------------------------------------------------ */
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
