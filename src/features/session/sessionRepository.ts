@@ -4,7 +4,9 @@
  */
 
 import { db } from "@/lib/db";
+import { migrateSession } from "@/features/session/migrations";
 import {
+  CURRENT_SCHEMA_VERSION,
   createEmptySession,
   type Branch,
   type Persona,
@@ -23,9 +25,23 @@ export async function createSession(
   return session;
 }
 
-/** Load a single session by id. */
+/**
+ * Load a single session by id. If it predates the current schema, migrate it
+ * (e.g. add `progress`) and persist the upgrade so local data stays consistent.
+ */
 export async function getSession(id: string): Promise<Session | undefined> {
-  return db.sessions.get(id);
+  const raw = await db.sessions.get(id);
+  if (!raw) return undefined;
+  if (raw.meta.schemaVersion < CURRENT_SCHEMA_VERSION) {
+    const migrated = migrateSession(raw, raw.meta.schemaVersion);
+    const upgraded: Session = {
+      ...migrated,
+      meta: { ...migrated.meta, schemaVersion: CURRENT_SCHEMA_VERSION },
+    };
+    await db.sessions.put(upgraded);
+    return upgraded;
+  }
+  return raw;
 }
 
 /** All sessions, newest-first (by meta.updatedAt). */

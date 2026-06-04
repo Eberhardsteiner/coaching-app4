@@ -9,7 +9,7 @@ import type { CoachingBranch } from "@/config/constants";
 import type { Persona } from "@/app/theme-context";
 
 /** Bump when the persisted shape changes; enables future migrations. */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 /** Coaching branch — re-used from config/constants (single source of truth). */
 export type Branch = CoachingBranch;
@@ -179,10 +179,26 @@ export interface Phase5 {
   check: PhaseCheck;
 }
 
+/* Progress / navigation --------------------------------------------------- */
+
+/** Phase ids of the 5+1 process (0 = Vereinbarung … 5 = Nachhaltigkeit). */
+export type PhaseId = 0 | 1 | 2 | 3 | 4 | 5;
+
+/** Where the user currently is in the process. */
+export interface Progress {
+  /** The phase currently in view. */
+  phase: PhaseId;
+  /** Zero-based step index within that phase. */
+  step: number;
+  /** Phases that are fully completed (and thus freely navigable). */
+  completedPhases: PhaseId[];
+}
+
 /* Aggregate --------------------------------------------------------------- */
 
 export interface Session {
   meta: SessionMeta;
+  progress: Progress;
   phase0: Phase0;
   phase1: Phase1;
   phase2: Phase2;
@@ -216,6 +232,7 @@ export function createEmptySession(
       persona,
       locale: "de",
     },
+    progress: { phase: 0, step: 0, completedPhases: [] },
     phase0: {
       consentAck: false,
       valuesAck: false,

@@ -14,8 +14,11 @@ type Migration = (raw: unknown) => unknown;
 
 /** Migration chain, keyed by the version being upgraded FROM. */
 const MIGRATIONS: Record<number, Migration> = {
-  // Example for the future:
-  // 1: (raw) => ({ ...(raw as object), /* new v2 fields */ }),
+  /** v1 → v2: introduce the navigation/progress field (start at phase 0). */
+  1: (raw) => ({
+    ...(raw as Record<string, unknown>),
+    progress: { phase: 0, step: 0, completedPhases: [] },
+  }),
 };
 
 /** Raised when no migration path exists for a given version. */
