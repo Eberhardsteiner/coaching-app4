@@ -19,7 +19,8 @@ export interface PhaseDef {
 
 /**
  * Central phase configuration. Phase 0 (Vereinbarung, 4 steps), Phase 1 (IST,
- * 5 steps) and Phase 2 (Ziel, 5 steps) are fully built; phases 3–5 carry a
+ * 5 steps) and Phase 2 (Ziel, 5 steps) are fully built; Phase 3 (Ressourcen, 7
+ * steps) has steps 3.1–3.3 built and 3.4–3.7 as placeholders; phases 4–5 carry a
  * single placeholder step for now (filled in later prompts).
  */
 export const PHASES: PhaseDef[] = [
@@ -120,7 +121,43 @@ export const PHASES: PhaseDef[] = [
     id: 3,
     title: "Ressourcen erkennen",
     short: "Was du schon mitbringst.",
-    steps: [{ id: "3.1", title: "Ressourcen erkennen" }],
+    steps: [
+      {
+        id: "3.1",
+        title: "Eigene Ressourcen",
+        intro: "Mit einem Modell deine Stärken, Werte und Fähigkeiten sammeln.",
+      },
+      {
+        id: "3.2",
+        title: "Werte der Beteiligten",
+        intro: "Was den Menschen rund um dein Kernthema wichtig ist.",
+      },
+      {
+        id: "3.3",
+        title: "Hypothesen & Impulse",
+        intro: "Mit guten Fragen weitere Ressourcen entdecken.",
+      },
+      {
+        id: "3.4",
+        title: "Erfahrungen & Muster",
+        intro: "Folgt im nächsten Paket.",
+      },
+      {
+        id: "3.5",
+        title: "Körpersignale",
+        intro: "Folgt im nächsten Paket.",
+      },
+      {
+        id: "3.6",
+        title: "Sortieren",
+        intro: "Folgt im nächsten Paket.",
+      },
+      {
+        id: "3.7",
+        title: "Abschluss & Check",
+        intro: "Folgt im nächsten Paket.",
+      },
+    ],
   },
   {
     id: 4,

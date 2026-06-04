@@ -24,6 +24,36 @@
       "name": "10-Felder-Modell",
       "category": "ist",
       "file": "zehn-felder.json"
+    },
+    {
+      "id": "intelligenzarten",
+      "name": "Intelligenzarten",
+      "category": "resource",
+      "file": "intelligenzarten.json"
+    },
+    {
+      "id": "werteliste",
+      "name": "Werteliste",
+      "category": "resource",
+      "file": "werteliste.json"
+    },
+    {
+      "id": "kompetenzmodell",
+      "name": "Kompetenzmodell",
+      "category": "resource",
+      "file": "kompetenzmodell.json"
+    },
+    {
+      "id": "motive",
+      "name": "Motive",
+      "category": "resource",
+      "file": "motive.json"
+    },
+    {
+      "id": "mvwk",
+      "name": "MVWK-Modell",
+      "category": "resource",
+      "file": "mvwk.json"
     }
   ]
 }

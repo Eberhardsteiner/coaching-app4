@@ -1,0 +1,50 @@
+{
+  "id": "intelligenzarten",
+  "name": "Intelligenzarten",
+  "category": "resource",
+  "intro": "Geh die verschiedenen Intelligenzarten durch — welche davon ist eine Stärke, die du für dein Ziel nutzen kannst?",
+  "_todo": "gegen Buch/PPT prüfen/anpassen",
+  "terms": [
+    {
+      "id": "sprachlich",
+      "label": "Sprachlich-linguistisch",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "logisch",
+      "label": "Logisch-mathematisch",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "raeumlich",
+      "label": "Räumlich-visuell",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "musikalisch",
+      "label": "Musikalisch-rhythmisch",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "koerperlich",
+      "label": "Körperlich-kinästhetisch",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "interpersonal",
+      "label": "Interpersonal",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "intrapersonal",
+      "label": "Intrapersonal",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    },
+    {
+      "id": "naturalistisch",
+      "label": "Naturalistisch",
+      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+    }
+  ],
+  "bookRef": ""
+}

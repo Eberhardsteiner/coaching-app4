@@ -1,0 +1,22 @@
+{
+  "id": "werteliste",
+  "name": "Werteliste",
+  "category": "resource",
+  "intro": "Welche dieser Werte sind dir wichtig — und wie stützen sie dein Ziel? Wähle aus und ergänze, was fehlt.",
+  "_todo": "öffentliche Auswahl, gegen Buch/PPT anpassbar",
+  "terms": [
+    { "id": "freiheit", "label": "Freiheit" },
+    { "id": "sicherheit", "label": "Sicherheit" },
+    { "id": "verantwortung", "label": "Verantwortung" },
+    { "id": "verbundenheit", "label": "Verbundenheit" },
+    { "id": "wachstum", "label": "Wachstum" },
+    { "id": "gerechtigkeit", "label": "Gerechtigkeit" },
+    { "id": "autonomie", "label": "Autonomie" },
+    { "id": "anerkennung", "label": "Anerkennung" },
+    { "id": "gesundheit", "label": "Gesundheit" },
+    { "id": "kreativitaet", "label": "Kreativität" },
+    { "id": "verlaesslichkeit", "label": "Verlässlichkeit" },
+    { "id": "sinn", "label": "Sinn" }
+  ],
+  "bookRef": ""
+}
