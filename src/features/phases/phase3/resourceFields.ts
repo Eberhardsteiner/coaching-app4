@@ -1,4 +1,4 @@
-import type { Phase3 } from "@/features/session/types";
+import type { Phase3, ResourceItem } from "@/features/session/types";
 
 /**
  * Phase-3 fields that hold the user's *own* resources as ResourceItem[].
@@ -48,4 +48,60 @@ export function isOwnResourceField(key: keyof Phase3): key is OwnResourceField {
     key === "intelligences" ||
     key === "innerResources"
   );
+}
+
+/**
+ * All Phase-3 fields holding the user's *own* resources that take part in the
+ * sorting step (3.6). The context field `othersValues` is intentionally NOT
+ * included — sorting förderlich/hinderlich only applies to one's own resources.
+ */
+export type SortableResourceField =
+  | OwnResourceField
+  | "experiential"
+  | "pastPatterns"
+  | "somaticMarkers"
+  | "hypotheses";
+
+export const SORTABLE_RESOURCE_FIELDS: SortableResourceField[] = [
+  "motives",
+  "values",
+  "intelligences",
+  "innerResources",
+  "experiential",
+  "pastPatterns",
+  "somaticMarkers",
+  "hypotheses",
+];
+
+export const SORTABLE_RESOURCE_LABEL: Record<SortableResourceField, string> = {
+  ...OWN_RESOURCE_LABEL,
+  experiential: "Erfahrungen & äußere Ressourcen",
+  pastPatterns: "Bisheriges Verhalten",
+  somaticMarkers: "Körpersignale",
+  hypotheses: "Hypothesen & Impulse",
+};
+
+/** Flatten every sortable resource, tagged with its source field. */
+export function collectSortableResources(
+  phase3: Phase3,
+): { field: SortableResourceField; item: ResourceItem }[] {
+  return SORTABLE_RESOURCE_FIELDS.flatMap((field) =>
+    phase3[field].map((item) => ({ field, item })),
+  );
+}
+
+/** Counts of förderlich / hinderlich / still-open across the sortable fields. */
+export function countPolarities(phase3: Phase3): {
+  foerderlich: number;
+  hinderlich: number;
+  offen: number;
+  total: number;
+} {
+  const items = collectSortableResources(phase3).map((entry) => entry.item);
+  return {
+    foerderlich: items.filter((i) => i.polarity === "foerderlich").length,
+    hinderlich: items.filter((i) => i.polarity === "hinderlich").length,
+    offen: items.filter((i) => !i.polarity).length,
+    total: items.length,
+  };
 }
