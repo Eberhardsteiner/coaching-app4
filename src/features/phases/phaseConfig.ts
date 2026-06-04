@@ -18,9 +18,9 @@ export interface PhaseDef {
 }
 
 /**
- * Central phase configuration. Phase 0 (Vereinbarung) is fully defined with its
- * four steps; phases 1–5 carry a single placeholder step for now (filled in
- * later prompts).
+ * Central phase configuration. Phase 0 (Vereinbarung, 4 steps) and Phase 1 (IST,
+ * 5 steps incl. the closing four-part check) are fully built; phases 2–5 carry a
+ * single placeholder step for now (filled in later prompts).
  */
 export const PHASES: PhaseDef[] = [
   {
@@ -69,12 +69,18 @@ export const PHASES: PhaseDef[] = [
       {
         id: "1.3",
         title: "Perspektive wechseln",
-        intro: "Den Blick weiten (folgt im nächsten Paket).",
+        intro: "Den Blick mit einem Modell weiten.",
       },
       {
         id: "1.4",
         title: "Clustern & gewichten",
-        intro: "Karten gruppieren und gewichten (folgt im nächsten Paket).",
+        intro:
+          "Verwandte Karten bündeln, gewichten und das Kernthema bestimmen.",
+      },
+      {
+        id: "1.5",
+        title: "Abschluss & Check",
+        intro: "Kurz festhalten, was du aus dieser Phase mitnimmst.",
       },
     ],
   },

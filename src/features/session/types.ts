@@ -77,8 +77,14 @@ export interface Cluster {
   id: string;
   name: string;
   weight: number; // 1..10
-  cardIds: string[];
-  isCore?: boolean;
+  /**
+   * Card-colour id (see cardColors) for the cluster zone + its cards.
+   * Optional + additive: clusters were never persisted before, so no migration
+   * is needed; new clusters always set it.
+   */
+  color?: string;
+  cardIds: string[]; // derived from card.clusterId (card.clusterId is the truth)
+  isCore?: boolean; // derived: the single highest-weight cluster
 }
 
 export interface Phase1 {

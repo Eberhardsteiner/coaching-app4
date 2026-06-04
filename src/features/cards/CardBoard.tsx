@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/features/cards/Card";
+import { ClusterBoard } from "@/features/cards/ClusterBoard";
 import { DEFAULT_CARD_COLOR } from "@/features/cards/cardColors";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
@@ -13,15 +14,24 @@ type CardBoardProps = {
   /** Optional fixed IST anchor card (pink, not editable). */
   anchorCard?: { text: string };
   readOnly?: boolean;
-  // Reserved for Phase 1, step 4 (clustering) — unused in this prompt:
+  /**
+   * Cluster mode: when both are provided the board switches from the free
+   * xy-layout to colour-coded cluster zones (see ClusterBoard).
+   */
   clusters?: Cluster[];
   onClustersChange?: (next: Cluster[]) => void;
 };
 
 /**
  * Reusable moderation-card board. Props-driven (no store access here): the
- * parent owns the data and persists it. Create / edit / delete / recolour cards
- * and move them freely (pointer + keyboard); positions commit on pointerup.
+ * parent owns the data and persists it.
+ *
+ * Two modes:
+ *  - free xy-mode (default): create / edit / delete / recolour cards and move
+ *    them freely (pointer + keyboard); positions commit on pointerup.
+ *  - cluster mode (when `clusters` + `onClustersChange` are passed): cards are
+ *    grouped into colour-coded zones via ClusterBoard.
+ *
  * No connection lines. Pink anchor = the IST card.
  */
 export function CardBoard({
@@ -29,9 +39,26 @@ export function CardBoard({
   onCardsChange,
   anchorCard,
   readOnly,
+  clusters,
+  onClustersChange,
 }: CardBoardProps) {
+  // Hooks must run unconditionally (free mode owns this local state).
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
+
+  // Cluster mode is active as soon as both cluster props are wired.
+  if (clusters && onClustersChange) {
+    return (
+      <ClusterBoard
+        cards={cards}
+        onCardsChange={onCardsChange}
+        clusters={clusters}
+        onClustersChange={onClustersChange}
+        anchorCard={anchorCard}
+        readOnly={readOnly}
+      />
+    );
+  }
 
   function addCard() {
     const offset = (cards.length % 5) * 22;
