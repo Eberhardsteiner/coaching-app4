@@ -1,0 +1,108 @@
+/**
+ * Global stylesheet — Tailwind entry point + project base styles.
+ *
+ * Import order matters: `tailwindcss` first (registers the framework, theme
+ * machinery and Preflight), then our design tokens (which use `@theme`).
+ */
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* ------------------------------------------------------------------ *
+ * Base / reset
+ *
+ * Tailwind's Preflight already normalises most browser defaults. This layer
+ * adds the project-specific base on top. It lives in `@layer base` so plain
+ * utility classes can always override it.
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings: tighter leading + balanced wrapping. Serif is opt-in (font-serif). */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Sensible media defaults. */
+  img,
+  picture,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form controls inherit typography. */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Visible, consistent focus ring for keyboard users (a11y). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Hero gradient — utility class backed by the --gradient-hero token.
+ * ------------------------------------------------------------------ */
+.bg-hero-gradient {
+  background-image: var(--gradient-hero);
+}
+
+/* ------------------------------------------------------------------ *
+ * Calm pulse — a slow, breathing emphasis.
+ * 9s loop, scale 1 → 1.07, opacity .82 → 1. Disabled under reduced-motion.
+ * ------------------------------------------------------------------ */
+@keyframes pulse-calm {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.82;
+  }
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-calm {
+  animation: pulse-calm 9s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-calm {
+    animation: none;
+  }
+}

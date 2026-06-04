@@ -1,0 +1,114 @@
+/**
+ * Design Tokens — the single source of truth for the visual language.
+ *
+ * Implemented as Tailwind v4 `@theme` blocks. Every token defined here is:
+ *   1. emitted as a CSS custom property on :root (usable anywhere via var(…)), and
+ *   2. registered in the Tailwind theme, so the matching utilities are generated
+ *      (e.g. `--color-accent` → `bg-accent`/`text-accent`, `--radius-lg` → `rounded-lg`).
+ *
+ * Only the shade steps the design spec defines are provided. Intermediate steps
+ * (e.g. green-300/500/700) are intentionally absent — using them is a mistake we
+ * want to surface, not paper over with a default Tailwind colour.
+ *
+ * NOTE: this file is consumed by Tailwind via `@import "./tokens.css"` in
+ * global.css (which must come *after* `@import "tailwindcss"`).
+ */
+
+@theme {
+  /* ---- Typography --------------------------------------------------- */
+  /* Self-hosted variable fonts (loaded in main.tsx via @fontsource). */
+  --font-sans:
+    "Source Sans 3 Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif:
+    "Source Serif 4 Variable", ui-serif, Georgia, Cambria, "Times New Roman",
+    Times, serif;
+
+  /* ---- Colour ramps ------------------------------------------------- */
+  /* Grün — Primär / Wachstum */
+  --color-green-50: #eaf3de;
+  --color-green-100: #c0dd97;
+  --color-green-200: #97c459;
+  --color-green-400: #639922;
+  --color-green-600: #3b6d11;
+  --color-green-800: #27500a;
+  --color-green-900: #173404;
+
+  /* Blau — Struktur / Coach */
+  --color-blue-50: #e6f1fb;
+  --color-blue-100: #b5d4f4;
+  --color-blue-200: #85b7eb;
+  --color-blue-400: #378add;
+  --color-blue-600: #185fa5;
+  --color-blue-800: #0c447c;
+  --color-blue-900: #042c53;
+
+  /* Pink — ausschließlich IST-Zustände */
+  --color-pink-50: #fbeaf0;
+  --color-pink-100: #f4c0d1;
+  --color-pink-400: #d4537e;
+  --color-pink-600: #993556;
+  --color-pink-900: #72243e;
+
+  /* Teal — Akzent */
+  --color-teal-100: #9fe1cb;
+  --color-teal-200: #5dcaa5;
+  --color-teal-600: #0f6e56;
+  --color-teal-900: #085041;
+
+  /* Amber — Akzent / Cluster */
+  --color-amber-50: #faeeda;
+  --color-amber-100: #fac775;
+  --color-amber-200: #ef9f27;
+  --color-amber-600: #854f0b;
+  --color-amber-900: #633806;
+
+  /* ---- Neutral & semantic (Light) ----------------------------------- */
+  --color-bg: #ffffff;
+  --color-surface: #f7f6f2;
+  --color-surface-2: #f4f3ee;
+  --color-border: #e6e4dc;
+  --color-text: #23231f;
+  --color-text-muted: #6b6a64;
+  --color-text-faint: #8f8e88;
+  /* Persona-dependent; default Grün. Becomes switchable in Prompt 2 by
+     overriding --color-accent at runtime (utilities reference the var). */
+  --color-accent: #3b6d11;
+  /* IST-Zustände only (alias utilities: text-ist / bg-ist). */
+  --color-ist: #d4537e;
+
+  /* ---- Radii -------------------------------------------------------- */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+/**
+ * Utility-name aliases.
+ *
+ * The spec requires class names like `text-muted` and `border-subtle` that do
+ * not match the raw token names (`--color-text-muted`, `--color-border`).
+ * `@theme inline` makes the generated utilities reference the source token
+ * directly, so a later persona/theme swap of the underlying token flows through.
+ */
+@theme inline {
+  --color-background: var(--color-bg); /* → bg-background        */
+  --color-foreground: var(--color-text); /* → text-foreground      */
+  --color-muted: var(--color-text-muted); /* → text-muted           */
+  --color-faint: var(--color-text-faint); /* → text-faint           */
+  --color-subtle: var(--color-border); /* → border-subtle        */
+}
+
+/**
+ * Non-utility design tokens (no Tailwind colour namespace to map onto).
+ * Exposed as plain custom properties for use by the .bg-hero-gradient utility.
+ */
+:root {
+  --gradient-hero: linear-gradient(
+    to bottom left,
+    #04182e 0%,
+    #0c447c 52%,
+    #1e63a8 100%
+  );
+}
