@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router";
 
-import { AppShell } from "@/components/layout/AppShell";
 import { BranchSelectPage } from "@/routes/BranchSelectPage";
 import { DesignSystem } from "@/routes/DesignSystem";
 import { LandingPage } from "@/routes/LandingPage";
 import { NotFoundPage } from "@/routes/NotFoundPage";
+import { SessionRoute } from "@/routes/SessionRoute";
 import { SessionView } from "@/routes/SessionView";
 
 /**
@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
   { path: "/start", element: <BranchSelectPage /> },
   {
     path: "/session",
-    element: <AppShell />,
+    element: <SessionRoute />,
     children: [{ index: true, element: <SessionView /> }],
   },
   {

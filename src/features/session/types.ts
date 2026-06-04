@@ -1,0 +1,274 @@
+/**
+ * Session data model for the full 5+1-phase coaching process.
+ *
+ * Field names are methodically chosen and must be kept stable — they are the
+ * contract that persistence (Dexie) and every later phase UI build on.
+ */
+
+import type { CoachingBranch } from "@/config/constants";
+import type { Persona } from "@/app/theme-context";
+
+/** Bump when the persisted shape changes; enables future migrations. */
+export const CURRENT_SCHEMA_VERSION = 1;
+
+/** Coaching branch — re-used from config/constants (single source of truth). */
+export type Branch = CoachingBranch;
+
+/** Persona — re-used from the theme layer (ruhig | klar | frei). */
+export type { Persona };
+
+/** Card/cluster visibility (relevant once a coach shares the board). */
+export type Visibility = "shared" | "coach_only";
+
+/** Top-level metadata for one coaching session. */
+export interface SessionMeta {
+  id: string;
+  schemaVersion: number;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+  branch: Branch;
+  persona: Persona;
+  title?: string;
+  locale: "de";
+}
+
+/** Four-part phase check: result / process / insight / transfer. */
+export interface PhaseCheck {
+  result: string;
+  process: string;
+  insight: string;
+  transfer: string;
+}
+
+/* Phase 0 — Vereinbarung -------------------------------------------------- */
+
+export type CoachabilityResult = "ok" | "caution" | "not_suitable";
+
+export interface Phase0 {
+  consentAck: boolean; // rechtliche Entlastung aktiv bestätigt
+  valuesAck: boolean; // Werte / Coachingverständnis bestätigt
+  dataPrivacyAck: boolean; // Datenschutz-Sensibilisierung bestätigt
+  coachability: {
+    addiction: boolean;
+    othersMustChange: boolean;
+    acuteDistress: boolean;
+    result: CoachabilityResult;
+  };
+  topicSketch: string;
+}
+
+/* Phase 1 — IST ----------------------------------------------------------- */
+
+export interface Card {
+  id: string;
+  text: string;
+  meaning?: string;
+  color?: string; // Farbe trägt Bedeutung (Cluster)
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number; // freie Positionierung
+  clusterId?: string;
+  modelTerm?: string;
+  visibility: Visibility;
+}
+
+export interface Cluster {
+  id: string;
+  name: string;
+  weight: number; // 1..10
+  cardIds: string[];
+  isCore?: boolean;
+}
+
+export interface Phase1 {
+  istWord: string;
+  selectedModel?: string;
+  cards: Card[];
+  clusters: Cluster[];
+  check: PhaseCheck;
+}
+
+/* Phase 2 — SOLL / Ziel --------------------------------------------------- */
+
+export interface GoalComponents {
+  futurII: boolean;
+  adressat: boolean;
+  terminiert: boolean;
+  kontextbezug: boolean;
+  loesungsfrei: boolean;
+  emotionalAttraktiv: number; // 1..10 (10/10-Stopper)
+  selbstErreichbar: number; // 1..10 (10/10-Stopper)
+}
+
+export interface Consequence {
+  id: string;
+  clusterId?: string;
+  perspective: string;
+  recognition: string;
+  valuation: string;
+  tailwind?: boolean;
+}
+
+export interface Phase2 {
+  vision: string;
+  goalText: string;
+  datum?: string;
+  rolle?: string;
+  gefuehl?: string;
+  clusterRef?: string;
+  components: GoalComponents;
+  consequences: Consequence[];
+  check: PhaseCheck;
+}
+
+/* Phase 3 — Ressourcen ---------------------------------------------------- */
+
+export interface ResourceItem {
+  id: string;
+  text: string;
+  note?: string;
+  polarity?: "foerderlich" | "hinderlich";
+}
+
+export interface Phase3 {
+  motives: ResourceItem[];
+  values: ResourceItem[];
+  intelligences: ResourceItem[];
+  innerResources: ResourceItem[]; // nach polarity sortierbar
+  othersValues: ResourceItem[];
+  hypotheses: ResourceItem[]; // Teilphase 3.3 — späterer KI-Einsatzpunkt
+  experiential: ResourceItem[]; // 3.4
+  pastPatterns: ResourceItem[]; // 3.5
+  somaticMarkers: ResourceItem[]; // 3.6
+  selectedModels?: string[];
+  check: PhaseCheck;
+}
+
+/* Phase 4 — Handlungsplan ------------------------------------------------- */
+
+export interface Measure {
+  id: string;
+  text: string; // Ich-Satz
+  basedOnResource?: string;
+  recognitionSignal?: string;
+}
+
+export interface ClusterPlan {
+  clusterId: string;
+  resourcesUsed: string[];
+  measures: Measure[];
+}
+
+export interface Phase4 {
+  plans: ClusterPlan[];
+  check: PhaseCheck;
+}
+
+/* Phase 5 — Controlling --------------------------------------------------- */
+
+export interface Strategy {
+  id: string;
+  resource: string;
+  concreteStrategy: string;
+}
+
+export interface Phase5 {
+  strategies: Strategy[];
+  insights: string;
+  check: PhaseCheck;
+}
+
+/* Aggregate --------------------------------------------------------------- */
+
+export interface Session {
+  meta: SessionMeta;
+  phase0: Phase0;
+  phase1: Phase1;
+  phase2: Phase2;
+  phase3: Phase3;
+  phase4: Phase4;
+  phase5: Phase5;
+}
+
+/** An empty four-part phase check. */
+function emptyCheck(): PhaseCheck {
+  return { result: "", process: "", insight: "", transfer: "" };
+}
+
+/**
+ * Create a fresh, empty session for the given branch.
+ * Generates an id + timestamps, stamps the current schema version and locale,
+ * and initialises every phase to its empty shape. Default persona: "ruhig".
+ */
+export function createEmptySession(
+  branch: Branch,
+  persona: Persona = "ruhig",
+): Session {
+  const now = new Date().toISOString();
+  return {
+    meta: {
+      id: crypto.randomUUID(),
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      createdAt: now,
+      updatedAt: now,
+      branch,
+      persona,
+      locale: "de",
+    },
+    phase0: {
+      consentAck: false,
+      valuesAck: false,
+      dataPrivacyAck: false,
+      coachability: {
+        addiction: false,
+        othersMustChange: false,
+        acuteDistress: false,
+        result: "ok",
+      },
+      topicSketch: "",
+    },
+    phase1: {
+      istWord: "",
+      cards: [],
+      clusters: [],
+      check: emptyCheck(),
+    },
+    phase2: {
+      vision: "",
+      goalText: "",
+      components: {
+        futurII: false,
+        adressat: false,
+        terminiert: false,
+        kontextbezug: false,
+        loesungsfrei: false,
+        emotionalAttraktiv: 0,
+        selbstErreichbar: 0,
+      },
+      consequences: [],
+      check: emptyCheck(),
+    },
+    phase3: {
+      motives: [],
+      values: [],
+      intelligences: [],
+      innerResources: [],
+      othersValues: [],
+      hypotheses: [],
+      experiential: [],
+      pastPatterns: [],
+      somaticMarkers: [],
+      check: emptyCheck(),
+    },
+    phase4: {
+      plans: [],
+      check: emptyCheck(),
+    },
+    phase5: {
+      strategies: [],
+      insights: "",
+      check: emptyCheck(),
+    },
+  };
+}
