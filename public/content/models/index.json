@@ -1,0 +1,29 @@
+{
+  "contentSchemaVersion": 1,
+  "models": [
+    {
+      "id": "st-galler",
+      "name": "Neues St. Galler Management-Modell",
+      "category": "ist",
+      "file": "st-galler.json"
+    },
+    {
+      "id": "gesundheit-konstruktivistisch",
+      "name": "Konstruktivistisches Gesundheitsmodell",
+      "category": "ist",
+      "file": "gesundheit-konstruktivistisch.json"
+    },
+    {
+      "id": "drei-k",
+      "name": "3K-Modell",
+      "category": "ist",
+      "file": "drei-k.json"
+    },
+    {
+      "id": "zehn-felder",
+      "name": "10-Felder-Modell",
+      "category": "ist",
+      "file": "zehn-felder.json"
+    }
+  ]
+}

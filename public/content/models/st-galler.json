@@ -1,0 +1,39 @@
+{
+  "id": "st-galler",
+  "name": "Neues St. Galler Management-Modell",
+  "category": "ist",
+  "intro": "Betrachte dein Thema aus der Vogelperspektive eines Gesamtsystems — welche Sphären, Beteiligten und Ordnungsmuster wirken hinein?",
+  "terms": [
+    {
+      "id": "umweltsphaeren",
+      "label": "Umweltsphären",
+      "hint": "Welche größeren Sphären spielen hinein: Gesellschaft, Natur, Technologie, Wirtschaft?"
+    },
+    {
+      "id": "anspruchsgruppen",
+      "label": "Anspruchsgruppen",
+      "hint": "Wer hat ein berechtigtes Interesse (z. B. Vorgesetzte, Team, Kund:innen, Familie, Öffentlichkeit)?"
+    },
+    {
+      "id": "interaktionsthemen",
+      "label": "Interaktionsthemen",
+      "hint": "Worum geht es im Austausch: Ressourcen, Normen & Werte, Anliegen & Interessen?"
+    },
+    {
+      "id": "ordnungsmomente",
+      "label": "Ordnungsmomente",
+      "hint": "Welche Strategie, welche Strukturen, welche Kultur prägen die Situation?"
+    },
+    {
+      "id": "prozesse",
+      "label": "Prozesse",
+      "hint": "Welche Management-, Kern- und Unterstützungsprozesse sind betroffen?"
+    },
+    {
+      "id": "entwicklungsmodi",
+      "label": "Entwicklungsmodi",
+      "hint": "Geht es eher um Erneuerung (Neues) oder Optimierung (Verbessern)?"
+    }
+  ],
+  "bookRef": ""
+}

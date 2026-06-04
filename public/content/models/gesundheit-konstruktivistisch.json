@@ -1,0 +1,15 @@
+{
+  "id": "gesundheit-konstruktivistisch",
+  "name": "Konstruktivistisches Gesundheitsmodell",
+  "category": "ist",
+  "intro": "Betrachte dein Thema durch die Brille der selbst erlebten Gesundheit und ihrer Quellen.",
+  "terms": [
+    {
+      "id": "selbsterlebte-gesundheit",
+      "label": "Selbsterlebte Gesundheit",
+      "hint": "Wie erlebst du deine Gesundheit gerade selbst?"
+    }
+  ],
+  "_todo": "weitere Begriffe gegen Buch/PPT vervollständigen — nicht erfinden",
+  "bookRef": ""
+}

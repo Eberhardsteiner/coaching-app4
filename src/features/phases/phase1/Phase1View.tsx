@@ -3,16 +3,18 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Step1Gefuehl } from "@/features/phases/phase1/Step1Gefuehl";
 import { Step2Zusammenhaenge } from "@/features/phases/phase1/Step2Zusammenhaenge";
+import { Step3Perspektive } from "@/features/phases/phase1/Step3Perspektive";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 
 /**
- * Phase 1 — IST verstehen. Steps 1.1 (Gefühl) and 1.2 (Zusammenhänge) are built;
- * steps 1.3 and 1.4 are placeholders (next prompt). The last step has no forward
- * yet, so Phase 1 cannot be completed and Phase 2 stays locked.
+ * Phase 1 — IST verstehen. Steps 1.1–1.3 are built; step 1.4 (Clustern) is a
+ * placeholder (next prompt). The last step has no forward yet, so Phase 1 cannot
+ * be completed and Phase 2 stays locked.
  */
 export function Phase1View({ nav }: { nav: PhaseNavigation }) {
   if (nav.stepIndex === 0) return <Step1Gefuehl nav={nav} />;
   if (nav.stepIndex === 1) return <Step2Zusammenhaenge nav={nav} />;
+  if (nav.stepIndex === 2) return <Step3Perspektive nav={nav} />;
 
   return (
     <div>
