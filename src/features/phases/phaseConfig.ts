@@ -18,8 +18,8 @@ export interface PhaseDef {
 }
 
 /**
- * Central phase configuration. Phase 0 (Vereinbarung, 4 steps) and Phase 1 (IST,
- * 5 steps incl. the closing four-part check) are fully built; phases 2–5 carry a
+ * Central phase configuration. Phase 0 (Vereinbarung, 4 steps), Phase 1 (IST,
+ * 5 steps) and Phase 2 (Ziel, 5 steps) are fully built; phases 3–5 carry a
  * single placeholder step for now (filled in later prompts).
  */
 export const PHASES: PhaseDef[] = [
@@ -88,7 +88,33 @@ export const PHASES: PhaseDef[] = [
     id: 2,
     title: "Ziel finden",
     short: "Ein attraktives, selbstgewähltes Ziel.",
-    steps: [{ id: "2.1", title: "Ziel finden" }],
+    steps: [
+      {
+        id: "2.1",
+        title: "Wunsch & Vision",
+        intro: "Den gewünschten Zustand beschreiben — nicht den Weg.",
+      },
+      {
+        id: "2.2",
+        title: "Zielformel",
+        intro: "Dein Ziel als erreichten Zustand formulieren (Futur II).",
+      },
+      {
+        id: "2.3",
+        title: "Zielprüfung",
+        intro: "Prüfen, ob das Ziel trägt — mit dem 10/10-Check.",
+      },
+      {
+        id: "2.4",
+        title: "Zielfolgen",
+        intro: "Was sich für dein Umfeld ändert, wenn du das Ziel erreichst.",
+      },
+      {
+        id: "2.5",
+        title: "Abschluss & Check",
+        intro: "Kurz festhalten, was du aus dieser Phase mitnimmst.",
+      },
+    ],
   },
   {
     id: 3,

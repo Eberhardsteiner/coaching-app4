@@ -1,5 +1,6 @@
 import { Phase0View } from "@/features/phases/phase0/Phase0View";
 import { Phase1View } from "@/features/phases/phase1/Phase1View";
+import { Phase2View } from "@/features/phases/phase2/Phase2View";
 import { PlaceholderPhase } from "@/features/phases/PlaceholderPhase";
 import { usePhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -40,6 +41,8 @@ export function PhaseContainer() {
           <Phase0View nav={nav} />
         ) : phaseDef.id === 1 ? (
           <Phase1View nav={nav} />
+        ) : phaseDef.id === 2 ? (
+          <Phase2View nav={nav} />
         ) : (
           <PlaceholderPhase nav={nav} />
         )}
