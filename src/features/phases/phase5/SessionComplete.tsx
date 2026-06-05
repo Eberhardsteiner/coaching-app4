@@ -1,4 +1,5 @@
-import { Check } from "lucide-react";
+import { Check, FileText } from "lucide-react";
+import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
  * stays intact; "Phase 5 noch einmal ansehen" reopens the steps.
  */
 export function SessionComplete({ onReview }: { onReview: () => void }) {
+  const navigate = useNavigate();
   return (
     <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center py-10 text-center">
       <div
@@ -28,13 +30,15 @@ export function SessionComplete({ onReview }: { onReview: () => void }) {
         wieder gehen.
       </p>
 
-      <p className="mt-6 rounded-lg border border-dashed border-subtle bg-surface p-4 text-sm text-muted">
-        Eine Zusammenfassung deiner Sitzung (als PDF) folgt im nächsten Paket.
-      </p>
-
-      <Button variant="ghost" size="sm" className="mt-6" onClick={onReview}>
-        Phase 5 noch einmal ansehen
-      </Button>
+      <div className="mt-7 flex flex-col items-center gap-2">
+        <Button onClick={() => navigate("/zusammenfassung")}>
+          <FileText />
+          Zusammenfassung ansehen &amp; als PDF speichern
+        </Button>
+        <Button variant="ghost" size="sm" onClick={onReview}>
+          Phase 5 noch einmal ansehen
+        </Button>
+      </div>
     </div>
   );
 }

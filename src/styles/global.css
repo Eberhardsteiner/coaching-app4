@@ -135,3 +135,23 @@
     opacity: 1;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Print — only the summary content prints. The chrome (header/buttons)
+ * is hidden via the Tailwind `print:hidden` variant in the markup; here
+ * we add neutral, persona-independent print defaults + page setup.
+ * ------------------------------------------------------------------ */
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  /* Keep each summary section together; avoid awkward mid-block breaks. */
+  .summary-section {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}

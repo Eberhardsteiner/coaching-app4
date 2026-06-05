@@ -3,6 +3,7 @@ import { Boxes, LifeBuoy, NotebookPen, Wrench, X } from "lucide-react";
 import { Outlet } from "react-router";
 
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
+import { ToolsDrawerContent } from "@/components/layout/ToolsDrawerContent";
 import { TopBar } from "@/components/layout/TopBar";
 import { ONBOARDING_TOUR_SEEN_KEY } from "@/config/constants";
 import { Tour } from "@/features/onboarding/Tour";
@@ -165,6 +166,8 @@ export function AppShell() {
           <div className="flex-1 overflow-y-auto p-4">
             {openDrawer.id === "help" ? (
               <HelpDrawerContent onStartTour={startTour} />
+            ) : openDrawer.id === "tools" ? (
+              <ToolsDrawerContent />
             ) : (
               <p className="text-sm text-muted">{openDrawer.body}</p>
             )}

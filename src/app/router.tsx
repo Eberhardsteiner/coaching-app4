@@ -8,6 +8,7 @@ import { NotFoundPage } from "@/routes/NotFoundPage";
 import { SessionRoute } from "@/routes/SessionRoute";
 import { SessionsPage } from "@/routes/SessionsPage";
 import { SessionView } from "@/routes/SessionView";
+import { SummaryView } from "@/routes/SummaryView";
 
 /**
  * Application route tree (data router).
@@ -16,6 +17,7 @@ import { SessionView } from "@/routes/SessionView";
  *   /start    Branch selection (no shell)
  *   /sessions Saved-session management (no shell)
  *   /session  AppShell layout → SessionView (index child via <Outlet />)
+ *   /zusammenfassung  Print-friendly session summary (no shell)
  *   /design   Design-System demo — DEV only; redirects to / in production
  *   *         404 fallback
  */
@@ -31,6 +33,7 @@ export const router = createBrowserRouter([
     element: <SessionRoute />,
     children: [{ index: true, element: <SessionView /> }],
   },
+  { path: "/zusammenfassung", element: <SummaryView /> },
   {
     path: "/design",
     element: import.meta.env.DEV ? (
