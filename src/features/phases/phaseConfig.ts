@@ -18,10 +18,10 @@ export interface PhaseDef {
 }
 
 /**
- * Central phase configuration. Phase 0 (Vereinbarung, 4 steps), Phase 1 (IST,
- * 5 steps), Phase 2 (Ziel, 5 steps), Phase 3 (Ressourcen, 7 steps) and Phase 4
- * (Handlungsplan, 3 steps) are fully built; Phase 5 carries a single placeholder
- * step for now (filled in a later prompt).
+ * Central phase configuration — all phases are fully built: Phase 0
+ * (Vereinbarung, 4 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
+ * Phase 3 (Ressourcen, 7 steps), Phase 4 (Handlungsplan, 3 steps) and Phase 5
+ * (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the 5+1 process.
  */
 export const PHASES: PhaseDef[] = [
   {
@@ -185,7 +185,23 @@ export const PHASES: PhaseDef[] = [
     id: 5,
     title: "Nachhaltigkeit",
     short: "Dranbleiben und absichern.",
-    steps: [{ id: "5.1", title: "Nachhaltigkeit" }],
+    steps: [
+      {
+        id: "5.1",
+        title: "Dranbleiben",
+        intro: "Pro Ressource eine konkrete Strategie, um dranzubleiben.",
+      },
+      {
+        id: "5.2",
+        title: "Erkenntnisse",
+        intro: "Festhalten, was du aus dem ganzen Prozess mitnimmst.",
+      },
+      {
+        id: "5.3",
+        title: "Abschluss & Check",
+        intro: "Kurz festhalten — und die Sitzung abschließen.",
+      },
+    ],
   },
 ];
 
