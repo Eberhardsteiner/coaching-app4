@@ -11,10 +11,11 @@ import { useSessionStore } from "@/features/session/sessionStore";
  */
 export function TopBar() {
   const session = useSessionStore((s) => s.session);
+  const compact = session?.meta.branch === "coached";
 
   return (
     <header className="flex items-center justify-between gap-4 border-b border-subtle bg-surface/80 px-4 py-2.5 backdrop-blur">
-      <PhaseBar />
+      <PhaseBar compact={compact} />
 
       <div className="flex items-center gap-1">
         {/* Export the active session as a JSON file. */}

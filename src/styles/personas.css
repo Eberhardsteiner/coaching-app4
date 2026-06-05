@@ -17,8 +17,14 @@
   --stage-max-width: 60rem;
 }
 
-/* Klar — Akzent Blau (#185FA5), kompaktere Dichte. */
-:root[data-persona="klar"] {
+/* Klar — Akzent Blau (#185FA5), kompaktere Dichte.
+ *
+ * Applies to the Klar persona on <html> AND to the coach view (any subtree
+ * marked `data-coach-view`). The coach view is a *view* property — it renders
+ * "Klar" without touching the persisted meta.persona; the attribute selector
+ * lets a wrapper element scope the same tokens to its subtree. */
+:root[data-persona="klar"],
+[data-coach-view] {
   --color-accent: #185fa5;
   --stage-padding: 1.75rem;
   --stage-max-width: 72rem;

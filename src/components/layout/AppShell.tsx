@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Boxes, LifeBuoy, NotebookPen, Wrench, X } from "lucide-react";
 import { Outlet } from "react-router";
 
+import { CoachConsole } from "@/components/layout/CoachConsole";
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
 import { ToolsDrawerContent } from "@/components/layout/ToolsDrawerContent";
 import { TopBar } from "@/components/layout/TopBar";
 import { ONBOARDING_TOUR_SEEN_KEY } from "@/config/constants";
 import { Tour } from "@/features/onboarding/Tour";
 import { getKvFlag, setKvFlag } from "@/features/session/sessionRepository";
+import { useSessionStore } from "@/features/session/sessionStore";
 import { cn } from "@/lib/utils";
 
 type DrawerId = "tools" | "notebook" | "models" | "help";
@@ -55,6 +57,9 @@ const DRAWERS: DrawerDef[] = [
  * off the onboarding tour once (kv flag) and hosts the Hilfe drawer content.
  */
 export function AppShell() {
+  const isCoached = useSessionStore(
+    (s) => s.session?.meta.branch === "coached",
+  );
   const [openId, setOpenId] = useState<DrawerId | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
   const tabRefs = useRef<Partial<Record<DrawerId, HTMLButtonElement | null>>>(
@@ -115,15 +120,21 @@ export function AppShell() {
   }
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
-      {/* Main column: top bar + stage */}
+    <div
+      data-coach-view={isCoached ? "" : undefined}
+      className="flex h-dvh overflow-hidden bg-background text-foreground"
+    >
+      {/* Main column: top bar + stage (+ coach console in the coached branch) */}
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto h-full w-full max-w-[var(--stage-max-width)] p-[var(--stage-padding)]">
-            <Outlet />
-          </div>
-        </main>
+        <div className="flex min-h-0 flex-1">
+          <main className="min-w-0 flex-1 overflow-y-auto">
+            <div className="mx-auto h-full w-full max-w-[var(--stage-max-width)] p-[var(--stage-padding)]">
+              <Outlet />
+            </div>
+          </main>
+          {isCoached ? <CoachConsole /> : null}
+        </div>
       </div>
 
       {/* Scrim — only on narrow viewports while a drawer is open. */}

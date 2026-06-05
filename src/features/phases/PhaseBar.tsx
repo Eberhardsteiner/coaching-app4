@@ -7,14 +7,15 @@ import { cn } from "@/lib/utils";
 /**
  * Real phase indicator for the TopBar: phases 0–5 as dots. Current is filled,
  * completed shows a check, the (reachable) frontier is outlined, future phases
- * are locked. Reachable phases are clickable (keyboard + ARIA).
+ * are locked. Reachable phases are clickable (keyboard + ARIA). `compact` packs
+ * it tighter (used in the coach view).
  */
-export function PhaseBar() {
+export function PhaseBar({ compact }: { compact?: boolean }) {
   const { progress, isReachable, goToPhase } = usePhaseNavigation();
 
   return (
     <nav aria-label="Phasen">
-      <ol className="flex items-center gap-1.5">
+      <ol className={cn("flex items-center", compact ? "gap-1" : "gap-1.5")}>
         {PHASES.map((phase) => {
           const isCurrent = phase.id === progress.phase;
           const isCompleted = progress.completedPhases.includes(phase.id);
@@ -35,7 +36,8 @@ export function PhaseBar() {
                 aria-label={`${phase.title} — ${state}`}
                 title={phase.title}
                 className={cn(
-                  "flex size-6 items-center justify-center rounded-full transition-colors",
+                  "flex items-center justify-center rounded-full transition-colors",
+                  compact ? "size-5" : "size-6",
                   isCurrent && "bg-accent text-white",
                   !isCurrent &&
                     isCompleted &&
@@ -48,9 +50,17 @@ export function PhaseBar() {
                 )}
               >
                 {isCompleted && !isCurrent ? (
-                  <Check className="size-3.5" aria-hidden />
+                  <Check
+                    className={compact ? "size-3" : "size-3.5"}
+                    aria-hidden
+                  />
                 ) : (
-                  <span className="size-1.5 rounded-full bg-current" />
+                  <span
+                    className={cn(
+                      "rounded-full bg-current",
+                      compact ? "size-1" : "size-1.5",
+                    )}
+                  />
                 )}
               </button>
             </li>

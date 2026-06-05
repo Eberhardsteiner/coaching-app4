@@ -219,6 +219,12 @@ export interface Session {
   phase3: Phase3;
   phase4: Phase4;
   phase5: Phase5;
+  /**
+   * Coach-only private notes / hypotheses (shown only in the coached-branch
+   * console, never on the coachee stage). Additive-optional, default-safe — no
+   * schema bump (analogous to istBurden / preMortem).
+   */
+  coachNotes?: string;
 }
 
 /** An empty four-part phase check. */
