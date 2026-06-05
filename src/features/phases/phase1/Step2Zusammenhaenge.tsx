@@ -1,4 +1,4 @@
-import { CardBoard } from "@/features/cards/CardBoard";
+import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -26,7 +26,7 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
         Karten frei herum und gib ihnen Farben, wie es für dich Sinn ergibt.
       </p>
 
-      <CardBoard
+      <CoachCardBoard
         cards={cards}
         onCardsChange={setCards}
         anchorCard={{ text: istWord }}

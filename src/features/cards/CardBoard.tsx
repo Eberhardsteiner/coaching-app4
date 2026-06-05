@@ -8,7 +8,7 @@ import { DEFAULT_CARD_COLOR } from "@/features/cards/cardColors";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
 
-type CardBoardProps = {
+export type CardBoardProps = {
   cards: CardModel[];
   onCardsChange: (next: CardModel[]) => void;
   /** Optional fixed IST anchor card (pink, not editable). */
@@ -20,6 +20,11 @@ type CardBoardProps = {
    */
   clusters?: Cluster[];
   onClustersChange?: (next: Cluster[]) => void;
+  /**
+   * Show a per-card visibility toggle (shared ↔ coach_only). Only the coached
+   * branch sets this (via CoachCardBoard); in self mode cards stay shared.
+   */
+  allowVisibilityToggle?: boolean;
 };
 
 /**
@@ -41,6 +46,7 @@ export function CardBoard({
   readOnly,
   clusters,
   onClustersChange,
+  allowVisibilityToggle,
 }: CardBoardProps) {
   // Hooks must run unconditionally (free mode owns this local state).
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +62,7 @@ export function CardBoard({
         onClustersChange={onClustersChange}
         anchorCard={anchorCard}
         readOnly={readOnly}
+        allowVisibilityToggle={allowVisibilityToggle}
       />
     );
   }
@@ -117,6 +124,7 @@ export function CardBoard({
             card={card}
             boardRef={boardRef}
             readOnly={readOnly}
+            allowVisibilityToggle={allowVisibilityToggle}
             autoFocus={card.id === focusId}
             onChange={updateCard}
             onDelete={deleteCard}

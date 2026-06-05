@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { CardBoard } from "@/features/cards/CardBoard";
+import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { DEFAULT_CARD_COLOR } from "@/features/cards/cardColors";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import type { ModelTerm } from "@/features/content/contentTypes";
@@ -150,7 +150,7 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
       ) : null}
 
       {/* The shared board — model cards appear next to the inductive ones. */}
-      <CardBoard
+      <CoachCardBoard
         cards={cards}
         onCardsChange={setCards}
         anchorCard={{ text: istWord }}

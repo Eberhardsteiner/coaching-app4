@@ -8,6 +8,11 @@ import {
   UNASSIGNED,
   pickNextClusterColor,
 } from "@/features/cards/clusters";
+import {
+  effectiveVisibility,
+  toggleVisibility,
+} from "@/features/cards/visibility";
+import { VisibilityToggle } from "@/features/cards/VisibilityToggle";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -20,6 +25,8 @@ type ClusterBoardProps = {
   /** Optional fixed IST anchor card (pink, never clustered). */
   anchorCard?: { text: string };
   readOnly?: boolean;
+  /** Show the per-card visibility toggle on chips (coached branch only). */
+  allowVisibilityToggle?: boolean;
 };
 
 /**
@@ -37,6 +44,7 @@ export function ClusterBoard({
   onClustersChange,
   anchorCard,
   readOnly,
+  allowVisibilityToggle,
 }: ClusterBoardProps) {
   const zoneRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [dragCardId, setDragCardId] = useState<string | null>(null);
@@ -71,6 +79,19 @@ export function ClusterBoard({
     const clusterId = zoneId === UNASSIGNED ? undefined : zoneId;
     onCardsChange(
       cards.map((card) => (card.id === cardId ? { ...card, clusterId } : card)),
+    );
+  }
+
+  function toggleCardVisibility(cardId: string) {
+    onCardsChange(
+      cards.map((card) =>
+        card.id === cardId
+          ? {
+              ...card,
+              visibility: toggleVisibility(effectiveVisibility(card)),
+            }
+          : card,
+      ),
     );
   }
 
@@ -180,11 +201,15 @@ export function ClusterBoard({
       : undefined;
     const color = getCardColor(cluster?.color);
     const dragging = card.id === dragCardId;
+    const coachOnly =
+      Boolean(allowVisibilityToggle) &&
+      effectiveVisibility(card) === "coach_only";
     return (
       <div
         key={card.id}
         className={cn(
-          "flex items-center gap-1.5 rounded-md border border-black/10 py-1 pl-1 pr-1.5 shadow-sm transition-colors",
+          "flex items-center gap-1.5 rounded-md border py-1 pl-1 pr-1.5 shadow-sm transition-colors",
+          coachOnly ? "border-dashed border-muted/70" : "border-black/10",
           color.surface,
           dragging && "opacity-40",
         )}
@@ -204,6 +229,13 @@ export function ClusterBoard({
         <span className="max-w-[10rem] truncate text-sm">
           {card.text || "—"}
         </span>
+        {allowVisibilityToggle ? (
+          <VisibilityToggle
+            visibility={effectiveVisibility(card)}
+            disabled={readOnly}
+            onToggle={() => toggleCardVisibility(card.id)}
+          />
+        ) : null}
         <label className="sr-only" htmlFor={`assign-${card.id}`}>
           Cluster für „{card.text || "ohne Text"}“
         </label>

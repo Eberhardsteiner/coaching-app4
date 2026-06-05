@@ -8,6 +8,11 @@ import {
 import { GripVertical, Trash2 } from "lucide-react";
 
 import { CARD_COLORS, getCardColor } from "@/features/cards/cardColors";
+import { VisibilityToggle } from "@/features/cards/VisibilityToggle";
+import {
+  effectiveVisibility,
+  toggleVisibility,
+} from "@/features/cards/visibility";
 import type { Card as CardModel } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +29,8 @@ type CardProps = {
   card: CardModel;
   boardRef: RefObject<HTMLDivElement | null>;
   readOnly?: boolean;
+  /** Show the per-card visibility toggle (coached branch only). */
+  allowVisibilityToggle?: boolean;
   /** Focus the text field on mount (for a freshly added card). */
   autoFocus?: boolean;
   onChange: (card: CardModel) => void;
@@ -39,6 +46,7 @@ export function Card({
   card,
   boardRef,
   readOnly,
+  allowVisibilityToggle,
   autoFocus,
   onChange,
   onDelete,
@@ -56,6 +64,10 @@ export function Card({
   const x = drag?.x ?? baseX;
   const y = drag?.y ?? baseY;
   const color = getCardColor(card.color);
+  const visibility = effectiveVisibility(card);
+  // The coach_only style only applies where the mechanic is active (coached).
+  const coachOnly =
+    Boolean(allowVisibilityToggle) && visibility === "coach_only";
 
   function boardSize() {
     const rect = boardRef.current?.getBoundingClientRect();
@@ -137,7 +149,8 @@ export function Card({
     <div
       style={{ left: x, top: y, width: CARD_WIDTH }}
       className={cn(
-        "absolute flex flex-col gap-1 rounded-lg border border-subtle p-2 shadow-sm",
+        "absolute flex flex-col gap-1 rounded-lg border p-2 shadow-sm",
+        coachOnly ? "border-dashed border-muted" : "border-subtle",
         color.surface,
         drag ? "z-10 shadow-md" : "",
       )}
@@ -157,6 +170,15 @@ export function Card({
           <GripVertical className="size-4" />
         </button>
         <div className="flex items-center gap-0.5">
+          {allowVisibilityToggle ? (
+            <VisibilityToggle
+              visibility={visibility}
+              disabled={readOnly}
+              onToggle={() =>
+                onChange({ ...card, visibility: toggleVisibility(visibility) })
+              }
+            />
+          ) : null}
           <button
             type="button"
             onClick={cycleColor}

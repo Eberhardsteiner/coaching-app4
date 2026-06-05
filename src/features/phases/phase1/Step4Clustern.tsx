@@ -1,4 +1,4 @@
-import { CardBoard } from "@/features/cards/CardBoard";
+import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { hasWeightTie, normalizeClusters } from "@/features/cards/clusters";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
@@ -62,7 +62,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
         </p>
       ) : null}
 
-      <CardBoard
+      <CoachCardBoard
         cards={cards}
         onCardsChange={setCards}
         clusters={clusters}
