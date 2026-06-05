@@ -3,6 +3,7 @@
  * JSON file. No backend; the file stays on the user's device.
  */
 
+import { cleanSessionForHandoff } from "@/features/session/handoff";
 import { CURRENT_SCHEMA_VERSION, type Session } from "@/features/session/types";
 
 /** File format identifier embedded in every export. */
@@ -41,19 +42,40 @@ export function exportFileName(session: Session): string {
   return `coaching-session_${date}_${shortId}.json`;
 }
 
-/** Serialise + trigger a browser download of the session as a JSON file. */
-export function downloadSession(session: Session): void {
-  const envelope = buildExportEnvelope(session);
-  const json = JSON.stringify(envelope, null, 2);
+/** File name for the cleaned coachee handoff (…-uebergabe.json). */
+export function handoffFileName(session: Session): string {
+  const date = new Date().toISOString().slice(0, 10);
+  const shortId = session.meta.id.slice(0, 8);
+  return `coaching-session_${date}_${shortId}-uebergabe.json`;
+}
+
+/** Serialise `data` as pretty JSON and trigger a browser download. */
+function downloadJson(data: unknown, fileName: string): void {
+  const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = exportFileName(session);
+  anchor.download = fileName;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
 
   URL.revokeObjectURL(url);
+}
+
+/** Full coach backup: download the complete session (incl. coach_only/coachNotes). */
+export function downloadSession(session: Session): void {
+  downloadJson(buildExportEnvelope(session), exportFileName(session));
+}
+
+/**
+ * Cleaned coachee handoff: download a copy with coach_only cards + coachNotes
+ * removed and branch set to "self" (see cleanSessionForHandoff). Same envelope
+ * format, fresh exportedAt, distinct filename.
+ */
+export function downloadHandoff(session: Session): void {
+  const cleaned = cleanSessionForHandoff(session);
+  downloadJson(buildExportEnvelope(cleaned), handoffFileName(session));
 }

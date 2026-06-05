@@ -1,9 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, Monitor } from "lucide-react";
+import { ChevronLeft, ChevronRight, Monitor, Save, Share2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { isShared } from "@/features/cards/visibility";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { usePhaseNavigation } from "@/features/phases/usePhaseNavigation";
+import {
+  downloadHandoff,
+  downloadSession,
+} from "@/features/session/exportSession";
 import { getKvFlag, setKvFlag } from "@/features/session/sessionRepository";
 import { useSessionStore } from "@/features/session/sessionStore";
 
@@ -57,6 +62,18 @@ export function CoachConsole() {
       `/buehne?id=${encodeURIComponent(sessionId)}`,
       "nhs-coaching-buehne",
     );
+  }
+
+  /** Cleaned handoff for the coachee (no coach_only / coachNotes; branch self). */
+  function handoffToCoachee() {
+    const current = useSessionStore.getState().session;
+    if (current) downloadHandoff(current);
+  }
+
+  /** Full coach backup (includes coach_only cards + coachNotes). */
+  function fullBackup() {
+    const current = useSessionStore.getState().session;
+    if (current) downloadSession(current);
   }
 
   const stepDef = nav.phaseDef.steps[nav.stepIndex];
@@ -116,6 +133,38 @@ export function CoachConsole() {
           </button>
           <p className="text-xs text-faint">
             Teile dieses Fenster im Videogespräch.
+          </p>
+        </section>
+
+        {/* Übergabe — two clearly-distinguished export paths */}
+        <section className="space-y-2 border-t border-subtle pt-5">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-faint">
+            Übergabe
+          </h3>
+          <div className="flex flex-col items-start gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handoffToCoachee}
+              aria-label="An Coachee übergeben (bereinigte Datei)"
+            >
+              <Share2 />
+              An Coachee übergeben
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={fullBackup}
+              aria-label="Vollständige Coach-Sicherung exportieren"
+            >
+              <Save />
+              Vollständige Sicherung
+            </Button>
+          </div>
+          <p className="text-xs text-faint">
+            „An Coachee übergeben“ enthält nicht deine Coach-Notizen — sie
+            reisen nicht mit und werden beim Zurück-Import nicht automatisch
+            zusammengeführt.
           </p>
         </section>
 

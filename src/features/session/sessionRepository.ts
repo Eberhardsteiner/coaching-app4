@@ -74,6 +74,22 @@ export async function deleteSession(id: string): Promise<void> {
   await db.sessions.delete(id);
 }
 
+/**
+ * Switch a session's branch (coach ↔ coachee). This is a view/role change only
+ * — it never migrates data or touches the schema. No-op if the session is gone.
+ */
+export async function setSessionBranch(
+  id: string,
+  branch: Branch,
+): Promise<void> {
+  const existing = await db.sessions.get(id);
+  if (!existing) return;
+  await db.sessions.put({
+    ...existing,
+    meta: { ...existing.meta, branch },
+  });
+}
+
 /** Id of the most recently active session, if any. */
 export async function getLastActiveId(): Promise<string | null> {
   const row = await db.kv.get(LAST_ACTIVE_KEY);

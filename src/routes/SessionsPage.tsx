@@ -21,6 +21,7 @@ import {
   deleteSession,
   getLastActiveId,
   listSessions,
+  setSessionBranch,
 } from "@/features/session/sessionRepository";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Session } from "@/features/session/types";
@@ -83,6 +84,13 @@ export function SessionsPage() {
     navigate("/session");
   }
 
+  /** Switch a session's role/view (coach ↔ coachee). View-only, no migration. */
+  async function handleSwitchBranch(session: Session) {
+    const next = session.meta.branch === "coached" ? "self" : "coached";
+    await setSessionBranch(session.meta.id, next);
+    await reload();
+  }
+
   async function handleConfirmDelete() {
     const target = pendingDelete;
     if (!target) return;
@@ -121,6 +129,10 @@ export function SessionsPage() {
             <p className="mt-2 text-sm text-muted">
               Lokal auf diesem Gerät gespeichert.
             </p>
+            <p className="mt-1 text-xs text-faint">
+              „Als Coach fortsetzen“ / „Als Coachee öffnen“ wechselt nur die
+              Sicht/Rolle — ohne Datenänderung.
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <ImportButton variant="outline" label="Importieren" />
@@ -156,7 +168,8 @@ export function SessionsPage() {
                     {sessionTitle(session)}
                   </p>
                   <p className="mt-0.5 text-xs text-muted">
-                    Zuletzt geändert: {formatDateTime(session.meta.updatedAt)}
+                    Zuletzt geändert: {formatDateTime(session.meta.updatedAt)} ·{" "}
+                    {BRANCH_LABELS[session.meta.branch]}
                     {session.meta.id === activeId ? " · aktiv" : ""}
                   </p>
                 </div>
@@ -169,6 +182,18 @@ export function SessionsPage() {
                   >
                     Fortsetzen
                     <ArrowRight />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      void handleSwitchBranch(session);
+                    }}
+                    title="Wechselt nur die Sicht/Rolle — ohne Datenänderung"
+                  >
+                    {session.meta.branch === "coached"
+                      ? "Als Coachee öffnen"
+                      : "Als Coach fortsetzen"}
                   </Button>
                   <Button
                     size="sm"
