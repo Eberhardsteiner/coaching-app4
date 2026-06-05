@@ -170,6 +170,12 @@ export interface ClusterPlan {
 
 export interface Phase4 {
   plans: ClusterPlan[];
+  /**
+   * Optional pre-mortem reflection (possible obstacles + early countermeasures).
+   * Additive-optional, default-safe — no schema bump needed (analogous to
+   * `istBurden`): existing sessions simply have it undefined.
+   */
+  preMortem?: ResourceItem[];
   check: PhaseCheck;
 }
 

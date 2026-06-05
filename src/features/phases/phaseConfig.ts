@@ -19,9 +19,9 @@ export interface PhaseDef {
 
 /**
  * Central phase configuration. Phase 0 (Vereinbarung, 4 steps), Phase 1 (IST,
- * 5 steps), Phase 2 (Ziel, 5 steps) and Phase 3 (Ressourcen, 7 steps) are fully
- * built; phases 4–5 carry a single placeholder step for now (filled in later
- * prompts).
+ * 5 steps), Phase 2 (Ziel, 5 steps), Phase 3 (Ressourcen, 7 steps) and Phase 4
+ * (Handlungsplan, 3 steps) are fully built; Phase 5 carries a single placeholder
+ * step for now (filled in a later prompt).
  */
 export const PHASES: PhaseDef[] = [
   {
@@ -163,7 +163,23 @@ export const PHASES: PhaseDef[] = [
     id: 4,
     title: "Handlungsplan",
     short: "Konkrete eigene Schritte.",
-    steps: [{ id: "4.1", title: "Handlungsplan" }],
+    steps: [
+      {
+        id: "4.1",
+        title: "Maßnahmen",
+        intro: "Aus förderlichen Ressourcen konkrete Ich-Schritte ableiten.",
+      },
+      {
+        id: "4.2",
+        title: "Mögliche Hindernisse",
+        intro: "Kurz vorausdenken — und jetzt schon gegensteuern.",
+      },
+      {
+        id: "4.3",
+        title: "Abschluss & Check",
+        intro: "Kurz festhalten, was du aus dieser Phase mitnimmst.",
+      },
+    ],
   },
   {
     id: 5,
