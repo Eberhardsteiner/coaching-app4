@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 
 import { BranchSelectPage } from "@/routes/BranchSelectPage";
+import { BuehneView } from "@/routes/BuehneView";
 import { DesignSystem } from "@/routes/DesignSystem";
 import { LandingPage } from "@/routes/LandingPage";
 import { LegalPage } from "@/routes/LegalPage";
@@ -18,6 +19,7 @@ import { SummaryView } from "@/routes/SummaryView";
  *   /sessions Saved-session management (no shell)
  *   /session  AppShell layout → SessionView (index child via <Outlet />)
  *   /zusammenfassung  Print-friendly session summary (no shell)
+ *   /buehne   Presenter stage — read-only, shared-only, live-mirrored (no shell)
  *   /design   Design-System demo — DEV only; redirects to / in production
  *   *         404 fallback
  */
@@ -34,6 +36,7 @@ export const router = createBrowserRouter([
     children: [{ index: true, element: <SessionView /> }],
   },
   { path: "/zusammenfassung", element: <SummaryView /> },
+  { path: "/buehne", element: <BuehneView /> },
   {
     path: "/design",
     element: import.meta.env.DEV ? (

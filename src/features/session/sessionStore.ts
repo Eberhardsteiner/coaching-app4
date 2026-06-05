@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { broadcastSessionUpdated } from "@/features/presenter/presenterChannel";
 import * as repo from "@/features/session/sessionRepository";
 import type { Branch, Session } from "@/features/session/types";
 
@@ -39,8 +40,12 @@ export const useSessionStore = create<SessionState>()((set, get) => {
     saveTimer = null;
     const current = get().session;
     if (!current) return;
-    await repo.saveSession(current);
+    const saved = await repo.saveSession(current);
     await repo.setLastActiveId(current.meta.id);
+    // Mirror to any open presenter (stage) window — after the Dexie write.
+    // Navigation also patches+saves the session, so this one point covers both
+    // content and phase/step position.
+    broadcastSessionUpdated(saved.meta.id, saved.meta.updatedAt);
     // Don't override the status if a newer save was scheduled meanwhile, or if
     // the active session changed during the await.
     if (saveTimer === null && get().session?.meta.id === current.meta.id) {

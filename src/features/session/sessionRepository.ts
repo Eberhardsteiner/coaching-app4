@@ -44,6 +44,16 @@ export async function getSession(id: string): Promise<Session | undefined> {
   return raw;
 }
 
+/**
+ * Read a session WITHOUT migrating or persisting — strictly read-only. Used by
+ * the presenter stage window, which must never write to Dexie. (Active sessions
+ * are already at the current schema, having been migrated on load in the main
+ * window.)
+ */
+export async function peekSession(id: string): Promise<Session | undefined> {
+  return db.sessions.get(id);
+}
+
 /** All sessions, newest-first (by meta.updatedAt). */
 export async function listSessions(): Promise<Session[]> {
   return db.sessions.orderBy("meta.updatedAt").reverse().toArray();

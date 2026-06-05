@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Monitor } from "lucide-react";
 
 import { isShared } from "@/features/cards/visibility";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
@@ -21,6 +21,7 @@ const COLLAPSED_KEY = "coachConsoleCollapsed";
  */
 export function CoachConsole() {
   const nav = usePhaseNavigation();
+  const sessionId = useSessionStore((s) => s.session?.meta.id);
   const coachNotes = useSessionStore((s) => s.session?.coachNotes) ?? "";
   const cards = useSessionStore((s) => s.session?.phase1.cards ?? []);
   const clusters = useSessionStore((s) => s.session?.phase1.clusters ?? []);
@@ -47,6 +48,15 @@ export function CoachConsole() {
 
   function setCoachNotes(value: string) {
     patch((s) => ({ ...s, coachNotes: value }));
+  }
+
+  /** Open the read-only presenter stage in a second window (reused if open). */
+  function openStage() {
+    if (!sessionId) return;
+    window.open(
+      `/buehne?id=${encodeURIComponent(sessionId)}`,
+      "nhs-coaching-buehne",
+    );
   }
 
   const stepDef = nav.phaseDef.steps[nav.stepIndex];
@@ -93,6 +103,22 @@ export function CoachConsole() {
       </header>
 
       <div className="space-y-6 p-4">
+        {/* Bühne öffnen — read-only presenter window to share in the call */}
+        <section className="space-y-2">
+          <button
+            type="button"
+            onClick={openStage}
+            aria-label="Bühne öffnen"
+            className="inline-flex items-center gap-2 rounded-lg border border-accent/40 bg-accent/5 px-3 py-2 text-sm font-medium text-accent transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <Monitor className="size-4" />
+            Bühne öffnen
+          </button>
+          <p className="text-xs text-faint">
+            Teile dieses Fenster im Videogespräch.
+          </p>
+        </section>
+
         {/* (a) Anmoderation — read-only, single source: phaseConfig */}
         <section className="space-y-1.5">
           <h3 className="text-xs font-medium uppercase tracking-wide text-faint">
