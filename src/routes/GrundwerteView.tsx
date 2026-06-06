@@ -11,9 +11,7 @@ import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { BRANDING } from "@/config/branding";
-import { INTRO_SEEN_KEY } from "@/config/constants";
 import { METHOD_LABELS } from "@/config/method";
-import { setKvFlag } from "@/features/session/sessionRepository";
 
 /** Intro paragraph (verbatim; method label bundled in METHOD_LABELS). */
 const INTRO = `Auch ein Selbstcoaching mit einer App gehorcht bestimmten Prämissen und folgt den in ${METHOD_LABELS.standardShort}-Coaching festgelegten Grundwerten, an denen sich die App orientiert.`;
@@ -57,17 +55,17 @@ const EFFECTS = [
 /**
  * /grundwerte — shell-free, persona "Ruhig". Second orientation page (after the
  * Rubikon page): the self-coaching premises / values and the expectable effects.
- * Self-coaching specific; the coached branch never reaches it. "Los geht's"
- * marks the intro chain seen (introSeen) and starts the session; "Zurück" goes
- * back to /einfuehrung. No pink (no IST reference here).
+ * Self-coaching specific; the coached branch never reaches it. "Weiter" continues
+ * the chain to the requirements page (/anforderungen, where introSeen is set at
+ * the end of the chain); "Zurück" goes back to /einfuehrung. No pink (no IST
+ * reference here).
  */
 export function GrundwerteView() {
   const navigate = useNavigate();
 
-  /** Finish the intro chain → mark seen + go to the session. */
-  function start() {
-    void setKvFlag(INTRO_SEEN_KEY, true);
-    navigate("/session");
+  /** Continue the chain to the third orientation page (the requirements page). */
+  function next() {
+    navigate("/anforderungen");
   }
 
   return (
@@ -141,8 +139,8 @@ export function GrundwerteView() {
             <ArrowLeft />
             Zurück
           </Button>
-          <Button onClick={start} aria-label="Los geht's — zur Sitzung">
-            Los geht’s
+          <Button onClick={next} aria-label="Weiter zu den Anforderungen">
+            Weiter
             <ArrowRight />
           </Button>
         </footer>

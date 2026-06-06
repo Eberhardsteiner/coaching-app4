@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router";
 
+import { AnforderungenView } from "@/routes/AnforderungenView";
 import { BranchSelectPage } from "@/routes/BranchSelectPage";
 import { BuehneView } from "@/routes/BuehneView";
 import { DesignSystem } from "@/routes/DesignSystem";
@@ -24,6 +25,7 @@ import { SummaryView } from "@/routes/SummaryView";
  *   /buehne   Presenter stage — read-only, shared-only, live-mirrored (no shell)
  *   /einfuehrung  Self-coaching intro (Rubikon model, no shell)
  *   /grundwerte   Self-coaching values & effects (no shell)
+ *   /anforderungen  Self-coaching requirements / preparation tips (no shell)
  *   /design   Design-System demo — DEV only; redirects to / in production
  *   *         404 fallback
  */
@@ -43,6 +45,7 @@ export const router = createBrowserRouter([
   { path: "/buehne", element: <BuehneView /> },
   { path: "/einfuehrung", element: <IntroView /> },
   { path: "/grundwerte", element: <GrundwerteView /> },
+  { path: "/anforderungen", element: <AnforderungenView /> },
   {
     path: "/design",
     element: import.meta.env.DEV ? (
