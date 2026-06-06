@@ -1,8 +1,9 @@
-import { RotateCcw } from "lucide-react";
+import { Map, RotateCcw } from "lucide-react";
 import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { SafetyNotice } from "@/features/safety/SafetyNotice";
+import { useSessionStore } from "@/features/session/sessionStore";
 
 type HelpDrawerContentProps = {
   /** Re-open the onboarding tour. */
@@ -15,6 +16,8 @@ type HelpDrawerContentProps = {
  * Links open in a new tab so the session view stays put.
  */
 export function HelpDrawerContent({ onStartTour }: HelpDrawerContentProps) {
+  const isSelf = useSessionStore((s) => s.session?.meta.branch === "self");
+
   return (
     <div className="space-y-5">
       <SafetyNotice />
@@ -46,6 +49,16 @@ export function HelpDrawerContent({ onStartTour }: HelpDrawerContentProps) {
           </li>
         </ul>
       </div>
+
+      {isSelf ? (
+        <Link
+          to="/einfuehrung"
+          className="inline-flex items-center gap-2 text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          <Map className="size-4" />
+          Einführung ansehen
+        </Link>
+      ) : null}
 
       <Button variant="outline" size="sm" onClick={onStartTour}>
         <RotateCcw />

@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { BranchSelectPage } from "@/routes/BranchSelectPage";
 import { BuehneView } from "@/routes/BuehneView";
 import { DesignSystem } from "@/routes/DesignSystem";
+import { IntroView } from "@/routes/IntroView";
 import { LandingPage } from "@/routes/LandingPage";
 import { LegalPage } from "@/routes/LegalPage";
 import { NotFoundPage } from "@/routes/NotFoundPage";
@@ -20,6 +21,7 @@ import { SummaryView } from "@/routes/SummaryView";
  *   /session  AppShell layout → SessionView (index child via <Outlet />)
  *   /zusammenfassung  Print-friendly session summary (no shell)
  *   /buehne   Presenter stage — read-only, shared-only, live-mirrored (no shell)
+ *   /einfuehrung  Self-coaching intro (Rubikon model, no shell)
  *   /design   Design-System demo — DEV only; redirects to / in production
  *   *         404 fallback
  */
@@ -37,6 +39,7 @@ export const router = createBrowserRouter([
   },
   { path: "/zusammenfassung", element: <SummaryView /> },
   { path: "/buehne", element: <BuehneView /> },
+  { path: "/einfuehrung", element: <IntroView /> },
   {
     path: "/design",
     element: import.meta.env.DEV ? (

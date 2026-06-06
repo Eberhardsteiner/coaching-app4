@@ -9,6 +9,9 @@ export const STORAGE_PREFIX = "coaching-app";
 /** kv-table key: the onboarding tour has been seen / dismissed. */
 export const ONBOARDING_TOUR_SEEN_KEY = "onboardingTourSeen";
 
+/** kv-table key: the self-coaching intro (Rubikon page) has been seen. */
+export const INTRO_SEEN_KEY = "introSeen";
+
 /**
  * The two branches of the coaching process. Held in the URL (?branch=) for
  * now; full session-state logic arrives in WP1.
