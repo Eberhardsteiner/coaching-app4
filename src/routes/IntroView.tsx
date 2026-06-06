@@ -15,7 +15,12 @@ import { INTRO_SEEN_KEY } from "@/config/constants";
 import { setKvFlag } from "@/features/session/sessionRepository";
 import { cn } from "@/lib/utils";
 
-/** The two intro paragraphs (verbatim). */
+/**
+ * The two intro paragraphs (verbatim). The method name "Neue Hamburger Schule"
+ * is quoted inline (declined: "der Neuen Hamburger Schule"). It is also listed
+ * centrally in METHOD_LABELS.schoolName — when the SMC/NHS label is unified, edit
+ * METHOD_LABELS and these two literal spots.
+ */
 const INTRO_PARAGRAPHS = [
   "Ein Selbstcoaching nach den Grundsätzen der Neuen Hamburger Schule funktioniert deshalb so gut, weil das Coaching einem logischen Prozess folgt. Dieser Prozess folgt dem sogenannten Rubikon-Modell der Veränderung.",
   "Das Rubikon-Modell der Veränderung zeigt die verschiedenen Schritte und Phasen, nach denen eine Veränderung sinnvollerweise erfolgt.",
@@ -72,15 +77,23 @@ const STATIONS: Station[] = [
 /**
  * /einfuehrung — shell-free, persona "Ruhig". Explains the self-coaching process
  * along the Rubikon model of change as a five-station journey (the 5+1 phases).
- * Shown once before the first self session (introSeen flag in SessionRoute) and
- * re-callable from the Hilfe drawer. Both actions mark it seen and go on to the
- * session. Self-coaching specific — the coached branch never sees it.
+ * First page of the self-coaching intro chain (/einfuehrung → /grundwerte →
+ * session). Shown once before the first self session (introSeen flag in
+ * SessionRoute) and re-callable from the Hilfe drawer. "Weiter" continues the
+ * chain (to the values page); "Überspringen" marks the chain seen and skips
+ * straight to the session. Self-coaching specific — the coached branch never
+ * sees it.
  */
 export function IntroView() {
   const navigate = useNavigate();
 
-  /** Mark the intro seen and continue to the session. */
-  function proceed() {
+  /** Continue the chain to the second orientation page (the values page). */
+  function next() {
+    navigate("/grundwerte");
+  }
+
+  /** Skip the rest of the chain: mark it seen + go straight to the session. */
+  function skip() {
     void setKvFlag(INTRO_SEEN_KEY, true);
     navigate("/session");
   }
@@ -125,7 +138,7 @@ export function IntroView() {
                 className={cn(
                   "relative z-10 flex size-10 shrink-0 items-center justify-center rounded-full border",
                   station.tone === "ist"
-                    ? "border-ist/40 bg-pink-50 text-ist"
+                    ? "border-ist/40 bg-ist/10 text-ist"
                     : "border-accent/30 bg-accent/10 text-accent",
                 )}
               >
@@ -147,11 +160,11 @@ export function IntroView() {
         </ol>
 
         <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-subtle pt-6">
-          <Button variant="ghost" onClick={proceed}>
+          <Button variant="ghost" onClick={skip}>
             Überspringen
           </Button>
-          <Button onClick={proceed} aria-label="Los geht's — zur Sitzung">
-            Los geht’s
+          <Button onClick={next} aria-label="Weiter zu den Grundwerten">
+            Weiter
             <ArrowRight />
           </Button>
         </footer>
