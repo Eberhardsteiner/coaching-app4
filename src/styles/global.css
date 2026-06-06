@@ -137,6 +137,23 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Phase-start entrance — a gentle fade + rise for the editorial phase
+ * opening screen (PhaseStart). Applied via the `motion-safe:` variant in
+ * the markup, so reduced-motion users get the final static state with no
+ * movement (the keyframe's `both` fill-mode keeps content from flashing).
+ * ------------------------------------------------------------------ */
+@keyframes phase-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.625rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Print — only the summary content prints. The chrome (header/buttons)
  * is hidden via the Tailwind `print:hidden` variant in the markup; here
  * we add neutral, persona-independent print defaults + page setup.

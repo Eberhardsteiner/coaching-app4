@@ -7,8 +7,11 @@ import { Phase3View } from "@/features/phases/phase3/Phase3View";
 import { Phase4View } from "@/features/phases/phase4/Phase4View";
 import { Phase5View } from "@/features/phases/phase5/Phase5View";
 import { SessionComplete } from "@/features/phases/phase5/SessionComplete";
+import { PhaseStart } from "@/features/phases/PhaseStart";
+import { getPhaseStart } from "@/features/phases/phaseStarts";
 import { PlaceholderPhase } from "@/features/phases/PlaceholderPhase";
 import { usePhaseNavigation } from "@/features/phases/usePhaseNavigation";
+import { usePhaseStartGate } from "@/features/phases/usePhaseStartGate";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { PhaseId } from "@/features/session/types";
 
@@ -25,6 +28,15 @@ export function PhaseContainer() {
   const patch = useSessionStore((s) => s.patch);
   const nav = usePhaseNavigation();
   const [reviewing, setReviewing] = useState(false);
+
+  // Phase opening screen (once per phase, before the work steps). Only phases
+  // with registered start content show one; the kv-backed gate prevents loops.
+  const startContent = getPhaseStart(nav.phaseDef.id);
+  const onStartScreen = startContent !== undefined && nav.stepIndex === 0;
+  const { seen: startSeen, markSeen: markStartSeen } = usePhaseStartGate(
+    nav.phaseDef.id,
+    onStartScreen,
+  );
 
   if (!session) return null;
 
@@ -50,6 +62,21 @@ export function PhaseContainer() {
       <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
         <SessionComplete onReview={() => setReviewing(true)} />
       </div>
+    );
+  }
+
+  // Editorial phase opening screen — shown once when entering the phase.
+  if (onStartScreen && startContent && startSeen !== true) {
+    if (startSeen === null) {
+      // kv read in flight — render an empty stage briefly to avoid a flash.
+      return <div className="h-full w-full" aria-hidden />;
+    }
+    return (
+      <PhaseStart
+        {...startContent}
+        onStart={markStartSeen}
+        onBack={nav.canGoBack ? nav.goPrevStep : undefined}
+      />
     );
   }
 

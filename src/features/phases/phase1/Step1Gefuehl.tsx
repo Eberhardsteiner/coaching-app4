@@ -123,7 +123,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => nav.goTo(0, 4)}
+                  onClick={() => nav.goTo(0, 3)}
                 >
                   Thema anpassen
                 </Button>

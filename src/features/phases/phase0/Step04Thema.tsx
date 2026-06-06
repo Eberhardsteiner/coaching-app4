@@ -4,10 +4,6 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 
-/** Verbatim invitation to sketch the topic. */
-const EINLEITUNG =
-  "Bevor du in deinen eigentlichen Coachingprozess startest, darf ich dich bitten, dein Thema kurz zu skizzieren. Bitte nicht zu ausführlich, denn du wirst gleich gebeten, dir dieses Thema in aller Tiefe zu erschließen. Es genügt, wenn du hier ein paar Fakten zu deiner Person und deinem Kontext benennst und angibst, mit welchem Thema und Anliegen du ins Coaching gehst. Bitte halte diese Punkte schriftlich fest, damit du im Anschluss überprüfen kannst, ob alle deine Aspekte auch in deiner Beschreibung der Ist-Situation vorkommen und du nichts vergessen hast.";
-
 /** Three calm guiding questions (verbatim) shown as inspiration over the field. */
 const LEITFRAGEN = [
   "Warum möchtest du ein Selbstcoaching durchführen?",
@@ -15,17 +11,22 @@ const LEITFRAGEN = [
   "Was treibt dich um?",
 ];
 
+/** Dezente, ruhige Hervorhebung einer Schlüsselstelle (Token-basiert, nicht bunt). */
+function Em({ children }: { children: string }) {
+  return <strong className="font-medium text-foreground">{children}</strong>;
+}
+
 /**
- * Phase 0, last step — Dein Thema (topic sketch). No yes/no here: the
- * eignungs-/Schutzprüfung is the previous step (Step04Eignung). Shows the
- * verbatim invitation + three guiding questions + a single free-text field bound
- * to the existing phase0.topicSketch (no model change). The §9.0 hint is locally
- * framed for this page — it deliberately avoids the blanket "no personal data"
- * wording, since the user is invited to note a few facts about themselves (the
- * app-wide privacy wording is unified in KP 1.5). Completing this step finishes
- * Phase 0 → Phase 1.
+ * Phase 0, last step (index 3) — Dein Thema (topic sketch). Since KP 1.5 the
+ * eignungs-/Schutzprüfung is gone, so this is again Phase 0's final step. The
+ * verbatim invitation is split into three calm paragraphs with dezente, token-
+ * based emphasis (Wortlaut unverändert). Three guiding questions + a single
+ * free-text field bound to the existing phase0.topicSketch (no model change).
+ * The §9.0 hint is locally framed for this page — it deliberately avoids the
+ * blanket "no personal data" wording, since the user is invited to note a few
+ * facts about themselves. Completing this step finishes Phase 0 → Phase 1.
  */
-export function Step05Thema({ nav }: { nav: PhaseNavigation }) {
+export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
   const session = useSessionStore((s) => s.session);
   const patch = useSessionStore((s) => s.patch);
 
@@ -42,7 +43,26 @@ export function Step05Thema({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-6">
-        <p className="text-muted">{EINLEITUNG}</p>
+        {/* Verbatim invitation — split into paragraphs with calm emphasis. */}
+        <div className="space-y-3 text-muted">
+          <p>
+            Bevor du in deinen eigentlichen Coachingprozess startest, darf ich
+            dich bitten, dein Thema <Em>kurz zu skizzieren</Em>.
+          </p>
+          <p>
+            Bitte <Em>nicht zu ausführlich</Em>, denn du wirst gleich gebeten,
+            dir dieses Thema in aller Tiefe zu erschließen. Es genügt, wenn du
+            hier <Em>ein paar Fakten</Em> zu deiner Person und deinem Kontext
+            benennst und angibst, mit welchem Thema und Anliegen du ins Coaching
+            gehst.
+          </p>
+          <p>
+            Bitte halte diese Punkte <Em>schriftlich fest</Em>, damit du im
+            Anschluss überprüfen kannst, ob alle deine Aspekte auch in deiner
+            Beschreibung der Ist-Situation vorkommen und du nichts vergessen
+            hast.
+          </p>
+        </div>
 
         <div className="rounded-lg border border-subtle bg-surface-2 p-4">
           <p className="text-sm font-medium text-foreground">

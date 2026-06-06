@@ -19,7 +19,7 @@ export interface PhaseDef {
 
 /**
  * Central phase configuration — all phases are fully built: Phase 0
- * (Vereinbarung, 5 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
+ * (Vereinbarung, 4 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
  * Phase 3 (Ressourcen, 7 steps), Phase 4 (Handlungsplan, 3 steps) and Phase 5
  * (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the 5+1 process.
  */
@@ -46,12 +46,6 @@ export const PHASES: PhaseDef[] = [
       },
       {
         id: "0.4",
-        title: "Passt das Thema?",
-        intro:
-          "Eine ruhige Selbsteinschätzung, bevor du dein Thema skizzierst.",
-      },
-      {
-        id: "0.5",
         title: "Dein Thema",
         intro: "Skizziere dein Thema kurz — ein paar Fakten genügen.",
       },
