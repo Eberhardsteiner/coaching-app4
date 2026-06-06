@@ -11,12 +11,78 @@ export interface ModelMeta {
   summary: string;
 }
 
+/** Per-model identity accent (Tailwind classes backed by the --color-model-* tokens). */
+type ModelAccent = {
+  /** Icon-chip fill (soft tint). */
+  chipBg: string;
+  /** Icon colour (base). */
+  chipIcon: string;
+  /** Anliegen-pill fill (soft tint) + text (ink, readable on the tint). */
+  pillBg: string;
+  pillText: string;
+  /** Selected: base-colour border + a very soft tinted card background. */
+  selBorder: string;
+  selBg: string;
+};
+
 /**
- * A selectable model card with an accessible explain-flyover. The flyover (model
- * description + term preview) opens on mouse hover, on keyboard focus of the info
- * trigger AND on tap/click — it is never hover-only. Escape closes it. The term
- * preview is loaded lazily (useModel) from the content layer. Selection markers
- * and the icon use the persona accent (never rosa).
+ * Model id → identity accent. Deliberately away from IST-rosa and the stage
+ * colours (Amber/Grün): Indigo · Teal · Terrakotta · Pflaume. Colours come only
+ * from the --color-model-* tokens (no hardcoded hex here).
+ */
+const MODEL_ACCENTS: Record<string, ModelAccent> = {
+  "st-galler": {
+    chipBg: "bg-model-stgaller-soft",
+    chipIcon: "text-model-stgaller",
+    pillBg: "bg-model-stgaller-soft",
+    pillText: "text-model-stgaller-ink",
+    selBorder: "border-model-stgaller",
+    selBg: "bg-model-stgaller-soft/40",
+  },
+  "gesundheit-konstruktivistisch": {
+    chipBg: "bg-model-gesundheit-soft",
+    chipIcon: "text-model-gesundheit",
+    pillBg: "bg-model-gesundheit-soft",
+    pillText: "text-model-gesundheit-ink",
+    selBorder: "border-model-gesundheit",
+    selBg: "bg-model-gesundheit-soft/40",
+  },
+  "drei-k": {
+    chipBg: "bg-model-dreik-soft",
+    chipIcon: "text-model-dreik",
+    pillBg: "bg-model-dreik-soft",
+    pillText: "text-model-dreik-ink",
+    selBorder: "border-model-dreik",
+    selBg: "bg-model-dreik-soft/40",
+  },
+  "zehn-felder": {
+    chipBg: "bg-model-zehnfelder-soft",
+    chipIcon: "text-model-zehnfelder",
+    pillBg: "bg-model-zehnfelder-soft",
+    pillText: "text-model-zehnfelder-ink",
+    selBorder: "border-model-zehnfelder",
+    selBg: "bg-model-zehnfelder-soft/40",
+  },
+};
+
+/** Neutral fallback (persona accent) for any model without a mapped accent. */
+const DEFAULT_ACCENT: ModelAccent = {
+  chipBg: "bg-surface-2",
+  chipIcon: "text-accent",
+  pillBg: "bg-surface-2",
+  pillText: "text-muted",
+  selBorder: "border-accent",
+  selBg: "bg-accent/5",
+};
+
+/**
+ * A selectable model card with an accessible explain-flyover. Layout: a tinted
+ * icon-chip (top-left) + the explain trigger (top-right), the title full width
+ * below, then a coloured Anliegen pill and the short description. Each model has
+ * its own calm identity accent (icon-chip, pill, selected state). The flyover
+ * (model description + term preview) opens on mouse hover, on keyboard focus of
+ * the info trigger AND on tap/click — never hover-only; Escape closes it. The
+ * term preview is loaded lazily (useModel). No rosa here (rosa stays IST-only).
  */
 export function ModelCard({
   id,
@@ -35,6 +101,7 @@ export function ModelCard({
   const flyoverId = useId();
   const loaded = useModel(id);
   const Icon = meta.icon;
+  const accent = MODEL_ACCENTS[id] ?? DEFAULT_ACCENT;
 
   // Hover opens it for mouse only (so a tap doesn't immediately re-close it).
   function onPointerEnter(event: PointerEvent) {
@@ -48,7 +115,7 @@ export function ModelCard({
 
   return (
     <div
-      className="relative"
+      className="relative h-full"
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
     >
@@ -57,20 +124,42 @@ export function ModelCard({
         aria-pressed={selected}
         onClick={onSelect}
         className={cn(
-          "flex w-full flex-col gap-1.5 rounded-xl border p-4 pr-11 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+          "flex h-full w-full flex-col gap-2.5 rounded-2xl p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
           selected
-            ? "border-accent bg-accent/5"
-            : "border-subtle bg-surface hover:bg-surface-2",
+            ? cn("border-[1.5px]", accent.selBorder, accent.selBg)
+            : "border-[0.5px] border-subtle bg-surface hover:bg-surface-2",
         )}
       >
-        <span className="flex items-center gap-2">
-          <Icon className="size-5 shrink-0 text-accent" aria-hidden />
-          <span className="font-medium text-foreground">{name}</span>
+        {/* Tinted icon chip (top-left). The explain trigger sits top-right. */}
+        <span
+          className={cn(
+            "flex size-[46px] items-center justify-center rounded-[13px]",
+            accent.chipBg,
+          )}
+        >
+          <Icon className={cn("size-[22px]", accent.chipIcon)} aria-hidden />
         </span>
-        <span className="text-xs font-medium uppercase tracking-wide text-accent">
-          {meta.anliegen}
+
+        {/* Title — full width, wraps cleanly below the chip. */}
+        <span className="text-[16.5px] font-medium leading-snug text-foreground">
+          {name}
         </span>
-        <span className="text-sm leading-relaxed text-muted">
+
+        {/* Anliegen as a coloured pill. */}
+        {meta.anliegen ? (
+          <span
+            className={cn(
+              "inline-flex self-start rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide",
+              accent.pillBg,
+              accent.pillText,
+            )}
+          >
+            {meta.anliegen}
+          </span>
+        ) : null}
+
+        {/* Short description. */}
+        <span className="text-[13.5px] leading-[1.55] text-muted">
           {meta.summary}
         </span>
       </button>
@@ -90,7 +179,7 @@ export function ModelCard({
         onKeyDown={(event) => {
           if (event.key === "Escape") setOpen(false);
         }}
-        className="absolute right-2.5 top-2.5 flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         <HelpCircle className="size-4" aria-hidden />
       </button>

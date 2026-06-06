@@ -87,6 +87,23 @@
   --color-card-beitrag: #ebe9e2; /* Stufe 4 — Grau-Tint */
   --color-card-beitrag-ink: #45453f;
 
+  /* IST model-choice accents (Phase 1, Schritt 3) — one calm identity colour per
+     model, deliberately away from IST-rosa and the stage colours (Amber/Grün).
+     Each: base (icon + selected border) · soft tint (chip/pill fill) · ink (pill
+     text, readable on the tint). */
+  --color-model-stgaller: #5663ad; /* Indigo/Blaugrau */
+  --color-model-stgaller-soft: #ebedf7;
+  --color-model-stgaller-ink: #3f4a86;
+  --color-model-gesundheit: #2e8b83; /* Petrol/Teal */
+  --color-model-gesundheit-soft: #e2f0ee;
+  --color-model-gesundheit-ink: #1e635c;
+  --color-model-dreik: #be5e38; /* Terrakotta */
+  --color-model-dreik-soft: #f6e8e0;
+  --color-model-dreik-ink: #8a4224;
+  --color-model-zehnfelder: #8a5c9e; /* Pflaume/Violett */
+  --color-model-zehnfelder-soft: #f0e9f4;
+  --color-model-zehnfelder-ink: #5e3d6e;
+
   /* ---- Radii -------------------------------------------------------- */
   --radius-sm: 6px;
   --radius-md: 8px;
