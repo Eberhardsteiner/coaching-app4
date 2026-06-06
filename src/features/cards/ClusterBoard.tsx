@@ -2,12 +2,8 @@ import { useRef, useState, type PointerEvent } from "react";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { CARD_COLORS, getCardColor } from "@/features/cards/cardColors";
-import {
-  MAX_CLUSTERS,
-  UNASSIGNED,
-  pickNextClusterColor,
-} from "@/features/cards/clusters";
+import { getCardColor } from "@/features/cards/cardColors";
+import { MAX_CLUSTERS, UNASSIGNED } from "@/features/cards/clusters";
 import {
   effectiveVisibility,
   toggleVisibility,
@@ -22,20 +18,24 @@ type ClusterBoardProps = {
   onCardsChange: (next: CardModel[]) => void;
   clusters: Cluster[];
   onClustersChange: (next: Cluster[]) => void;
-  /** Optional fixed IST anchor card (pink, never clustered). */
-  anchorCard?: { text: string };
+  /** Optional fixed IST anchor card (rosa, never clustered). */
+  anchorCard?: { text: string; label?: string; hint?: string };
   readOnly?: boolean;
   /** Show the per-card visibility toggle on chips (coached branch only). */
   allowVisibilityToggle?: boolean;
 };
 
+/** The unique 1..10 weight scale (10 = "drückt am meisten"). */
+const WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
 /**
- * Cluster mode of the moderation board. Cards are assigned to at most five
- * colour-coded zones (plus a "not assigned" area) two ways: by dragging a card
- * onto a zone (committed on pointerup) or via a keyboard cluster select per
- * card. `card.clusterId` is the single source of truth; an assigned card takes
- * its cluster's colour. The IST anchor stays visible and is never clustered.
- * No connection lines.
+ * Cluster mode of the moderation board. Cards (which keep their IST stage colours)
+ * are grouped into at most five clusters labelled by a **blue oval**; assignment
+ * is by dragging a card chip onto a cluster (committed on pointerup) or via a
+ * keyboard cluster-select per card. `card.clusterId` is the single source of
+ * truth. Each cluster gets a **unique** weight 1–10 (10 = drückt am meisten):
+ * values already taken by another cluster are locked in the selector. The IST
+ * anchor stays visible and is never clustered. No connection lines.
  */
 export function ClusterBoard({
   cards,
@@ -145,13 +145,7 @@ export function ClusterBoard({
     if (readOnly || clusters.length >= MAX_CLUSTERS) return;
     onClustersChange([
       ...clusters,
-      {
-        id: crypto.randomUUID(),
-        name: "",
-        weight: 5,
-        color: pickNextClusterColor(clusters),
-        cardIds: [],
-      },
+      { id: crypto.randomUUID(), name: "", cardIds: [] },
     ]);
   }
 
@@ -163,19 +157,8 @@ export function ClusterBoard({
     );
   }
 
-  function cycleClusterColor(id: string) {
-    const cluster = clusterById.get(id);
-    if (!cluster) return;
-    const index = CARD_COLORS.findIndex(
-      (c) => c.id === (cluster.color ?? "neutral"),
-    );
-    updateCluster(id, {
-      color: CARD_COLORS[(index + 1) % CARD_COLORS.length].id,
-    });
-  }
-
   function deleteCluster(id: string) {
-    // Cards in the deleted cluster fall back to "not assigned".
+    // Cards in the deleted cluster fall back to "not assigned" (never lost).
     onCardsChange(
       cards.map((card) =>
         card.clusterId === id ? { ...card, clusterId: undefined } : card,
@@ -184,22 +167,19 @@ export function ClusterBoard({
     onClustersChange(clusters.filter((cluster) => cluster.id !== id));
   }
 
+  /** Is weight `value` already taken by a *different* cluster? */
+  function weightLockedBy(clusterId: string, value: number): boolean {
+    return clusters.some((c) => c.id !== clusterId && c.weight === value);
+  }
+
   /* Rendering ------------------------------------------------------------- */
 
   const ghostCard = dragCardId ? getCard(dragCardId) : null;
-  const ghostColor = ghostCard
-    ? getCardColor(
-        ghostCard.clusterId
-          ? clusterById.get(ghostCard.clusterId)?.color
-          : undefined,
-      )
-    : null;
+  const ghostColor = ghostCard ? getCardColor(ghostCard.color) : null;
 
+  /** A card chip — keeps the card's own IST stage colour (orthogonal to clusters). */
   function renderChip(card: CardModel) {
-    const cluster = card.clusterId
-      ? clusterById.get(card.clusterId)
-      : undefined;
-    const color = getCardColor(cluster?.color);
+    const color = getCardColor(card.color);
     const dragging = card.id === dragCardId;
     const coachOnly =
       Boolean(allowVisibilityToggle) &&
@@ -262,11 +242,11 @@ export function ClusterBoard({
   return (
     <div className="space-y-3">
       {anchorCard ? (
-        <div className="flex items-center gap-3 rounded-lg border border-ist/40 bg-pink-50 px-4 py-2.5">
+        <div className="flex items-center gap-3 rounded-lg border border-ist/40 bg-ist/10 px-4 py-2.5">
           <span className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-            IST-Zustand
+            {anchorCard.label ?? "IST-Zustand"}
           </span>
-          <span className="truncate text-sm font-semibold text-pink-900">
+          <span className="truncate text-sm font-semibold text-ist">
             {anchorCard.text || "—"}
           </span>
         </div>
@@ -285,6 +265,7 @@ export function ClusterBoard({
           </Button>
           <p className="text-xs text-faint">
             {clusters.length} / {MAX_CLUSTERS} Cluster
+            {clusters.length >= MAX_CLUSTERS ? " — Maximum erreicht" : ""}
           </p>
         </div>
       ) : null}
@@ -292,7 +273,6 @@ export function ClusterBoard({
       {/* Cluster zones */}
       <div className="space-y-3">
         {clusters.map((cluster, index) => {
-          const color = getCardColor(cluster.color);
           const assigned = cards.filter(
             (card) => card.clusterId === cluster.id,
           );
@@ -312,43 +292,46 @@ export function ClusterBoard({
               )}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => cycleClusterColor(cluster.id)}
-                  disabled={readOnly}
-                  aria-label={`Farbe wechseln (aktuell: ${color.label})`}
-                  title={`Farbe: ${color.label}`}
-                  className="flex size-6 shrink-0 items-center justify-center rounded hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  <span
-                    className={cn(
-                      "size-3.5 rounded-full border border-black/10",
-                      color.swatch,
-                    )}
+                {/* Cluster label — the blue oval (new card form). */}
+                <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/30 bg-blue-50 px-3.5 py-1.5 focus-within:ring-2 focus-within:ring-blue-600">
+                  <label
+                    className="sr-only"
+                    htmlFor={`cluster-name-${cluster.id}`}
+                  >
+                    Name für Cluster {index + 1}
+                  </label>
+                  <input
+                    id={`cluster-name-${cluster.id}`}
+                    type="text"
+                    value={cluster.name}
+                    readOnly={readOnly}
+                    onChange={(event) =>
+                      updateCluster(cluster.id, { name: event.target.value })
+                    }
+                    placeholder={`Cluster ${index + 1}`}
+                    className="w-full min-w-0 bg-transparent text-sm font-medium text-blue-900 placeholder:text-blue-900/45 focus-visible:outline-none"
                   />
-                </button>
-                <label
-                  className="sr-only"
-                  htmlFor={`cluster-name-${cluster.id}`}
+                </div>
+
+                {/* Prominent weight badge. */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "flex size-9 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
+                    cluster.weight != null
+                      ? "bg-blue-600 text-white"
+                      : "border border-dashed border-subtle text-faint",
+                  )}
                 >
-                  Name für Cluster {index + 1}
-                </label>
-                <input
-                  id={`cluster-name-${cluster.id}`}
-                  type="text"
-                  value={cluster.name}
-                  readOnly={readOnly}
-                  onChange={(event) =>
-                    updateCluster(cluster.id, { name: event.target.value })
-                  }
-                  placeholder={`Cluster ${index + 1}`}
-                  className="min-w-0 flex-1 rounded border border-subtle bg-surface px-2 py-1 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                />
-                {cluster.isCore ? (
-                  <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-white">
-                    Kernthema
+                  {cluster.weight ?? "–"}
+                </span>
+
+                {cluster.isCore && cluster.weight != null ? (
+                  <span className="shrink-0 rounded-full bg-blue-600/10 px-2 py-0.5 text-xs font-medium text-blue-800">
+                    Kernproblem
                   </span>
                 ) : null}
+
                 <button
                   type="button"
                   onClick={() => deleteCluster(cluster.id)}
@@ -361,31 +344,48 @@ export function ClusterBoard({
                 </button>
               </div>
 
-              <div className="mt-2 flex items-center gap-3">
-                <label
-                  htmlFor={`cluster-weight-${cluster.id}`}
-                  className="text-xs text-muted"
-                >
-                  Gewicht
-                </label>
-                <input
-                  id={`cluster-weight-${cluster.id}`}
-                  type="range"
-                  min={1}
-                  max={10}
-                  value={cluster.weight}
-                  disabled={readOnly}
-                  onChange={(event) =>
-                    updateCluster(cluster.id, {
-                      weight: Number(event.target.value),
-                    })
-                  }
-                  className="h-1.5 flex-1 cursor-pointer accent-accent"
-                />
-                <span className="w-6 text-right text-sm font-medium text-foreground tabular-nums">
-                  {cluster.weight}
-                </span>
-              </div>
+              {/* Unique weight selector — taken values are locked. */}
+              {!readOnly ? (
+                <div className="mt-2.5">
+                  <p className="text-xs text-muted">
+                    Gewicht — 10 drückt am meisten, jeder Wert nur einmal
+                  </p>
+                  <div
+                    role="group"
+                    aria-label={`Gewicht für Cluster ${cluster.name.trim() || index + 1}`}
+                    className="mt-1 flex flex-wrap gap-1"
+                  >
+                    {WEIGHTS.map((value) => {
+                      const isSelf = cluster.weight === value;
+                      const locked =
+                        !isSelf && weightLockedBy(cluster.id, value);
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          disabled={locked}
+                          aria-disabled={locked}
+                          aria-pressed={isSelf}
+                          aria-label={`Gewicht ${value}${value === 10 ? " — drückt am meisten" : ""}${locked ? " — bereits vergeben" : ""}`}
+                          onClick={() =>
+                            updateCluster(cluster.id, { weight: value })
+                          }
+                          className={cn(
+                            "size-7 rounded-md text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                            isSelf
+                              ? "bg-blue-600 font-medium text-white"
+                              : locked
+                                ? "cursor-not-allowed bg-surface-2 text-faint opacity-40"
+                                : "bg-surface-2 text-muted hover:text-foreground",
+                          )}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-3 flex min-h-[40px] flex-wrap gap-2">
                 {assigned.length > 0 ? (

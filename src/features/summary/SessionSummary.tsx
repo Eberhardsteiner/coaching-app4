@@ -139,7 +139,8 @@ export function SessionSummary({ session }: { session: Session }) {
             <ul className="ml-4 list-disc text-sm text-muted">
               {otherClusters.map((c) => (
                 <li key={c.id}>
-                  {c.name.trim() || "Cluster"} · Gewicht {c.weight}
+                  {c.name.trim() || "Cluster"}
+                  {c.weight != null ? ` · Gewicht ${c.weight}` : ""}
                 </li>
               ))}
             </ul>

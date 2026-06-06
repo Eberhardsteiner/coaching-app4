@@ -76,7 +76,8 @@ export interface Card {
 export interface Cluster {
   id: string;
   name: string;
-  weight: number; // 1..10
+  /** Unique weight 1..10 (10 = "drückt am meisten"). Undefined = not yet rated. */
+  weight?: number;
   /**
    * Card-colour id (see cardColors) for the cluster zone + its cards.
    * Optional + additive: clusters were never persisted before, so no migration

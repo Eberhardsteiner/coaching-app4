@@ -27,8 +27,9 @@ export function normalizeClusters(
   let coreIndex = -1;
   let maxWeight = -Infinity;
   clusters.forEach((cluster, index) => {
-    if (cluster.weight > maxWeight) {
-      maxWeight = cluster.weight;
+    const weight = cluster.weight ?? -Infinity;
+    if (weight > maxWeight) {
+      maxWeight = weight;
       coreIndex = index;
     }
   });
@@ -47,9 +48,12 @@ export function normalizeClusters(
  * ambiguous and we gently ask the user to differentiate the weights.
  */
 export function hasWeightTie(clusters: Cluster[]): boolean {
-  if (clusters.length < 2) return false;
-  const maxWeight = Math.max(...clusters.map((cluster) => cluster.weight));
-  return clusters.filter((cluster) => cluster.weight === maxWeight).length > 1;
+  const weights = clusters
+    .map((cluster) => cluster.weight)
+    .filter((weight): weight is number => weight != null);
+  if (weights.length < 2) return false;
+  const maxWeight = Math.max(...weights);
+  return weights.filter((weight) => weight === maxWeight).length > 1;
 }
 
 /**
