@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
-import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { StepNav } from "@/features/phases/StepNav";
 import {
   COACHABILITY_QUESTIONS,
@@ -50,18 +49,22 @@ function YesNo({
 }
 
 /**
- * Phase 0, Step 0.4 — Passt das Thema? & Dein Thema.
- * Coachability self-check → result; reaction to the result; topic sketch with
- * the §9.0 no-personal-data hint. For self + not_suitable, advancing to Phase 1
- * is blocked (help links + back instead); coached is recommended-not-blocked.
+ * Phase 0, Step 0.4 — Passt das Thema? (eignungs-/Schutzprüfung).
+ *
+ * The three calm yes/no self-assessments plus the unchanged protection logic
+ * (computeCoachabilityResult): addiction or acute distress → not_suitable
+ * (calm message + SafetyNotice / help resources; for self this blocks advancing
+ * to the topic sketch — help links + back instead of "Weiter"); "others must
+ * change" → caution hint. coached is recommended-not-blocked. The topic sketch
+ * itself is the next, separate step (Step05Thema).
  */
-export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
+export function Step04Eignung({ nav }: { nav: PhaseNavigation }) {
   const session = useSessionStore((s) => s.session);
   const patch = useSessionStore((s) => s.patch);
 
   if (!session) return null;
 
-  const { coachability, topicSketch } = session.phase0;
+  const { coachability } = session.phase0;
   const branch = session.meta.branch;
   const result = coachability.result;
 
@@ -80,13 +83,7 @@ export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
     });
   }
 
-  function setTopic(value: string) {
-    patch((s) => ({ ...s, phase0: { ...s.phase0, topicSketch: value } }));
-  }
-
-  const hasTopic = topicSketch.trim().length > 0;
   const blockedSelf = branch === "self" && result === "not_suitable";
-  const canComplete = hasTopic && !blockedSelf;
 
   return (
     <div>
@@ -134,27 +131,6 @@ export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
             anders machen oder erreichen — unabhängig von anderen?
           </div>
         ) : null}
-
-        <div className="space-y-2">
-          <label
-            htmlFor="topic-sketch"
-            className="block text-sm font-medium text-foreground"
-          >
-            Dein Thema
-          </label>
-          <p className="text-sm text-muted">
-            Warum jetzt? Worum geht es im Kern?
-          </p>
-          <textarea
-            id="topic-sketch"
-            value={topicSketch}
-            onChange={(event) => setTopic(event.target.value)}
-            rows={4}
-            placeholder="Ein paar Sätze genügen …"
-            className="w-full rounded-md border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          />
-          <NoPersonalDataHint />
-        </div>
       </div>
 
       {blockedSelf ? (
@@ -176,7 +152,7 @@ export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
           onBack={nav.goPrevStep}
           canBack={nav.canGoBack}
           onNext={nav.advance}
-          canNext={canComplete}
+          canNext={!blockedSelf}
         />
       )}
     </div>
