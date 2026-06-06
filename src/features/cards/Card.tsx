@@ -7,7 +7,11 @@ import {
 } from "react";
 import { GripVertical, Trash2 } from "lucide-react";
 
-import { CARD_COLORS, getCardColor } from "@/features/cards/cardColors";
+import {
+  CARD_COLORS,
+  getCardColor,
+  type CardColor,
+} from "@/features/cards/cardColors";
 import { VisibilityToggle } from "@/features/cards/VisibilityToggle";
 import {
   effectiveVisibility,
@@ -33,6 +37,8 @@ type CardProps = {
   allowVisibilityToggle?: boolean;
   /** Focus the text field on mount (for a freshly added card). */
   autoFocus?: boolean;
+  /** Colour palette the recolour button cycles through (default: CARD_COLORS). */
+  palette?: CardColor[];
   onChange: (card: CardModel) => void;
   onDelete: (id: string) => void;
 };
@@ -48,6 +54,7 @@ export function Card({
   readOnly,
   allowVisibilityToggle,
   autoFocus,
+  palette = CARD_COLORS,
   onChange,
   onDelete,
 }: CardProps) {
@@ -138,10 +145,8 @@ export function Card({
   }
 
   function cycleColor() {
-    const index = CARD_COLORS.findIndex(
-      (c) => c.id === (card.color ?? "neutral"),
-    );
-    const next = CARD_COLORS[(index + 1) % CARD_COLORS.length];
+    const index = palette.findIndex((c) => c.id === card.color);
+    const next = palette[(index + 1) % palette.length];
     onChange({ ...card, color: next.id });
   }
 

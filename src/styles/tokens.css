@@ -77,6 +77,16 @@
   /* IST-Zustände only (alias utilities: text-ist / bg-ist). */
   --color-ist: #d4537e;
 
+  /* IST moderation-card stages (Phase 1, Schritt 2) — „Farbe = Bedeutung“.
+     Heller Füllton + dunkle, lesbare Schrift je Stufe. Stufe 1 (Anker) nutzt
+     --color-ist (Rosa); Stufen 2–4 hier. */
+  --color-card-zusammenhang: #faeeda; /* Stufe 2 — Amber-Tint */
+  --color-card-zusammenhang-ink: #633806;
+  --color-card-konkretisierung: #eaf3de; /* Stufe 3 — Grün-Tint */
+  --color-card-konkretisierung-ink: #173404;
+  --color-card-beitrag: #ebe9e2; /* Stufe 4 — Grau-Tint */
+  --color-card-beitrag-ink: #45453f;
+
   /* ---- Radii -------------------------------------------------------- */
   --radius-sm: 6px;
   --radius-md: 8px;

@@ -47,7 +47,37 @@ export const CARD_COLORS: CardColor[] = [
 
 export const DEFAULT_CARD_COLOR = "neutral";
 
+/**
+ * IST-analysis card stages (Phase 1, Schritt 2) — "Farbe = Bedeutung". A fixed
+ * 4-colour set keyed to the four stages; stage 1 (the IST feeling anchor) is
+ * rendered separately in rosa (the IST token), so only stages 2–4 are card
+ * colours here. Light fill + dark ink come from the `--color-card-*` tokens.
+ */
+export const CARD_STAGES: CardColor[] = [
+  {
+    id: "zusammenhang",
+    label: "Zusammenhang",
+    surface: "bg-card-zusammenhang text-card-zusammenhang-ink",
+    swatch: "bg-amber-200",
+  },
+  {
+    id: "konkretisierung",
+    label: "Konkretisierung",
+    surface: "bg-card-konkretisierung text-card-konkretisierung-ink",
+    swatch: "bg-green-400",
+  },
+  {
+    id: "beitrag",
+    label: "Beitrag",
+    surface: "bg-card-beitrag text-card-beitrag-ink",
+    swatch: "bg-faint",
+  },
+];
+
+/** Every resolvable card colour (generic palette + the IST-analysis stages). */
+const ALL_CARD_COLORS: CardColor[] = [...CARD_COLORS, ...CARD_STAGES];
+
 /** Resolve a colour id to its definition (falls back to neutral). */
 export function getCardColor(id: string | undefined): CardColor {
-  return CARD_COLORS.find((color) => color.id === id) ?? CARD_COLORS[0];
+  return ALL_CARD_COLORS.find((color) => color.id === id) ?? CARD_COLORS[0];
 }

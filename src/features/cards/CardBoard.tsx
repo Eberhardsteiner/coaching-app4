@@ -4,15 +4,22 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/features/cards/Card";
 import { ClusterBoard } from "@/features/cards/ClusterBoard";
-import { DEFAULT_CARD_COLOR } from "@/features/cards/cardColors";
+import { DEFAULT_CARD_COLOR, getCardColor } from "@/features/cards/cardColors";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
+import { cn } from "@/lib/utils";
+
+/** A colour-coded "add card" affordance: a new card takes this stage's colour. */
+export type AddStage = { colorId: string; addLabel: string };
 
 export type CardBoardProps = {
   cards: CardModel[];
   onCardsChange: (next: CardModel[]) => void;
-  /** Optional fixed IST anchor card (pink, not editable). */
-  anchorCard?: { text: string };
+  /**
+   * Optional fixed IST anchor card (rosa, not editable, not in the card list).
+   * `label`/`hint` customise the header line and a "start here" marker.
+   */
+  anchorCard?: { text: string; label?: string; hint?: string };
   readOnly?: boolean;
   /**
    * Cluster mode: when both are provided the board switches from the free
@@ -25,6 +32,12 @@ export type CardBoardProps = {
    * branch sets this (via CoachCardBoard); in self mode cards stay shared.
    */
   allowVisibilityToggle?: boolean;
+  /**
+   * When set, the single "+ Karte" button is replaced by one colour-coded add
+   * button per stage; a new card takes that stage's colour, and the per-card
+   * recolour cycles within these stages ("Farbe = Bedeutung").
+   */
+  addStages?: AddStage[];
 };
 
 /**
@@ -47,10 +60,14 @@ export function CardBoard({
   clusters,
   onClustersChange,
   allowVisibilityToggle,
+  addStages,
 }: CardBoardProps) {
   // Hooks must run unconditionally (free mode owns this local state).
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
+
+  // In stage mode the recolour button cycles within the stage palette.
+  const stagePalette = addStages?.map((stage) => getCardColor(stage.colorId));
 
   // Cluster mode is active as soon as both cluster props are wired.
   if (clusters && onClustersChange) {
@@ -67,12 +84,12 @@ export function CardBoard({
     );
   }
 
-  function addCard() {
+  function addCard(color = DEFAULT_CARD_COLOR) {
     const offset = (cards.length % 5) * 22;
     const newCard: CardModel = {
       id: crypto.randomUUID(),
       text: "",
-      color: DEFAULT_CARD_COLOR,
+      color,
       x: 20 + offset,
       y: 96 + offset, // below the anchor card
       visibility: "shared",
@@ -92,11 +109,34 @@ export function CardBoard({
   return (
     <div className="space-y-3">
       {!readOnly ? (
-        <div className="flex items-center justify-between gap-3">
-          <Button variant="outline" size="sm" onClick={addCard}>
-            <Plus />
-            Karte
-          </Button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {addStages ? (
+            <div className="flex flex-wrap gap-2">
+              {addStages.map((stage) => (
+                <Button
+                  key={stage.colorId}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addCard(stage.colorId)}
+                >
+                  <Plus aria-hidden />
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "size-2.5 rounded-full",
+                      getCardColor(stage.colorId).swatch,
+                    )}
+                  />
+                  {stage.addLabel}
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <Button variant="outline" size="sm" onClick={() => addCard()}>
+              <Plus />
+              Karte
+            </Button>
+          )}
           <p className="text-xs text-faint">
             {cards.length} {cards.length === 1 ? "Karte" : "Karten"}
           </p>
@@ -108,13 +148,18 @@ export function CardBoard({
         className="relative h-[440px] w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2"
       >
         {anchorCard ? (
-          <div className="absolute left-1/2 top-4 w-44 -translate-x-1/2 rounded-lg border border-ist/40 bg-pink-50 p-3 text-center shadow-sm">
+          <div className="absolute left-1/2 top-4 w-44 -translate-x-1/2 rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm">
             <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-              IST-Zustand
+              {anchorCard.label ?? "IST-Zustand"}
             </p>
-            <p className="mt-0.5 truncate text-sm font-semibold text-pink-900">
+            <p className="mt-0.5 truncate text-base font-semibold text-ist">
               {anchorCard.text || "—"}
             </p>
+            {anchorCard.hint ? (
+              <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-wide text-ist/70">
+                {anchorCard.hint}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -126,6 +171,7 @@ export function CardBoard({
             readOnly={readOnly}
             allowVisibilityToggle={allowVisibilityToggle}
             autoFocus={card.id === focusId}
+            palette={stagePalette}
             onChange={updateCard}
             onDelete={deleteCard}
           />
