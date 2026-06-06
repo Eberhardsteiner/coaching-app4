@@ -38,6 +38,12 @@ export type CardBoardProps = {
    * recolour cycles within these stages ("Farbe = Bedeutung").
    */
   addStages?: AddStage[];
+  /**
+   * Larger placement area (full width, ≥ 560 px / ~60vh, growing) — used in the
+   * IST-analysis steps. Drag bounds follow the actual size automatically. Other
+   * usages keep the default compact height.
+   */
+  large?: boolean;
 };
 
 /**
@@ -61,6 +67,7 @@ export function CardBoard({
   onClustersChange,
   allowVisibilityToggle,
   addStages,
+  large,
 }: CardBoardProps) {
   // Hooks must run unconditionally (free mode owns this local state).
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -145,7 +152,10 @@ export function CardBoard({
 
       <div
         ref={boardRef}
-        className="relative h-[440px] w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2"
+        className={cn(
+          "relative w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2",
+          large ? "min-h-[max(560px,60vh)]" : "h-[440px]",
+        )}
       >
         {anchorCard ? (
           <div className="absolute left-1/2 top-4 w-44 -translate-x-1/2 rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm">

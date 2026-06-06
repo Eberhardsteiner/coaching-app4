@@ -1,22 +1,106 @@
-import { Plus } from "lucide-react";
+import { Building2, HeartPulse, Info, LayoutGrid, Swords } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
-import { DEFAULT_CARD_COLOR } from "@/features/cards/cardColors";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import type { ModelTerm } from "@/features/content/contentTypes";
 import { useModel, useModelList } from "@/features/content/useModel";
+import { ModelCard, type ModelMeta } from "@/features/phases/phase1/ModelCard";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Card } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
+/** Intro before the model choice (verbatim). */
+const INTRO_TOP = [
+  "Wenn du alles aufgeschrieben hast, was dir zu deiner Ist-Situation einfällt, dann überprüfe doch bitte einmal aus der ‚Vogelperspektive‘, ob es weitere Aspekte gibt, die auch noch zu deinem Gefühl beitragen.",
+  "Suche dir dazu eins der folgenden Modelle aus (nur eins!), gehe die Begriffe durch und entscheide, ob du noch etwas ergänzen möchtest. Wenn ja, gehe genauso vor, wie im ersten Teil und schreibe auf extra Karten auf, was du genau mit den gewählten Begriffen meinst und wie sie zu deinem Gefühl beitragen.",
+  "Nun kennst du bereits die Vorgehensweise und hast alles aufgeschrieben, was dir aus deiner eigenen Perspektive zu deinem Thema eingefallen ist. Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Vielleicht fällt dir ja noch etwas ein, was zusätzlich zu deinem Thema dazugehört, wenn du einmal durch die Brille eines Modells blickst. Das funktioniert, indem du dich durch einen Blick aus der Vogelperspektive inspirieren lassen kannst.",
+  "Dafür sind 4 Modelle vorgesehen und du kannst bei der Auswahl nichts falsch machen. Die 4 Modelle folgen den häufigsten Veränderungsanliegen, die beim Coaching vorkommen:",
+];
+
+/** The four change concerns (verbatim). */
+const ANLIEGEN = [
+  "Beeinträchtigungen im persönlichen Wohlbefinden",
+  "Konflikte",
+  "(Betriebs-)wirtschaftliche Herausforderungen",
+  "Gesundheitliche Probleme",
+];
+
+const INTRO_CHOOSE =
+  "Wirf einen Blick auf alle 4 und suche dir das Modell aus, das zu deinem Thema am besten passt.";
+
+const INTRO_TERMS =
+  "Wenn du ein Modell gewählt hast, dann suche nach möglichen Ergänzungen deines aktuellen Bildes der Ist-Situation. Wenn du welche gefunden hast, gehe wieder genauso vor, wie du es bereits praktiziert hast: Was genau meinst du mit dem Begriff und wie trägt das zu deinem Gefühl bei?";
+
+/** Model-button presentation metadata (icon + Anliegen + Kurzbeschreibung). */
+const MODEL_META: Record<string, ModelMeta> = {
+  "st-galler": {
+    icon: Building2,
+    anliegen: "(Betriebs-)wirtschaftliche Herausforderungen",
+    summary:
+      "Die Organisation als System: Umweltsphären, Anspruchsgruppen, Interaktionsthemen, Ordnungsmomente, Prozesse und Entwicklungsmodi.",
+  },
+  "gesundheit-konstruktivistisch": {
+    icon: HeartPulse,
+    anliegen: "Gesundheitliche Probleme",
+    summary:
+      "Faktoren der selbst erlebten Gesundheit (u. a. Erfahrungen, Biografie, Bewältigbarkeit, Verstehbarkeit, Bedeutsamkeit).",
+  },
+  "drei-k": {
+    icon: Swords,
+    anliegen: "Konflikte",
+    summary:
+      "Die Aspekte eines Konflikts: Ich, andere Partei, Dritte, Thema, Werte, Emotionen, Abhängigkeiten u. a.",
+  },
+  "zehn-felder": {
+    icon: LayoutGrid,
+    anliegen: "Persönliches Wohlbefinden",
+    summary:
+      "Felder des Wohlbefindens: u. a. psycho-biologisches Wohlbefinden, Erfahrungen, Erwartungen, Körper, Gedanken, Umwelt, Sinn, Beziehung.",
+  },
+};
+
+const DEFAULT_META: ModelMeta = {
+  icon: LayoutGrid,
+  anliegen: "",
+  summary: "",
+};
+
+/** Per-term card-add affordances (same colour stages as Schritt 2). */
+const STAGE_ADDS = [
+  { colorId: "zusammenhang", label: "Zusammenhang", swatch: "bg-amber-200" },
+  {
+    colorId: "konkretisierung",
+    label: "Konkretisierung",
+    swatch: "bg-green-400",
+  },
+  { colorId: "beitrag", label: "Beitrag", swatch: "bg-faint" },
+];
+
+const ADD_STAGES = STAGE_ADDS.map((s) => ({
+  colorId: s.colorId,
+  addLabel: s.label,
+}));
+
+/** The 3K conflict aspects (B5 — verbatim). */
+const CONFLICT_ASPECTS = [
+  { term: "Thema", gloss: "worum geht es?" },
+  { term: "Ich", gloss: "meine Rolle im Konflikt" },
+  {
+    term: "andere Partei",
+    gloss: "Person(en), mit denen ich im Konflikt bin",
+  },
+  { term: "Dritte", gloss: "Unbeteiligte, die Folgen des Konflikts spüren" },
+];
+
 /**
- * Phase 1, Step 1.3 — Perspektive wechseln (deductive). Pick one of the IST
- * models, read its terms and add the missing ones as cards to the same board.
- * No AI here. Selecting a model persists phase1.selectedModel; switching models
- * keeps existing cards.
+ * Phase 1, Step 1.3 — Perspektive wechseln („Vogelperspektive"). Verbatim intro
+ * + four model buttons (icon + Anliegen + Kurzbeschreibung + accessible
+ * explain-flyover, ModelCard), single choice in the persona accent. After a
+ * choice, the model's terms are shown as a scannable list and can be added as
+ * colour-coded cards (stages 2–4, marked with Card.modelTerm) onto the same,
+ * enlarged board. The 3K model shows a special conflict-aspects note. No AI.
  */
 export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
   const selectedModel = useSessionStore((s) => s.session?.phase1.selectedModel);
@@ -35,16 +119,17 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, cards: next } }));
   }
 
-  function addTermCard(term: ModelTerm) {
+  /** Add a model term as a colour-coded card (marked with modelTerm). */
+  function addTermCard(term: ModelTerm, colorId: string) {
     patch((s) => {
       const offset = (s.phase1.cards.length % 6) * 24;
       const card: Card = {
         id: crypto.randomUUID(),
         text: term.label,
         modelTerm: term.id,
-        color: DEFAULT_CARD_COLOR,
+        color: colorId,
         x: 20 + offset,
-        y: 110 + offset,
+        y: 130 + offset,
         visibility: "shared",
       };
       return {
@@ -56,45 +141,53 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      {/* Model selection — free choice, no AI recommendation. */}
-      <div
-        role="group"
-        aria-label="Modell wählen"
-        className="grid gap-3 sm:grid-cols-2"
-      >
-        {list.status === "loading" || list.status === "error" ? (
-          <div className="sm:col-span-2">
-            <ContentLoadState
-              status={list.status}
-              error={list.error}
-              onRetry={list.retry}
-              loadingLabel="Modelle werden geladen …"
-            />
-          </div>
-        ) : (
-          list.models.map((model) => {
-            const selected = model.id === selectedModel;
-            return (
-              <button
-                key={model.id}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => selectModel(model.id)}
-                className={cn(
-                  "rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                  selected
-                    ? "border-accent bg-accent/5"
-                    : "border-subtle bg-surface hover:bg-surface-2",
-                )}
-              >
-                <p className="font-medium text-foreground">{model.name}</p>
-              </button>
-            );
-          })
-        )}
+      {/* B1 — intro + the four change concerns */}
+      <div className="space-y-3 text-muted">
+        {INTRO_TOP.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
+        ))}
+        <ul className="ml-1 space-y-1">
+          {ANLIEGEN.map((anliegen) => (
+            <li key={anliegen} className="flex items-start gap-2">
+              <span
+                aria-hidden
+                className="mt-2 size-1.5 shrink-0 rounded-full bg-accent"
+              />
+              <span className="text-foreground">{anliegen}</span>
+            </li>
+          ))}
+        </ul>
+        <p>{INTRO_CHOOSE}</p>
       </div>
 
-      {/* Selected model: intro + (optional) coach note + terms. */}
+      {/* B2 — model buttons with explain-flyover */}
+      {list.status === "loading" || list.status === "error" ? (
+        <ContentLoadState
+          status={list.status}
+          error={list.error}
+          onRetry={list.retry}
+          loadingLabel="Modelle werden geladen …"
+        />
+      ) : (
+        <div
+          role="group"
+          aria-label="Modell wählen (nur eins)"
+          className="grid gap-3 sm:grid-cols-2"
+        >
+          {list.models.map((model) => (
+            <ModelCard
+              key={model.id}
+              id={model.id}
+              name={model.name}
+              meta={MODEL_META[model.id] ?? DEFAULT_META}
+              selected={model.id === selectedModel}
+              onSelect={() => selectModel(model.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Selected model: B5 note (3K only) + B4 terms */}
       {selectedModel ? (
         loaded.status === "loading" || loaded.status === "error" ? (
           <ContentLoadState
@@ -105,63 +198,115 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           />
         ) : loaded.model ? (
           <div className="space-y-4">
-            <p className="text-muted">{loaded.model.intro}</p>
-
-            {loaded.model.coachRecommended && loaded.model.coachNote ? (
-              <div className="rounded-lg border border-subtle bg-surface-2 p-4 text-sm text-foreground">
-                {loaded.model.coachNote}
+            {/* B5 — 3K conflict-aspects special note */}
+            {selectedModel === "drei-k" ? (
+              <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+                <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Info className="size-4 shrink-0 text-accent" aria-hidden />
+                  Achtung Besonderheit
+                </p>
+                <p className="mt-1.5 text-sm text-muted">
+                  Zu jedem Konflikt gehören diese Aspekte:
+                </p>
+                <ul className="mt-2 space-y-1 text-sm text-muted">
+                  {CONFLICT_ASPECTS.map((aspect) => (
+                    <li key={aspect.term}>
+                      <span className="font-medium text-foreground">
+                        {aspect.term}
+                      </span>{" "}
+                      (= {aspect.gloss})
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-sm text-muted">
+                  Sollte davon etwas fehlen, ergänze diese Punkte bitte in jedem
+                  Fall.
+                </p>
               </div>
             ) : null}
 
-            {loaded.model.terms.length > 0 ? (
-              <ul className="space-y-2">
-                {loaded.model.terms.map((term) => (
-                  <li
-                    key={term.id}
-                    className="flex flex-col gap-2 rounded-lg border border-subtle bg-surface p-3 sm:flex-row sm:items-start sm:justify-between"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {term.label}
-                      </p>
-                      {term.hint ? (
-                        <p className="mt-0.5 text-sm text-muted">{term.hint}</p>
-                      ) : null}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="shrink-0"
-                      onClick={() => addTermCard(term)}
-                    >
-                      <Plus />
-                      Als Karte
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-faint">
-                Für dieses Modell sind noch keine Begriffe hinterlegt.
+            {/* B4 — terms to go through + per-term card adds */}
+            <div>
+              <h3 className="font-serif text-lg text-foreground">
+                Begriffe durchgehen
+              </h3>
+              <p className="mt-1 text-sm text-muted">{INTRO_TERMS}</p>
+              <p className="mt-2 text-xs text-faint">
+                Ergänze je Begriff Karten: Zusammenhang (Amber), Konkretisierung
+                (Grün), Beitrag (Grau).
               </p>
-            )}
+
+              {loaded.model.terms.length > 0 ? (
+                <ul className="mt-3 space-y-2">
+                  {loaded.model.terms.map((term) => (
+                    <li
+                      key={term.id}
+                      className="flex flex-col gap-2 rounded-lg border border-subtle bg-surface p-3 sm:flex-row sm:items-start sm:justify-between"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">
+                          {term.label}
+                        </p>
+                        {term.subterms && term.subterms.length > 0 ? (
+                          <p className="mt-0.5 text-xs text-muted">
+                            {term.subterms.join(" · ")}
+                          </p>
+                        ) : term.hint ? (
+                          <p className="mt-0.5 text-xs text-muted">
+                            {term.hint}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="flex shrink-0 flex-wrap gap-1.5">
+                        {STAGE_ADDS.map((stage) => (
+                          <button
+                            key={stage.colorId}
+                            type="button"
+                            onClick={() => addTermCard(term, stage.colorId)}
+                            aria-label={`„${term.label}“ als ${stage.label} ergänzen`}
+                            title={`Als ${stage.label} ergänzen`}
+                            className="flex size-7 items-center justify-center rounded-md border border-subtle bg-surface transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          >
+                            <span
+                              aria-hidden
+                              className={cn(
+                                "size-3 rounded-full",
+                                stage.swatch,
+                              )}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 text-sm text-faint">
+                  Für dieses Modell sind noch keine Begriffe hinterlegt.
+                </p>
+              )}
+            </div>
           </div>
         ) : null
-      ) : null}
-
-      {/* The shared board — model cards appear next to the inductive ones. */}
-      <CoachCardBoard
-        cards={cards}
-        onCardsChange={setCards}
-        anchorCard={{ text: istWord }}
-      />
-
-      {!selectedModel ? (
+      ) : (
         <p className="text-xs text-faint">
           Tipp: Wähle ein Modell, um seine Begriffe als Linsen zu nutzen. Du
           kannst auch ohne Modell weitergehen.
         </p>
-      ) : null}
+      )}
+
+      {/* The shared, enlarged board — model cards appear next to the others. */}
+      <CoachCardBoard
+        cards={cards}
+        onCardsChange={setCards}
+        anchorCard={{
+          text: istWord,
+          label: "So geht es mir aktuell",
+          hint: "Starte hier",
+        }}
+        addStages={ADD_STAGES}
+        large
+      />
 
       <StepNav
         onBack={nav.goPrevStep}

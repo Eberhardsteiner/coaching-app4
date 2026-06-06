@@ -217,6 +217,7 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
             hint: "Starte hier",
           }}
           addStages={ADD_STAGES}
+          large
         />
       </div>
 

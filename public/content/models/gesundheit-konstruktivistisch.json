@@ -1,15 +1,30 @@
 {
   "id": "gesundheit-konstruktivistisch",
-  "name": "Konstruktivistisches Gesundheitsmodell",
+  "name": "Selbsterlebte Gesundheit",
   "category": "ist",
   "intro": "Betrachte dein Thema durch die Brille der selbst erlebten Gesundheit und ihrer Quellen.",
   "terms": [
-    {
-      "id": "selbsterlebte-gesundheit",
-      "label": "Selbsterlebte Gesundheit",
-      "hint": "Wie erlebst du deine Gesundheit gerade selbst?"
-    }
+    { "id": "erwartungen", "label": "Erwartungen" },
+    { "id": "bewaeltigbarkeit", "label": "Bewältigbarkeit" },
+    { "id": "andere-menschen", "label": "andere Menschen" },
+    { "id": "widerstandsfaehigkeit", "label": "Widerstandsfähigkeit" },
+    { "id": "alter", "label": "Alter" },
+    { "id": "vertrauen", "label": "Vertrauen" },
+    { "id": "kultur", "label": "Kultur" },
+    { "id": "stimmigkeit", "label": "Stimmigkeit" },
+    { "id": "geschlecht", "label": "Geschlecht" },
+    { "id": "bedeutsamkeit", "label": "Bedeutsamkeit" },
+    { "id": "umwelt", "label": "Umwelt" },
+    { "id": "verstehbarkeit", "label": "Verstehbarkeit" },
+    { "id": "erfahrungen", "label": "Erfahrungen" },
+    { "id": "biografie", "label": "Biografie" },
+    { "id": "kondition", "label": "Kondition" },
+    { "id": "emotion", "label": "Emotion" },
+    { "id": "zeit", "label": "Zeit" },
+    { "id": "sexualitaet", "label": "Sexualität" },
+    { "id": "ernaehrung", "label": "Ernährung" },
+    { "id": "kontakt", "label": "Kontakt" },
+    { "id": "interesse", "label": "Interesse" }
   ],
-  "_todo": "weitere Begriffe gegen Buch/PPT vervollständigen — nicht erfinden",
   "bookRef": ""
 }

@@ -3,19 +3,19 @@
   "models": [
     {
       "id": "st-galler",
-      "name": "Neues St. Galler Management-Modell",
+      "name": "Neues St. Galler Managementmodell",
       "category": "ist",
       "file": "st-galler.json"
     },
     {
       "id": "gesundheit-konstruktivistisch",
-      "name": "Konstruktivistisches Gesundheitsmodell",
+      "name": "Selbsterlebte Gesundheit",
       "category": "ist",
       "file": "gesundheit-konstruktivistisch.json"
     },
     {
       "id": "drei-k",
-      "name": "3K-Modell",
+      "name": "3K-Modell (Konfliktmodell)",
       "category": "ist",
       "file": "drei-k.json"
     },

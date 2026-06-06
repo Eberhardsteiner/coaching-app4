@@ -1,16 +1,27 @@
 {
   "id": "drei-k",
-  "name": "3K-Modell",
+  "name": "3K-Modell (Konfliktmodell)",
   "category": "ist",
   "intro": "Betrachte die Situation aus mehreren Beteiligten-Perspektiven.",
   "coachRecommended": true,
   "coachNote": "Dieser Schritt mit dem 3K-Modell profitiert besonders von einem Coach; allein kann er schwieriger sein.",
   "terms": [
     { "id": "ich", "label": "Ich" },
-    { "id": "thema", "label": "Das Thema" },
-    { "id": "andere", "label": "Die andere Partei/Beteiligte" },
-    { "id": "dritte", "label": "Dritte / Umfeld" }
+    { "id": "erfahrungen", "label": "Erfahrungen" },
+    { "id": "thema", "label": "Thema" },
+    { "id": "andere-partei", "label": "die andere Partei" },
+    { "id": "dritte", "label": "Dritte" },
+    { "id": "werte", "label": "Werte" },
+    { "id": "abhaengigkeiten", "label": "Abhängigkeiten" },
+    { "id": "zeit", "label": "Zeit" },
+    { "id": "emotionen", "label": "Emotionen" },
+    { "id": "koerper", "label": "Körper" },
+    { "id": "folgen", "label": "Folgen" },
+    { "id": "kultur", "label": "Kultur" },
+    { "id": "prozesse", "label": "Prozesse" },
+    { "id": "erwartungen", "label": "Erwartungen" },
+    { "id": "sprache", "label": "Sprache" },
+    { "id": "annahmen", "label": "Annahmen" }
   ],
-  "_todo": "genaue Begriffsbedeutung gegen Buch verifizieren — nicht erfinden",
   "bookRef": ""
 }

@@ -13,6 +13,8 @@ export interface ModelTerm {
   id: string;
   label: string;
   hint?: string;
+  /** Optional sub-terms shown as a preview/guidance (e.g. St. Galler categories). */
+  subterms?: string[];
 }
 
 export interface CoachingModel {

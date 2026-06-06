@@ -112,6 +112,11 @@ export async function loadModel(id: string): Promise<CoachingModel> {
           id: term.id,
           label: term.label,
           hint: typeof term.hint === "string" ? term.hint : undefined,
+          subterms: Array.isArray(term.subterms)
+            ? term.subterms.filter(
+                (sub): sub is string => typeof sub === "string",
+              )
+            : undefined,
         }))
     : [];
 

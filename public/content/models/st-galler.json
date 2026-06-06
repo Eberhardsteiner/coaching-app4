@@ -1,38 +1,50 @@
 {
   "id": "st-galler",
-  "name": "Neues St. Galler Management-Modell",
+  "name": "Neues St. Galler Managementmodell",
   "category": "ist",
   "intro": "Betrachte dein Thema aus der Vogelperspektive eines Gesamtsystems — welche Sphären, Beteiligten und Ordnungsmuster wirken hinein?",
   "terms": [
     {
       "id": "umweltsphaeren",
       "label": "Umweltsphären",
-      "hint": "Welche größeren Sphären spielen hinein: Gesellschaft, Natur, Technologie, Wirtschaft?"
+      "subterms": ["Gesellschaft", "Natur", "Technologie", "Wirtschaft"]
     },
     {
       "id": "anspruchsgruppen",
       "label": "Anspruchsgruppen",
-      "hint": "Wer hat ein berechtigtes Interesse (z. B. Vorgesetzte, Team, Kund:innen, Familie, Öffentlichkeit)?"
+      "subterms": [
+        "Kapitalgeber",
+        "Kunden",
+        "Mitarbeitende",
+        "Lieferanten",
+        "Staat",
+        "Konkurrenz",
+        "Öffentlichkeit/NGOs"
+      ]
     },
     {
       "id": "interaktionsthemen",
       "label": "Interaktionsthemen",
-      "hint": "Worum geht es im Austausch: Ressourcen, Normen & Werte, Anliegen & Interessen?"
+      "subterms": ["Anliegen & Interessen", "Normen & Werte", "Ressourcen"]
     },
     {
       "id": "ordnungsmomente",
       "label": "Ordnungsmomente",
-      "hint": "Welche Strategie, welche Strukturen, welche Kultur prägen die Situation?"
+      "subterms": ["Strategie", "Struktur", "Kultur"]
     },
     {
       "id": "prozesse",
       "label": "Prozesse",
-      "hint": "Welche Management-, Kern- und Unterstützungsprozesse sind betroffen?"
+      "subterms": [
+        "Managementprozesse",
+        "Geschäftsprozesse",
+        "Unterstützungsprozesse"
+      ]
     },
     {
       "id": "entwicklungsmodi",
       "label": "Entwicklungsmodi",
-      "hint": "Geht es eher um Erneuerung (Neues) oder Optimierung (Verbessern)?"
+      "subterms": ["Erneuerung", "Optimierung"]
     }
   ],
   "bookRef": ""
