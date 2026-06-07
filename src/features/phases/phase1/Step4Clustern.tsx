@@ -56,6 +56,10 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
     }));
   }
 
+  function setIstWord(text: string) {
+    patch((s) => ({ ...s, phase1: { ...s.phase1, istWord: text } }));
+  }
+
   const namedClusters = clusters.filter((c) => c.name.trim() !== "");
   const canNext = namedClusters.length >= 1;
 
@@ -151,7 +155,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
         onCardsChange={setCards}
         clusters={clusters}
         onClustersChange={setClusters}
-        anchorCard={{ text: istWord }}
+        anchorCard={{ text: istWord, onTextChange: setIstWord }}
       />
 
       {!canNext ? (

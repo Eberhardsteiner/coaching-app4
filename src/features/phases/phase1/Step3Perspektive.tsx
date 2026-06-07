@@ -371,6 +371,10 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, cards: next } }));
   }
 
+  function setIstWord(text: string) {
+    patch((s) => ({ ...s, phase1: { ...s.phase1, istWord: text } }));
+  }
+
   /** Add a model term as a colour-coded card (marked with modelTerm). */
   function addTermCard(term: ModelTerm, colorId: string) {
     patch((s) => {
@@ -577,6 +581,7 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           text: istWord,
           label: "So geht es mir aktuell",
           hint: "Starte hier",
+          onTextChange: setIstWord,
         }}
         addStages={ADD_STAGES}
         large

@@ -117,6 +117,10 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, cards: next } }));
   }
 
+  function setIstWord(text: string) {
+    patch((s) => ({ ...s, phase1: { ...s.phase1, istWord: text } }));
+  }
+
   // Schritt-für-Schritt-Coach: beim ersten Besuch automatisch öffnen.
   const [guideOpen, setGuideOpen] = useState(false);
   useEffect(() => {
@@ -261,6 +265,7 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
             text: istWord,
             label: "So geht es mir aktuell",
             hint: "Starte hier",
+            onTextChange: setIstWord,
           }}
           addStages={ADD_STAGES}
           large

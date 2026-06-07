@@ -25,7 +25,12 @@ type ClusterBoardProps = {
   clusters: Cluster[];
   onClustersChange: (next: Cluster[]) => void;
   /** Optional fixed IST anchor card (rosa, never clustered). */
-  anchorCard?: { text: string; label?: string; hint?: string };
+  anchorCard?: {
+    text: string;
+    label?: string;
+    hint?: string;
+    onTextChange?: (text: string) => void;
+  };
   readOnly?: boolean;
   /** Show the per-card visibility toggle (coached branch only). */
   allowVisibilityToggle?: boolean;
@@ -310,9 +315,22 @@ export function ClusterBoard({
               <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
                 {anchorCard.label ?? "IST-Zustand"}
               </p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-ist">
-                {anchorCard.text || "—"}
-              </p>
+              {anchorCard.onTextChange && !readOnly ? (
+                <input
+                  type="text"
+                  value={anchorCard.text}
+                  onChange={(event) =>
+                    anchorCard.onTextChange?.(event.target.value)
+                  }
+                  aria-label="Ausgangsgefühl bearbeiten"
+                  placeholder="—"
+                  className="mt-0.5 w-full rounded bg-transparent text-center text-sm font-semibold text-ist placeholder:text-ist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist"
+                />
+              ) : (
+                <p className="mt-0.5 truncate text-sm font-semibold text-ist">
+                  {anchorCard.text || "—"}
+                </p>
+              )}
             </div>
           ) : null}
 

@@ -23,10 +23,16 @@ export type CardBoardProps = {
   cards: CardModel[];
   onCardsChange: (next: CardModel[]) => void;
   /**
-   * Optional fixed IST anchor card (rosa, not editable, not in the card list).
-   * `label`/`hint` customise the header line and a "start here" marker.
+   * Optional fixed IST anchor card (rosa, not in the card list). `label`/`hint`
+   * customise the header line and a "start here" marker. When `onTextChange` is
+   * given (and the board is not readOnly), the anchor text is inline-editable.
    */
-  anchorCard?: { text: string; label?: string; hint?: string };
+  anchorCard?: {
+    text: string;
+    label?: string;
+    hint?: string;
+    onTextChange?: (text: string) => void;
+  };
   readOnly?: boolean;
   /**
    * Cluster mode: when both are provided the board switches from the free
@@ -142,9 +148,22 @@ export function CardBoard({
           <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
             {anchorCard.label ?? "IST-Zustand"}
           </p>
-          <p className="mt-0.5 truncate text-base font-semibold text-ist">
-            {anchorCard.text || "—"}
-          </p>
+          {anchorCard.onTextChange && !readOnly ? (
+            <input
+              type="text"
+              value={anchorCard.text}
+              onChange={(event) =>
+                anchorCard.onTextChange?.(event.target.value)
+              }
+              aria-label="Ausgangsgefühl bearbeiten"
+              placeholder="—"
+              className="mt-0.5 w-full rounded bg-transparent text-center text-base font-semibold text-ist placeholder:text-ist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist"
+            />
+          ) : (
+            <p className="mt-0.5 truncate text-base font-semibold text-ist">
+              {anchorCard.text || "—"}
+            </p>
+          )}
           {anchorCard.hint ? (
             <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-wide text-ist/70">
               {anchorCard.hint}
