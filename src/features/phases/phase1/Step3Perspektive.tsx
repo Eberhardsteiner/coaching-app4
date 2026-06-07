@@ -74,6 +74,90 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Gesundheitliche Probleme",
     summary:
       "Faktoren der selbst erlebten Gesundheit (u. a. Erfahrungen, Biografie, Bewältigbarkeit, Verstehbarkeit, Bedeutsamkeit).",
+    subtitle: "Selbst erlebtes Wohlbefinden",
+    description: (
+      <>
+        <p>
+          Das Thema Gesundheit gewinnt im beruflichen Umfeld zunehmend an
+          Bedeutung. Längst wird beherzigt, dass die Gesundheit des
+          Humankapitals einen betriebswirtschaftlichen Beitrag leistet. Doch was
+          ist Gesundheit genau? Oft lautet die einfache Antwort lapidar:{" "}
+          <strong className="font-semibold text-foreground">
+            „Das Fehlen von Krankheit.“
+          </strong>{" "}
+          Diese Herangehensweise ist einfach, da es z. B. mit der von der WHO
+          herausgegebenen ICD 10 (ICD, englisch = International Statistical
+          Classification of Diseases and Related Health Problems) ein
+          Klassifikationssystem der weltweit bekannten Krankheiten gibt. Es
+          müsste nur durch eine Untersuchung eines Arztes festgestellt werden,
+          dass keine Krankheit vorliegt – der Patient also „gesund“ ist. Ein
+          Unternehmen könnte das z. B. durch einen Betriebsarzt realisieren und
+          dokumentieren lassen. Die WHO bietet jedoch eine weitreichende
+          Definition von Gesundheit an, die dem individuellen Erleben besser
+          gerecht wird als das schlichte „Fehlen von Krankheit“:{" "}
+          <strong className="font-semibold text-foreground">
+            „Gesundheit ist ein Zustand vollkommenen körperlichen, geistigen und
+            sozialen Wohlbefindens und nicht allein das Fehlen von Krankheit und
+            Gebrechen.“
+          </strong>
+        </p>
+        <p className="mt-2">
+          Vielleicht ist Ihnen einmal aufgefallen, dass manche Menschen auf die
+          Frage nach ihrer Gesundheit ganz anders antworten, als man selbst
+          zuvor (konstruktivistisch) angenommen hat. Es stört sie nicht, dass
+          sie aus ärztlicher Sicht vielleicht krank sind. Sie fühlen sich
+          gesund. Wieder andere fühlen sich krank, obgleich keine
+          diagnostizierbare Krankheit vorliegt. Gesundheit ist in der moderneren
+          Auslegung der Medizin daher etwas{" "}
+          <strong className="font-semibold text-foreground">
+            „selbst Erlebtes“
+          </strong>
+          . Mit den Worten dieses Buches gesprochen, unterliegt das Thema
+          Gesundheit einer{" "}
+          <strong className="font-semibold text-foreground">
+            individuell konstruktivistischen Deutung
+          </strong>
+          .
+        </p>
+        <p className="mt-2">
+          Bei Anliegen, die der Coachee selbst als „Gesundheit“ oder ähnlich
+          formuliert, ist es für den Coachee eine Struktur, die ihm hilft, in
+          der Auseinandersetzung mit den Merkmalen des Modells weitere
+          Zusammenhänge in Bezug auf seinen „IST-Zustand Gesundheit“ zu
+          entdecken. Auf diese Weise ist es möglich, dem Thema „Gesundheit“
+          systemisch und konstruktivistisch zu begegnen. Der Coachee entdeckt,{" "}
+          <strong className="font-semibold text-foreground">
+            womit bei ihm persönlich „der IST-Zustand Gesundheit“ zusammenhängt
+          </strong>
+          , warum er sie gerade so erlebt und nicht anders. Die mit dem Coaching
+          einhergehende alternative Selbstorganisation hilft ihm, seine
+          Gesundheit künftig anders zu erleben.{" "}
+          <strong className="font-semibold text-foreground">
+            Selbstverständlich ersetzt ein Coaching zu einem Thema „Gesundheit“
+            keinen Arzt.
+          </strong>{" "}
+          Darauf sollte der Coachee auch hingewiesen werden.
+        </p>
+        <p className="mt-2">
+          Das Modell enthält im Vergleich zu anderen Modellen der visuellen
+          Aufstellung eine{" "}
+          <strong className="font-semibold text-foreground">
+            Besonderheit
+          </strong>
+          : Einige Begriffe für Merkmale des Modells sind bewusst so gewählt,
+          dass sie eine{" "}
+          <strong className="font-semibold text-foreground">
+            Irritation auslösen
+          </strong>
+          , z. B.{" "}
+          <strong className="font-semibold text-foreground">
+            „Bewältigbarkeit“ oder „Verstehbarkeit“
+          </strong>
+          . Das Wort selbst ist ungewohnt und erfordert ein wiederholtes,
+          intensives Reflektieren der thematischen Zusammenhänge.
+        </p>
+      </>
+    ),
   },
   "drei-k": {
     icon: Swords,
