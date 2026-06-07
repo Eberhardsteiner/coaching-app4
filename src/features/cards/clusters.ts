@@ -37,10 +37,39 @@ export function normalizeClusters(
   return clusters.map((cluster, index) => ({
     ...cluster,
     cardIds: cards
-      .filter((card) => card.clusterId === cluster.id)
+      // `card.clusterId != null` guards against an id-less cluster matching every
+      // *unassigned* card (both `undefined`) — see ensureClusterIds.
+      .filter((card) => card.clusterId != null && card.clusterId === cluster.id)
       .map((card) => card.id),
     isCore: index === coreIndex,
   }));
+}
+
+/**
+ * Guarantee every cluster carries a **stable, unique** id. Legacy or imported
+ * sessions can hold clusters with a missing or duplicated id, which collapses
+ * cluster identity: renaming one would rename every id-less/duplicate cluster
+ * (`updateCluster(id)` matches them all), an unassigned card would appear inside
+ * an id-less cluster (`undefined === undefined`), and duplicate React keys can
+ * crash the board. Keeps the FIRST occurrence of each id (so existing
+ * `card.clusterId` references stay valid) and re-mints only the missing/duplicate
+ * ones. Returns the same array reference when nothing needed fixing.
+ */
+export function ensureClusterIds(clusters: Cluster[]): Cluster[] {
+  const seen = new Set<string>();
+  let changed = false;
+  const next = clusters.map((cluster) => {
+    if (cluster.id && !seen.has(cluster.id)) {
+      seen.add(cluster.id);
+      return cluster;
+    }
+    changed = true;
+    let fresh = crypto.randomUUID();
+    while (seen.has(fresh)) fresh = crypto.randomUUID();
+    seen.add(fresh);
+    return { ...cluster, id: fresh };
+  });
+  return changed ? next : clusters;
 }
 
 /**

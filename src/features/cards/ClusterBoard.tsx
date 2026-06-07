@@ -203,10 +203,16 @@ export function ClusterBoard({
   /** A keyboard-friendly cluster select, slotted into each card. */
   function cardClusterSelect(card: CardModel) {
     if (clusters.length === 0) return undefined;
+    // Null-safe: an orphaned clusterId (cluster deleted or never existed)
+    // resolves to "Kein Cluster" instead of selecting a phantom/blank option.
+    const selected =
+      card.clusterId && clusters.some((c) => c.id === card.clusterId)
+        ? card.clusterId
+        : "";
     return (
       <select
         aria-label={`Cluster für „${card.text || "ohne Text"}“`}
-        value={card.clusterId ?? ""}
+        value={selected}
         disabled={readOnly}
         onChange={(event) => assignCard(card, event.target.value || undefined)}
         className="w-full rounded border border-black/10 bg-white/70 px-1 py-0.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"

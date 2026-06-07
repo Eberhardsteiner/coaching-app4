@@ -4,6 +4,7 @@
  */
 
 import { db } from "@/lib/db";
+import { ensureClusterIds } from "@/features/cards/clusters";
 import { migrateSession } from "@/features/session/migrations";
 import {
   CURRENT_SCHEMA_VERSION,
@@ -28,20 +29,39 @@ export async function createSession(
 /**
  * Load a single session by id. If it predates the current schema, migrate it
  * (e.g. add `progress`) and persist the upgrade so local data stays consistent.
+ * Independently of the schema version, heal any legacy clusters that lack a
+ * stable, unique id (missing/duplicate ids leak cluster labels + assignments and
+ * can crash the board via duplicate React keys — see ensureClusterIds). Corrupt
+ * data can sit in already-current sessions, so this runs every load, not only on
+ * a version upgrade; it persists once when something actually changed.
  */
 export async function getSession(id: string): Promise<Session | undefined> {
   const raw = await db.sessions.get(id);
   if (!raw) return undefined;
-  if (raw.meta.schemaVersion < CURRENT_SCHEMA_VERSION) {
-    const migrated = migrateSession(raw, raw.meta.schemaVersion);
-    const upgraded: Session = {
+
+  let session: Session = raw;
+  let dirty = false;
+
+  if (session.meta.schemaVersion < CURRENT_SCHEMA_VERSION) {
+    const migrated = migrateSession(session, session.meta.schemaVersion);
+    session = {
       ...migrated,
       meta: { ...migrated.meta, schemaVersion: CURRENT_SCHEMA_VERSION },
     };
-    await db.sessions.put(upgraded);
-    return upgraded;
+    dirty = true;
   }
-  return raw;
+
+  const healedClusters = ensureClusterIds(session.phase1.clusters);
+  if (healedClusters !== session.phase1.clusters) {
+    session = {
+      ...session,
+      phase1: { ...session.phase1, clusters: healedClusters },
+    };
+    dirty = true;
+  }
+
+  if (dirty) await db.sessions.put(session);
+  return session;
 }
 
 /**
