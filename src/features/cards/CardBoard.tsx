@@ -12,6 +12,14 @@ import { cn } from "@/lib/utils";
 /** A colour-coded "add card" affordance: a new card takes this stage's colour. */
 export type AddStage = { colorId: string; addLabel: string };
 
+/* Whiteboard canvas (large mode) — much bigger than the viewport, scrolls both
+   ways and grows as cards are dragged towards its edges. */
+const CANVAS_MIN_W = 1800;
+const CANVAS_MIN_H = 1300;
+const CANVAS_MARGIN = 320;
+const CARD_APPROX_W = 160;
+const CARD_APPROX_H = 100;
+
 export type CardBoardProps = {
   cards: CardModel[];
   onCardsChange: (next: CardModel[]) => void;
@@ -113,6 +121,61 @@ export function CardBoard({
     onCardsChange(cards.filter((c) => c.id !== id));
   }
 
+  // Large canvas grows to fit the furthest card (so the board can keep expanding).
+  const rightMost = cards.length
+    ? Math.max(...cards.map((c) => (c.x ?? 0) + CARD_APPROX_W))
+    : 0;
+  const bottomMost = cards.length
+    ? Math.max(...cards.map((c) => (c.y ?? 0) + CARD_APPROX_H))
+    : 0;
+  const canvasW = Math.max(CANVAS_MIN_W, rightMost + CANVAS_MARGIN);
+  const canvasH = Math.max(CANVAS_MIN_H, bottomMost + CANVAS_MARGIN);
+
+  const boardContent = (
+    <>
+      {anchorCard ? (
+        <div
+          className={cn(
+            "absolute top-4 w-44 rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm",
+            large ? "left-6" : "left-1/2 -translate-x-1/2",
+          )}
+        >
+          <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
+            {anchorCard.label ?? "IST-Zustand"}
+          </p>
+          <p className="mt-0.5 truncate text-base font-semibold text-ist">
+            {anchorCard.text || "—"}
+          </p>
+          {anchorCard.hint ? (
+            <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-wide text-ist/70">
+              {anchorCard.hint}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {cards.map((card) => (
+        <Card
+          key={card.id}
+          card={card}
+          boardRef={boardRef}
+          readOnly={readOnly}
+          allowVisibilityToggle={allowVisibilityToggle}
+          autoFocus={card.id === focusId}
+          palette={stagePalette}
+          onChange={updateCard}
+          onDelete={deleteCard}
+        />
+      ))}
+
+      {cards.length === 0 && !anchorCard ? (
+        <p className="pointer-events-none absolute inset-x-0 top-24 text-center text-sm text-faint">
+          Noch keine Karten.
+        </p>
+      ) : null}
+    </>
+  );
+
   return (
     <div className="space-y-3">
       {!readOnly ? (
@@ -150,49 +213,28 @@ export function CardBoard({
         </div>
       ) : null}
 
-      <div
-        ref={boardRef}
-        className={cn(
-          "relative w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2",
-          large ? "min-h-[max(560px,60vh)]" : "h-[440px]",
-        )}
-      >
-        {anchorCard ? (
-          <div className="absolute left-1/2 top-4 w-44 -translate-x-1/2 rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm">
-            <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-              {anchorCard.label ?? "IST-Zustand"}
-            </p>
-            <p className="mt-0.5 truncate text-base font-semibold text-ist">
-              {anchorCard.text || "—"}
-            </p>
-            {anchorCard.hint ? (
-              <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-wide text-ist/70">
-                {anchorCard.hint}
-              </p>
-            ) : null}
+      {large ? (
+        <div
+          tabIndex={0}
+          aria-label="Arbeitsfläche — scrollbar; Karten frei platzieren"
+          className="h-[78vh] w-full overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+        >
+          <div
+            ref={boardRef}
+            className="relative"
+            style={{ width: canvasW, height: canvasH }}
+          >
+            {boardContent}
           </div>
-        ) : null}
-
-        {cards.map((card) => (
-          <Card
-            key={card.id}
-            card={card}
-            boardRef={boardRef}
-            readOnly={readOnly}
-            allowVisibilityToggle={allowVisibilityToggle}
-            autoFocus={card.id === focusId}
-            palette={stagePalette}
-            onChange={updateCard}
-            onDelete={deleteCard}
-          />
-        ))}
-
-        {cards.length === 0 && !anchorCard ? (
-          <p className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-faint">
-            Noch keine Karten.
-          </p>
-        ) : null}
-      </div>
+        </div>
+      ) : (
+        <div
+          ref={boardRef}
+          className="relative h-[440px] w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2"
+        >
+          {boardContent}
+        </div>
+      )}
 
       {!readOnly ? <NoPersonalDataHint /> : null}
     </div>

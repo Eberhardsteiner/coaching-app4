@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Info, Search, X } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Info, Search, X } from "lucide-react";
 
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { normalizeClusters } from "@/features/cards/clusters";
@@ -61,62 +61,77 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-5">
-      {/* Einleitung */}
-      <p className="text-muted">
-        Du hast deine Ist-Situation ausführlich erfasst — eine starke Grundlage.
-        Jetzt gibst du ihr eine bearbeitbare Struktur.
-      </p>
-
-      {/* Callout: Zuerst prüfen */}
-      <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-        <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
-          <Search className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
-          Zuerst prüfen: Beschreibt jede Karte wirklich die Ist-Situation?
-        </p>
-        <p className="mt-1.5 text-sm text-muted">
-          Manchmal schleicht sich eine Lösung oder Maßnahme ein. Geh kurz über
-          deine Karten — und wenn eine nicht beschreibt, wie es gerade ist,
-          formuliere den tatsächlichen Zustand.
-        </p>
-
-        {/* Vorher / Nachher */}
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div className="flex-1 rounded-lg border border-red-200 bg-red-50 p-3">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-red-700">
-              <X className="size-4 shrink-0" aria-hidden />
-              „Zeitmanagement“
-            </p>
-            <p className="mt-0.5 pl-5 text-xs text-red-700/80">
-              ein Schlagwort, keine Beschreibung
-            </p>
-          </div>
-          <ArrowRight
-            className="mx-auto size-4 shrink-0 rotate-90 text-faint sm:rotate-0"
+      {/* Compact, collapsible instructions so the whiteboard gets the most space. */}
+      <details className="group" open>
+        <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-foreground">
+          <ChevronDown
+            className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
             aria-hidden
           />
-          <div className="flex-1 rounded-lg border border-green-200 bg-green-50 p-3">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-green-800">
-              <Check className="size-4 shrink-0" aria-hidden />
-              „Ich nehme mir mehr vor, als ich schaffe“
-            </p>
-            <p className="mt-0.5 pl-5 text-xs text-green-800/80">
-              so ist es gerade wirklich
-            </p>
-          </div>
-        </div>
-      </div>
+          Anleitung
+        </summary>
+        <div className="mt-3 space-y-4">
+          {/* Einleitung */}
+          <p className="text-muted">
+            Du hast deine Ist-Situation ausführlich erfasst — eine starke
+            Grundlage. Jetzt gibst du ihr eine bearbeitbare Struktur.
+          </p>
 
-      {/* Hinweis-Chips */}
-      <ul className="flex flex-wrap gap-2">
-        {CHIPS.map((chip) => (
-          <li
-            key={chip}
-            className="rounded-full border border-subtle bg-surface px-3 py-1 text-xs text-muted"
-          >
-            {chip}
-          </li>
-        ))}
-      </ul>
+          {/* Callout: Zuerst prüfen */}
+          <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+            <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
+              <Search
+                className="mt-0.5 size-4 shrink-0 text-accent"
+                aria-hidden
+              />
+              Zuerst prüfen: Beschreibt jede Karte wirklich die Ist-Situation?
+            </p>
+            <p className="mt-1.5 text-sm text-muted">
+              Manchmal schleicht sich eine Lösung oder Maßnahme ein. Geh kurz
+              über deine Karten — und wenn eine nicht beschreibt, wie es gerade
+              ist, formuliere den tatsächlichen Zustand.
+            </p>
+
+            {/* Vorher / Nachher */}
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="flex-1 rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="flex items-center gap-1.5 text-sm font-medium text-red-700">
+                  <X className="size-4 shrink-0" aria-hidden />
+                  „Zeitmanagement“
+                </p>
+                <p className="mt-0.5 pl-5 text-xs text-red-700/80">
+                  ein Schlagwort, keine Beschreibung
+                </p>
+              </div>
+              <ArrowRight
+                className="mx-auto size-4 shrink-0 rotate-90 text-faint sm:rotate-0"
+                aria-hidden
+              />
+              <div className="flex-1 rounded-lg border border-green-200 bg-green-50 p-3">
+                <p className="flex items-center gap-1.5 text-sm font-medium text-green-800">
+                  <Check className="size-4 shrink-0" aria-hidden />
+                  „Ich nehme mir mehr vor, als ich schaffe“
+                </p>
+                <p className="mt-0.5 pl-5 text-xs text-green-800/80">
+                  so ist es gerade wirklich
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hinweis-Chips */}
+          <ul className="flex flex-wrap gap-2">
+            {CHIPS.map((chip) => (
+              <li
+                key={chip}
+                className="rounded-full border border-subtle bg-surface px-3 py-1 text-xs text-muted"
+              >
+                {chip}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
 
       {/* Bewertungs-Hinweis — erst beim Bewerten (sobald es Cluster gibt). */}
       {clusters.length >= 1 ? (

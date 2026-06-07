@@ -22,10 +22,16 @@ type ClusterBoardProps = {
 
 /* Layout constants (card height mirrors Card.tsx). */
 const CARD_H = 88;
+const CARD_APPROX_W = 160;
 const OVAL_W = 230;
 const OVAL_H = 44;
 const KEY_STEP = 16;
-const FIELD_MIN = 560;
+
+/* Whiteboard canvas — much bigger than the viewport; scrolls both ways and
+   grows to fit the furthest card/oval. */
+const CANVAS_MIN_W = 1800;
+const CANVAS_MIN_H = 1300;
+const CANVAS_MARGIN = 320;
 
 /** The unique 1..10 weight scale (10 = "drückt am meisten"). */
 const WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -54,7 +60,7 @@ export function ClusterBoard({
   const boardRef = useRef<HTMLDivElement | null>(null);
   const clusterById = new Map(clusters.map((c) => [c.id, c]));
 
-  // Live offset while a cluster's oval (and its member cards) is being dragged.
+  // Live offset while a cluster's oval is being dragged (oval only — cards never follow).
   const [ovalDrag, setOvalDrag] = useState<{
     id: string;
     dx: number;
@@ -67,11 +73,20 @@ export function ClusterBoard({
     return (cluster.y ?? 0) + OVAL_H + 28;
   }
 
-  const fieldMinHeight =
-    atLeast(FIELD_MIN, [
+  const canvasW = Math.max(
+    CANVAS_MIN_W,
+    atLeast(0, [
+      ...cards.map((c) => (c.x ?? 0) + CARD_APPROX_W),
+      ...clusters.map((c) => (c.x ?? 0) + OVAL_W),
+    ]) + CANVAS_MARGIN,
+  );
+  const canvasH = Math.max(
+    CANVAS_MIN_H,
+    atLeast(0, [
       ...cards.map((c) => (c.y ?? 0) + CARD_H),
       ...clusters.map((c) => clusterBottom(c)),
-    ]) + 24;
+    ]) + CANVAS_MARGIN,
+  );
 
   /** Set a card's cluster (via the dropdown). Logical only — never moves the card. */
   function assignCard(card: CardModel, clusterId: string | undefined) {
@@ -229,148 +244,154 @@ export function ClusterBoard({
       ) : null}
 
       <div
-        ref={boardRef}
-        style={{ minHeight: fieldMinHeight }}
-        className="relative w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2"
+        tabIndex={0}
+        aria-label="Arbeitsfläche — scrollbar; Karten und Cluster frei platzieren"
+        className="h-[78vh] w-full overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
       >
-        {/* IST anchor — rosa, never clustered. */}
-        {anchorCard ? (
-          <div className="absolute left-1/2 top-4 w-48 -translate-x-1/2 rounded-lg border border-ist/40 bg-ist/10 p-2.5 text-center shadow-sm">
-            <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-              {anchorCard.label ?? "IST-Zustand"}
-            </p>
-            <p className="mt-0.5 truncate text-sm font-semibold text-ist">
-              {anchorCard.text || "—"}
-            </p>
-          </div>
-        ) : null}
+        <div
+          ref={boardRef}
+          className="relative"
+          style={{ width: canvasW, height: canvasH }}
+        >
+          {/* IST anchor — rosa, never clustered. */}
+          {anchorCard ? (
+            <div className="absolute left-6 top-4 w-48 rounded-lg border border-ist/40 bg-ist/10 p-2.5 text-center shadow-sm">
+              <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
+                {anchorCard.label ?? "IST-Zustand"}
+              </p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-ist">
+                {anchorCard.text || "—"}
+              </p>
+            </div>
+          ) : null}
 
-        {/* Cluster ovals (blue) — draggable label + weight badge. */}
-        {clusters.map((cluster, index) => {
-          const live = ovalDrag?.id === cluster.id ? ovalDrag : null;
-          const left = (cluster.x ?? 0) + (live?.dx ?? 0);
-          const top = (cluster.y ?? 0) + (live?.dy ?? 0);
-          return (
-            <div
-              key={cluster.id}
-              style={{ left, top, width: OVAL_W }}
-              className={cn("absolute", live ? "z-20" : "z-10")}
-            >
-              <div className="flex items-center gap-1.5">
-                <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/40 bg-blue-50 py-1 pl-1 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-600">
-                  <button
-                    type="button"
-                    aria-label={`Cluster „${cluster.name.trim() || index + 1}“ verschieben (Pfeiltasten)`}
-                    title="Verschieben"
-                    disabled={readOnly}
-                    onPointerDown={(event) =>
-                      onOvalPointerDown(cluster.id, event)
-                    }
-                    onPointerMove={onOvalPointerMove}
-                    onPointerUp={onOvalPointerUp}
-                    onKeyDown={(event) => onOvalKeyDown(cluster.id, event)}
-                    className="flex size-6 shrink-0 cursor-grab touch-none items-center justify-center rounded text-blue-900/60 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:cursor-grabbing disabled:cursor-default"
-                  >
-                    <GripVertical className="size-4" />
-                  </button>
+          {/* Cluster ovals (blue) — draggable label + weight badge. */}
+          {clusters.map((cluster, index) => {
+            const live = ovalDrag?.id === cluster.id ? ovalDrag : null;
+            const left = (cluster.x ?? 0) + (live?.dx ?? 0);
+            const top = (cluster.y ?? 0) + (live?.dy ?? 0);
+            return (
+              <div
+                key={cluster.id}
+                style={{ left, top, width: OVAL_W }}
+                className={cn("absolute", live ? "z-20" : "z-10")}
+              >
+                <div className="flex items-center gap-1.5">
+                  <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/40 bg-blue-50 py-1 pl-1 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-600">
+                    <button
+                      type="button"
+                      aria-label={`Cluster „${cluster.name.trim() || index + 1}“ verschieben (Pfeiltasten)`}
+                      title="Verschieben"
+                      disabled={readOnly}
+                      onPointerDown={(event) =>
+                        onOvalPointerDown(cluster.id, event)
+                      }
+                      onPointerMove={onOvalPointerMove}
+                      onPointerUp={onOvalPointerUp}
+                      onKeyDown={(event) => onOvalKeyDown(cluster.id, event)}
+                      className="flex size-6 shrink-0 cursor-grab touch-none items-center justify-center rounded text-blue-900/60 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:cursor-grabbing disabled:cursor-default"
+                    >
+                      <GripVertical className="size-4" />
+                    </button>
+                    <label
+                      className="sr-only"
+                      htmlFor={`cluster-name-${cluster.id}`}
+                    >
+                      Name für Cluster {index + 1}
+                    </label>
+                    <input
+                      id={`cluster-name-${cluster.id}`}
+                      type="text"
+                      value={cluster.name}
+                      readOnly={readOnly}
+                      onChange={(event) =>
+                        updateCluster(cluster.id, { name: event.target.value })
+                      }
+                      placeholder={`Cluster ${index + 1}`}
+                      className="w-full min-w-0 bg-transparent text-sm font-medium text-blue-900 placeholder:text-blue-900/45 focus-visible:outline-none"
+                    />
+                  </div>
+
+                  {/* Prominent unique-weight badge (select; taken values locked). */}
                   <label
                     className="sr-only"
-                    htmlFor={`cluster-name-${cluster.id}`}
+                    htmlFor={`cluster-weight-${cluster.id}`}
                   >
-                    Name für Cluster {index + 1}
+                    Gewicht für Cluster {cluster.name.trim() || index + 1}
                   </label>
-                  <input
-                    id={`cluster-name-${cluster.id}`}
-                    type="text"
-                    value={cluster.name}
-                    readOnly={readOnly}
+                  <select
+                    id={`cluster-weight-${cluster.id}`}
+                    value={cluster.weight ?? ""}
+                    disabled={readOnly}
                     onChange={(event) =>
-                      updateCluster(cluster.id, { name: event.target.value })
+                      updateCluster(cluster.id, {
+                        weight: event.target.value
+                          ? Number(event.target.value)
+                          : undefined,
+                      })
                     }
-                    placeholder={`Cluster ${index + 1}`}
-                    className="w-full min-w-0 bg-transparent text-sm font-medium text-blue-900 placeholder:text-blue-900/45 focus-visible:outline-none"
-                  />
+                    title="Gewicht (10 = drückt am meisten)"
+                    className={cn(
+                      "h-8 shrink-0 rounded-lg px-1.5 text-center text-sm font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+                      cluster.weight != null
+                        ? "bg-blue-600 text-white"
+                        : "border border-dashed border-blue-600/40 bg-white text-blue-900",
+                    )}
+                  >
+                    <option value="">–</option>
+                    {WEIGHTS.map((value) => (
+                      <option
+                        key={value}
+                        value={value}
+                        disabled={weightLockedBy(cluster.id, value)}
+                      >
+                        {value}
+                        {value === 10 ? " (max)" : ""}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteCluster(cluster.id)}
+                    disabled={readOnly}
+                    aria-label={`Cluster ${cluster.name.trim() || index + 1} löschen`}
+                    title="Cluster löschen"
+                    className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
                 </div>
-
-                {/* Prominent unique-weight badge (select; taken values locked). */}
-                <label
-                  className="sr-only"
-                  htmlFor={`cluster-weight-${cluster.id}`}
-                >
-                  Gewicht für Cluster {cluster.name.trim() || index + 1}
-                </label>
-                <select
-                  id={`cluster-weight-${cluster.id}`}
-                  value={cluster.weight ?? ""}
-                  disabled={readOnly}
-                  onChange={(event) =>
-                    updateCluster(cluster.id, {
-                      weight: event.target.value
-                        ? Number(event.target.value)
-                        : undefined,
-                    })
-                  }
-                  title="Gewicht (10 = drückt am meisten)"
-                  className={cn(
-                    "h-8 shrink-0 rounded-lg px-1.5 text-center text-sm font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
-                    cluster.weight != null
-                      ? "bg-blue-600 text-white"
-                      : "border border-dashed border-blue-600/40 bg-white text-blue-900",
-                  )}
-                >
-                  <option value="">–</option>
-                  {WEIGHTS.map((value) => (
-                    <option
-                      key={value}
-                      value={value}
-                      disabled={weightLockedBy(cluster.id, value)}
-                    >
-                      {value}
-                      {value === 10 ? " (max)" : ""}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  onClick={() => deleteCluster(cluster.id)}
-                  disabled={readOnly}
-                  aria-label={`Cluster ${cluster.name.trim() || index + 1} löschen`}
-                  title="Cluster löschen"
-                  className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  <Trash2 className="size-4" />
-                </button>
+                {cluster.isCore && cluster.weight != null ? (
+                  <span className="ml-1 mt-1 inline-block rounded-full bg-blue-600/10 px-2 py-0.5 text-xs font-medium text-blue-800">
+                    Kernproblem
+                  </span>
+                ) : null}
               </div>
-              {cluster.isCore && cluster.weight != null ? (
-                <span className="ml-1 mt-1 inline-block rounded-full bg-blue-600/10 px-2 py-0.5 text-xs font-medium text-blue-800">
-                  Kernproblem
-                </span>
-              ) : null}
-            </div>
-          );
-        })}
+            );
+          })}
 
-        {/* Colour cards — the unchanged Card component (free xy, stage colours).
+          {/* Colour cards — the unchanged Card component (free xy, stage colours).
             Each card is an independent object; it never follows an oval. */}
-        {cards.map((card) => (
-          <Card
-            key={card.id}
-            card={card}
-            boardRef={boardRef}
-            readOnly={readOnly}
-            allowVisibilityToggle={allowVisibilityToggle}
-            clusterSelect={cardClusterSelect(card)}
-            onChange={handleCardChange}
-            onDelete={deleteCard}
-          />
-        ))}
+          {cards.map((card) => (
+            <Card
+              key={card.id}
+              card={card}
+              boardRef={boardRef}
+              readOnly={readOnly}
+              allowVisibilityToggle={allowVisibilityToggle}
+              clusterSelect={cardClusterSelect(card)}
+              onChange={handleCardChange}
+              onDelete={deleteCard}
+            />
+          ))}
 
-        {cards.length === 0 && clusters.length === 0 ? (
-          <p className="pointer-events-none absolute inset-x-0 top-1/2 text-center text-sm text-faint">
-            Keine Karten.
-          </p>
-        ) : null}
+          {cards.length === 0 && clusters.length === 0 ? (
+            <p className="pointer-events-none absolute inset-x-0 top-24 text-center text-sm text-faint">
+              Keine Karten.
+            </p>
+          ) : null}
+        </div>
       </div>
 
       {!readOnly ? <NoPersonalDataHint example="Arbeitslast" /> : null}
