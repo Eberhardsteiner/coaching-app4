@@ -3,6 +3,7 @@ import {
   useState,
   type KeyboardEvent,
   type PointerEvent,
+  type ReactNode,
   type RefObject,
 } from "react";
 import { GripVertical, Trash2 } from "lucide-react";
@@ -39,6 +40,8 @@ type CardProps = {
   autoFocus?: boolean;
   /** Colour palette the recolour button cycles through (default: CARD_COLORS). */
   palette?: CardColor[];
+  /** Optional control slotted below the text (e.g. a keyboard cluster select). */
+  clusterSelect?: ReactNode;
   onChange: (card: CardModel) => void;
   onDelete: (id: string) => void;
 };
@@ -55,6 +58,7 @@ export function Card({
   allowVisibilityToggle,
   autoFocus,
   palette = CARD_COLORS,
+  clusterSelect,
   onChange,
   onDelete,
 }: CardProps) {
@@ -221,6 +225,7 @@ export function Card({
         aria-label="Kartentext"
         className="w-full rounded bg-transparent px-1 py-0.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       />
+      {clusterSelect}
     </div>
   );
 }

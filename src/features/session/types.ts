@@ -86,6 +86,9 @@ export interface Cluster {
   color?: string;
   cardIds: string[]; // derived from card.clusterId (card.clusterId is the truth)
   isCore?: boolean; // derived: the single highest-weight cluster
+  /** Free-field position of the cluster's blue oval (additive; default placed). */
+  x?: number;
+  y?: number;
 }
 
 export interface Phase1 {

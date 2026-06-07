@@ -1,14 +1,9 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getCardColor } from "@/features/cards/cardColors";
-import { MAX_CLUSTERS, UNASSIGNED } from "@/features/cards/clusters";
-import {
-  effectiveVisibility,
-  toggleVisibility,
-} from "@/features/cards/visibility";
-import { VisibilityToggle } from "@/features/cards/VisibilityToggle";
+import { Card } from "@/features/cards/Card";
+import { MAX_CLUSTERS } from "@/features/cards/clusters";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -21,21 +16,34 @@ type ClusterBoardProps = {
   /** Optional fixed IST anchor card (rosa, never clustered). */
   anchorCard?: { text: string; label?: string; hint?: string };
   readOnly?: boolean;
-  /** Show the per-card visibility toggle on chips (coached branch only). */
+  /** Show the per-card visibility toggle (coached branch only). */
   allowVisibilityToggle?: boolean;
 };
+
+/* Layout constants (card size mirrors Card.tsx). */
+const CARD_W = 152;
+const CARD_H = 88;
+const OVAL_W = 230;
+const OVAL_H = 44;
+const GAP = 12;
+const MEMBER_STEP = CARD_H + GAP;
+const KEY_STEP = 16;
+const FIELD_MIN = 560;
 
 /** The unique 1..10 weight scale (10 = "drückt am meisten"). */
 const WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+const atLeast = (min: number, values: number[]) =>
+  values.length ? Math.max(min, ...values) : min;
+
 /**
- * Cluster mode of the moderation board. Cards (which keep their IST stage colours)
- * are grouped into at most five clusters labelled by a **blue oval**; assignment
- * is by dragging a card chip onto a cluster (committed on pointerup) or via a
- * keyboard cluster-select per card. `card.clusterId` is the single source of
- * truth. Each cluster gets a **unique** weight 1–10 (10 = drückt am meisten):
- * values already taken by another cluster are locked in the selector. The IST
- * anchor stays visible and is never clustered. No connection lines.
+ * Cluster mode of the moderation board — the **same free field** as Schritt 3.
+ * The colour cards are the unchanged `Card` component (free xy, stage colours);
+ * a new **blue oval** card per cluster sits on the field as a draggable, named
+ * label. Dragging a colour card onto an oval (or the per-card cluster select)
+ * assigns it (`card.clusterId`) and snaps it into the stack **under** that oval,
+ * so a cluster's cards lie together. Each cluster gets a **unique** weight 1–10
+ * (10 = drückt am meisten); taken values are locked. No Kanban columns, no list.
  */
 export function ClusterBoard({
   cards,
@@ -46,59 +54,163 @@ export function ClusterBoard({
   readOnly,
   allowVisibilityToggle,
 }: ClusterBoardProps) {
-  const zoneRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const [dragCardId, setDragCardId] = useState<string | null>(null);
-  const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
-  const [hoverZone, setHoverZone] = useState<string | null>(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const clusterById = new Map(clusters.map((c) => [c.id, c]));
+  const cardById = new Map(cards.map((c) => [c.id, c]));
 
-  const clusterById = new Map(clusters.map((cluster) => [cluster.id, cluster]));
+  // Live offset while a cluster's oval (and its member cards) is being dragged.
+  const [ovalDrag, setOvalDrag] = useState<{
+    id: string;
+    dx: number;
+    dy: number;
+  } | null>(null);
+  const ovalStart = useRef<{ px: number; py: number } | null>(null);
 
-  /** The zone a card belongs to: its cluster's id, or UNASSIGNED. */
-  function zoneOf(card: CardModel): string {
-    return card.clusterId && clusterById.has(card.clusterId)
-      ? card.clusterId
-      : UNASSIGNED;
+  function membersOf(clusterId: string): CardModel[] {
+    return cards.filter((card) => card.clusterId === clusterId);
   }
 
-  /** Which registered zone (by rect) sits under a screen point. */
-  function zoneAt(x: number, y: number): string | null {
-    for (const [id, el] of zoneRefs.current) {
-      const rect = el.getBoundingClientRect();
-      if (
-        x >= rect.left &&
-        x <= rect.right &&
-        y >= rect.top &&
-        y <= rect.bottom
-      )
-        return id;
+  function clusterBottom(cluster: Cluster): number {
+    return (
+      (cluster.y ?? 0) +
+      OVAL_H +
+      GAP +
+      membersOf(cluster.id).length * MEMBER_STEP
+    );
+  }
+
+  const fieldMinHeight =
+    atLeast(FIELD_MIN, [
+      ...cards.map((c) => (c.y ?? 0) + CARD_H),
+      ...clusters.map((c) => clusterBottom(c)),
+    ]) + 24;
+
+  /** Which cluster oval (by its header rect) sits under a board point. */
+  function clusterAtPoint(x: number, y: number): Cluster | null {
+    for (const cluster of clusters) {
+      const ox = cluster.x ?? 0;
+      const oy = cluster.y ?? 0;
+      if (x >= ox && x <= ox + OVAL_W && y >= oy && y <= oy + OVAL_H)
+        return cluster;
     }
     return null;
   }
 
-  function assignCard(cardId: string, zoneId: string) {
-    const clusterId = zoneId === UNASSIGNED ? undefined : zoneId;
-    onCardsChange(
-      cards.map((card) => (card.id === cardId ? { ...card, clusterId } : card)),
+  /** The slot position for the next card added to a cluster (under its oval). */
+  function slotFor(
+    clusterId: string,
+    excludeId: string,
+  ): { x: number; y: number } {
+    const cluster = clusterById.get(clusterId);
+    const ox = cluster?.x ?? 0;
+    const oy = cluster?.y ?? 0;
+    const count = cards.filter(
+      (c) => c.clusterId === clusterId && c.id !== excludeId,
+    ).length;
+    return { x: ox, y: oy + OVAL_H + GAP + count * MEMBER_STEP };
+  }
+
+  /** Assign a card to a cluster (or none) and snap it under the oval. */
+  function assignCard(card: CardModel, clusterId: string | undefined) {
+    let next: CardModel = { ...card, clusterId };
+    if (clusterId) {
+      const slot = slotFor(clusterId, card.id);
+      next = { ...next, x: slot.x, y: slot.y };
+    }
+    onCardsChange(cards.map((c) => (c.id === card.id ? next : c)));
+  }
+
+  /**
+   * A card moved (drag or keyboard) → if its centre now sits over a different
+   * cluster's oval, re-assign + snap; if it left its cluster onto free space,
+   * unassign. Otherwise just persist the new position.
+   */
+  function handleCardChange(updated: CardModel) {
+    const prev = cardById.get(updated.id);
+    const moved = prev && (prev.x !== updated.x || prev.y !== updated.y);
+    let next = updated;
+    if (moved) {
+      const cx = (updated.x ?? 0) + CARD_W / 2;
+      const cy = (updated.y ?? 0) + CARD_H / 2;
+      const target = clusterAtPoint(cx, cy);
+      const targetId = target?.id;
+      if (targetId !== prev.clusterId) {
+        next = { ...next, clusterId: targetId };
+        if (targetId) {
+          const slot = slotFor(targetId, updated.id);
+          next = { ...next, x: slot.x, y: slot.y };
+        }
+      }
+    }
+    onCardsChange(cards.map((c) => (c.id === next.id ? next : c)));
+  }
+
+  function deleteCard(id: string) {
+    onCardsChange(cards.filter((c) => c.id !== id));
+  }
+
+  /* Cluster CRUD ---------------------------------------------------------- */
+
+  function addCluster() {
+    if (readOnly || clusters.length >= MAX_CLUSTERS) return;
+    const bottom = atLeast(80, [
+      ...clusters.map((c) => clusterBottom(c)),
+      ...cards.map((c) => (c.y ?? 0) + CARD_H),
+    ]);
+    onClustersChange([
+      ...clusters,
+      { id: crypto.randomUUID(), name: "", cardIds: [], x: 20, y: bottom + 16 },
+    ]);
+  }
+
+  function updateCluster(id: string, partial: Partial<Cluster>) {
+    onClustersChange(
+      clusters.map((c) => (c.id === id ? { ...c, ...partial } : c)),
     );
   }
 
-  function toggleCardVisibility(cardId: string) {
+  function deleteCluster(id: string) {
+    // Cards of the deleted cluster fall back to free (unassigned); never lost.
     onCardsChange(
-      cards.map((card) =>
-        card.id === cardId
+      cards.map((c) =>
+        c.clusterId === id ? { ...c, clusterId: undefined } : c,
+      ),
+    );
+    onClustersChange(clusters.filter((c) => c.id !== id));
+  }
+
+  /** Move a cluster's oval + all its member cards by (dx, dy), clamped to ≥ 0. */
+  function moveCluster(id: string, dx: number, dy: number) {
+    const cluster = clusterById.get(id);
+    if (!cluster) return;
+    const nx = Math.max(0, (cluster.x ?? 0) + dx);
+    const ny = Math.max(0, (cluster.y ?? 0) + dy);
+    const adx = nx - (cluster.x ?? 0);
+    const ady = ny - (cluster.y ?? 0);
+    onClustersChange(
+      clusters.map((c) => (c.id === id ? { ...c, x: nx, y: ny } : c)),
+    );
+    onCardsChange(
+      cards.map((c) =>
+        c.clusterId === id
           ? {
-              ...card,
-              visibility: toggleVisibility(effectiveVisibility(card)),
+              ...c,
+              x: Math.max(0, (c.x ?? 0) + adx),
+              y: Math.max(0, (c.y ?? 0) + ady),
             }
-          : card,
+          : c,
       ),
     );
   }
 
-  /* Drag-to-zone (pointer) — commits only on pointerup. ------------------- */
+  function weightLockedBy(clusterId: string, value: number): boolean {
+    return clusters.some((c) => c.id !== clusterId && c.weight === value);
+  }
 
-  function onChipPointerDown(
-    cardId: string,
+  /* Oval drag (pointer) --------------------------------------------------- */
+
+  function onOvalPointerDown(
+    id: string,
     event: PointerEvent<HTMLButtonElement>,
   ) {
     if (readOnly) return;
@@ -107,151 +219,70 @@ export function ClusterBoard({
     } catch {
       /* synthetic pointer — ignore */
     }
-    setDragCardId(cardId);
-    setGhost({ x: event.clientX, y: event.clientY });
-    setHoverZone(zoneAt(event.clientX, event.clientY));
+    ovalStart.current = { px: event.clientX, py: event.clientY };
+    setOvalDrag({ id, dx: 0, dy: 0 });
   }
 
-  function onChipPointerMove(event: PointerEvent<HTMLButtonElement>) {
-    if (dragCardId === null) return;
-    setGhost({ x: event.clientX, y: event.clientY });
-    setHoverZone(zoneAt(event.clientX, event.clientY));
+  function onOvalPointerMove(event: PointerEvent<HTMLButtonElement>) {
+    const start = ovalStart.current;
+    if (!start || !ovalDrag) return;
+    setOvalDrag({
+      id: ovalDrag.id,
+      dx: event.clientX - start.px,
+      dy: event.clientY - start.py,
+    });
   }
 
-  function onChipPointerUp(event: PointerEvent<HTMLButtonElement>) {
-    if (dragCardId === null) return;
-    const target = zoneAt(event.clientX, event.clientY);
-    if (target && target !== zoneOf(getCard(dragCardId))) {
-      assignCard(dragCardId, target);
-    }
-    setDragCardId(null);
-    setGhost(null);
-    setHoverZone(null);
+  function onOvalPointerUp(event: PointerEvent<HTMLButtonElement>) {
+    const start = ovalStart.current;
+    if (!start || !ovalDrag) return;
+    const dx = event.clientX - start.px;
+    const dy = event.clientY - start.py;
+    const id = ovalDrag.id;
+    ovalStart.current = null;
+    setOvalDrag(null);
+    if (dx !== 0 || dy !== 0) moveCluster(id, dx, dy);
   }
 
-  function getCard(id: string): CardModel {
-    return (
-      cards.find((card) => card.id === id) ?? {
-        id,
-        text: "",
-        visibility: "shared",
-      }
-    );
-  }
-
-  /* Cluster CRUD ---------------------------------------------------------- */
-
-  function addCluster() {
-    if (readOnly || clusters.length >= MAX_CLUSTERS) return;
-    onClustersChange([
-      ...clusters,
-      { id: crypto.randomUUID(), name: "", cardIds: [] },
-    ]);
-  }
-
-  function updateCluster(id: string, partial: Partial<Cluster>) {
-    onClustersChange(
-      clusters.map((cluster) =>
-        cluster.id === id ? { ...cluster, ...partial } : cluster,
-      ),
-    );
-  }
-
-  function deleteCluster(id: string) {
-    // Cards in the deleted cluster fall back to "not assigned" (never lost).
-    onCardsChange(
-      cards.map((card) =>
-        card.clusterId === id ? { ...card, clusterId: undefined } : card,
-      ),
-    );
-    onClustersChange(clusters.filter((cluster) => cluster.id !== id));
-  }
-
-  /** Is weight `value` already taken by a *different* cluster? */
-  function weightLockedBy(clusterId: string, value: number): boolean {
-    return clusters.some((c) => c.id !== clusterId && c.weight === value);
+  function onOvalKeyDown(id: string, event: KeyboardEvent<HTMLButtonElement>) {
+    if (readOnly) return;
+    const deltas: Record<string, [number, number]> = {
+      ArrowLeft: [-KEY_STEP, 0],
+      ArrowRight: [KEY_STEP, 0],
+      ArrowUp: [0, -KEY_STEP],
+      ArrowDown: [0, KEY_STEP],
+    };
+    const delta = deltas[event.key];
+    if (!delta) return;
+    event.preventDefault();
+    moveCluster(id, delta[0], delta[1]);
   }
 
   /* Rendering ------------------------------------------------------------- */
 
-  const ghostCard = dragCardId ? getCard(dragCardId) : null;
-  const ghostColor = ghostCard ? getCardColor(ghostCard.color) : null;
-
-  /** A card chip — keeps the card's own IST stage colour (orthogonal to clusters). */
-  function renderChip(card: CardModel) {
-    const color = getCardColor(card.color);
-    const dragging = card.id === dragCardId;
-    const coachOnly =
-      Boolean(allowVisibilityToggle) &&
-      effectiveVisibility(card) === "coach_only";
+  /** A keyboard-friendly cluster select, slotted into each card. */
+  function cardClusterSelect(card: CardModel) {
+    if (clusters.length === 0) return undefined;
     return (
-      <div
-        key={card.id}
-        className={cn(
-          "flex items-center gap-1.5 rounded-md border py-1 pl-1 pr-1.5 shadow-sm transition-colors",
-          coachOnly ? "border-dashed border-muted/70" : "border-black/10",
-          color.surface,
-          dragging && "opacity-40",
-        )}
+      <select
+        aria-label={`Cluster für „${card.text || "ohne Text"}“`}
+        value={card.clusterId ?? ""}
+        disabled={readOnly}
+        onChange={(event) => assignCard(card, event.target.value || undefined)}
+        className="w-full rounded border border-black/10 bg-white/70 px-1 py-0.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
-        <button
-          type="button"
-          aria-label={`Karte „${card.text || "ohne Text"}“ in ein Cluster ziehen`}
-          title="Auf ein Cluster ziehen"
-          disabled={readOnly}
-          onPointerDown={(event) => onChipPointerDown(card.id, event)}
-          onPointerMove={onChipPointerMove}
-          onPointerUp={onChipPointerUp}
-          className="flex size-6 shrink-0 cursor-grab touch-none items-center justify-center rounded text-current/60 hover:text-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:cursor-grabbing disabled:cursor-default"
-        >
-          <GripVertical className="size-4" />
-        </button>
-        <span className="max-w-[10rem] truncate text-sm">
-          {card.text || "—"}
-        </span>
-        {allowVisibilityToggle ? (
-          <VisibilityToggle
-            visibility={effectiveVisibility(card)}
-            disabled={readOnly}
-            onToggle={() => toggleCardVisibility(card.id)}
-          />
-        ) : null}
-        <label className="sr-only" htmlFor={`assign-${card.id}`}>
-          Cluster für „{card.text || "ohne Text"}“
-        </label>
-        <select
-          id={`assign-${card.id}`}
-          value={zoneOf(card)}
-          disabled={readOnly || clusters.length === 0}
-          onChange={(event) => assignCard(card.id, event.target.value)}
-          className="max-w-[7rem] rounded border border-black/10 bg-white/70 px-1 py-0.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50"
-        >
-          <option value={UNASSIGNED}>nicht zugeordnet</option>
-          {clusters.map((cluster, index) => (
-            <option key={cluster.id} value={cluster.id}>
-              {cluster.name.trim() || `Cluster ${index + 1}`}
-            </option>
-          ))}
-        </select>
-      </div>
+        <option value="">Kein Cluster</option>
+        {clusters.map((cluster, index) => (
+          <option key={cluster.id} value={cluster.id}>
+            {cluster.name.trim() || `Cluster ${index + 1}`}
+          </option>
+        ))}
+      </select>
     );
   }
 
-  const unassignedCards = cards.filter((card) => zoneOf(card) === UNASSIGNED);
-
   return (
     <div className="space-y-3">
-      {anchorCard ? (
-        <div className="flex items-center gap-3 rounded-lg border border-ist/40 bg-ist/10 px-4 py-2.5">
-          <span className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-            {anchorCard.label ?? "IST-Zustand"}
-          </span>
-          <span className="truncate text-sm font-semibold text-ist">
-            {anchorCard.text || "—"}
-          </span>
-        </div>
-      ) : null}
-
       {!readOnly ? (
         <div className="flex items-center justify-between gap-3">
           <Button
@@ -261,7 +292,7 @@ export function ClusterBoard({
             disabled={clusters.length >= MAX_CLUSTERS}
           >
             <Plus />
-            Cluster
+            Cluster hinzufügen
           </Button>
           <p className="text-xs text-faint">
             {clusters.length} / {MAX_CLUSTERS} Cluster
@@ -270,30 +301,51 @@ export function ClusterBoard({
         </div>
       ) : null}
 
-      {/* Cluster zones */}
-      <div className="space-y-3">
+      <div
+        ref={boardRef}
+        style={{ minHeight: fieldMinHeight }}
+        className="relative w-full touch-none overflow-hidden rounded-xl border border-subtle bg-surface-2"
+      >
+        {/* IST anchor — rosa, never clustered. */}
+        {anchorCard ? (
+          <div className="absolute left-1/2 top-4 w-48 -translate-x-1/2 rounded-lg border border-ist/40 bg-ist/10 p-2.5 text-center shadow-sm">
+            <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
+              {anchorCard.label ?? "IST-Zustand"}
+            </p>
+            <p className="mt-0.5 truncate text-sm font-semibold text-ist">
+              {anchorCard.text || "—"}
+            </p>
+          </div>
+        ) : null}
+
+        {/* Cluster ovals (blue) — draggable label + weight badge. */}
         {clusters.map((cluster, index) => {
-          const assigned = cards.filter(
-            (card) => card.clusterId === cluster.id,
-          );
+          const live = ovalDrag?.id === cluster.id ? ovalDrag : null;
+          const left = (cluster.x ?? 0) + (live?.dx ?? 0);
+          const top = (cluster.y ?? 0) + (live?.dy ?? 0);
           return (
             <div
               key={cluster.id}
-              data-zone-id={cluster.id}
-              ref={(el) => {
-                if (el) zoneRefs.current.set(cluster.id, el);
-                else zoneRefs.current.delete(cluster.id);
-              }}
-              className={cn(
-                "rounded-xl border bg-surface p-3 transition-colors",
-                hoverZone === cluster.id
-                  ? "border-accent ring-2 ring-accent"
-                  : "border-subtle",
-              )}
+              style={{ left, top, width: OVAL_W }}
+              className={cn("absolute", live ? "z-20" : "z-10")}
             >
-              <div className="flex flex-wrap items-center gap-2">
-                {/* Cluster label — the blue oval (new card form). */}
-                <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/30 bg-blue-50 px-3.5 py-1.5 focus-within:ring-2 focus-within:ring-blue-600">
+              <div className="flex items-center gap-1.5">
+                <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/40 bg-blue-50 py-1 pl-1 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-600">
+                  <button
+                    type="button"
+                    aria-label={`Cluster „${cluster.name.trim() || index + 1}“ verschieben (Pfeiltasten)`}
+                    title="Verschieben"
+                    disabled={readOnly}
+                    onPointerDown={(event) =>
+                      onOvalPointerDown(cluster.id, event)
+                    }
+                    onPointerMove={onOvalPointerMove}
+                    onPointerUp={onOvalPointerUp}
+                    onKeyDown={(event) => onOvalKeyDown(cluster.id, event)}
+                    className="flex size-6 shrink-0 cursor-grab touch-none items-center justify-center rounded text-blue-900/60 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:cursor-grabbing disabled:cursor-default"
+                  >
+                    <GripVertical className="size-4" />
+                  </button>
                   <label
                     className="sr-only"
                     htmlFor={`cluster-name-${cluster.id}`}
@@ -313,24 +365,44 @@ export function ClusterBoard({
                   />
                 </div>
 
-                {/* Prominent weight badge. */}
-                <span
-                  aria-hidden
+                {/* Prominent unique-weight badge (select; taken values locked). */}
+                <label
+                  className="sr-only"
+                  htmlFor={`cluster-weight-${cluster.id}`}
+                >
+                  Gewicht für Cluster {cluster.name.trim() || index + 1}
+                </label>
+                <select
+                  id={`cluster-weight-${cluster.id}`}
+                  value={cluster.weight ?? ""}
+                  disabled={readOnly}
+                  onChange={(event) =>
+                    updateCluster(cluster.id, {
+                      weight: event.target.value
+                        ? Number(event.target.value)
+                        : undefined,
+                    })
+                  }
+                  title="Gewicht (10 = drückt am meisten)"
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
+                    "h-8 shrink-0 rounded-lg px-1.5 text-center text-sm font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
                     cluster.weight != null
                       ? "bg-blue-600 text-white"
-                      : "border border-dashed border-subtle text-faint",
+                      : "border border-dashed border-blue-600/40 bg-white text-blue-900",
                   )}
                 >
-                  {cluster.weight ?? "–"}
-                </span>
-
-                {cluster.isCore && cluster.weight != null ? (
-                  <span className="shrink-0 rounded-full bg-blue-600/10 px-2 py-0.5 text-xs font-medium text-blue-800">
-                    Kernproblem
-                  </span>
-                ) : null}
+                  <option value="">–</option>
+                  {WEIGHTS.map((value) => (
+                    <option
+                      key={value}
+                      value={value}
+                      disabled={weightLockedBy(cluster.id, value)}
+                    >
+                      {value}
+                      {value === 10 ? " (max)" : ""}
+                    </option>
+                  ))}
+                </select>
 
                 <button
                   type="button"
@@ -343,105 +415,47 @@ export function ClusterBoard({
                   <Trash2 className="size-4" />
                 </button>
               </div>
-
-              {/* Unique weight selector — taken values are locked. */}
-              {!readOnly ? (
-                <div className="mt-2.5">
-                  <p className="text-xs text-muted">
-                    Gewicht — 10 drückt am meisten, jeder Wert nur einmal
-                  </p>
-                  <div
-                    role="group"
-                    aria-label={`Gewicht für Cluster ${cluster.name.trim() || index + 1}`}
-                    className="mt-1 flex flex-wrap gap-1"
-                  >
-                    {WEIGHTS.map((value) => {
-                      const isSelf = cluster.weight === value;
-                      const locked =
-                        !isSelf && weightLockedBy(cluster.id, value);
-                      return (
-                        <button
-                          key={value}
-                          type="button"
-                          disabled={locked}
-                          aria-disabled={locked}
-                          aria-pressed={isSelf}
-                          aria-label={`Gewicht ${value}${value === 10 ? " — drückt am meisten" : ""}${locked ? " — bereits vergeben" : ""}`}
-                          onClick={() =>
-                            updateCluster(cluster.id, { weight: value })
-                          }
-                          className={cn(
-                            "size-7 rounded-md text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                            isSelf
-                              ? "bg-blue-600 font-medium text-white"
-                              : locked
-                                ? "cursor-not-allowed bg-surface-2 text-faint opacity-40"
-                                : "bg-surface-2 text-muted hover:text-foreground",
-                          )}
-                        >
-                          {value}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+              {cluster.isCore && cluster.weight != null ? (
+                <span className="ml-1 mt-1 inline-block rounded-full bg-blue-600/10 px-2 py-0.5 text-xs font-medium text-blue-800">
+                  Kernproblem
+                </span>
               ) : null}
-
-              <div className="mt-3 flex min-h-[40px] flex-wrap gap-2">
-                {assigned.length > 0 ? (
-                  assigned.map(renderChip)
-                ) : (
-                  <p className="self-center text-xs text-faint">
-                    Karten hierher ziehen oder über das Auswahlfeld zuordnen.
-                  </p>
-                )}
-              </div>
             </div>
           );
         })}
-      </div>
 
-      {/* Unassigned area */}
-      <div
-        data-zone-id={UNASSIGNED}
-        ref={(el) => {
-          if (el) zoneRefs.current.set(UNASSIGNED, el);
-          else zoneRefs.current.delete(UNASSIGNED);
-        }}
-        className={cn(
-          "rounded-xl border border-dashed p-3 transition-colors",
-          hoverZone === UNASSIGNED
-            ? "border-accent bg-surface ring-2 ring-accent"
-            : "border-subtle bg-surface-2",
-        )}
-      >
-        <p className="mb-2 text-xs font-medium text-muted">
-          noch nicht zugeordnet
-        </p>
-        <div className="flex min-h-[40px] flex-wrap gap-2">
-          {unassignedCards.length > 0 ? (
-            unassignedCards.map(renderChip)
-          ) : (
-            <p className="self-center text-xs text-faint">
-              Alle Karten sind einem Cluster zugeordnet.
-            </p>
-          )}
-        </div>
-      </div>
+        {/* Colour cards — the unchanged Card component (free xy, stage colours).
+            Members of a dragged cluster follow its live offset. */}
+        {cards.map((card) => {
+          const live =
+            card.clusterId && ovalDrag?.id === card.clusterId ? ovalDrag : null;
+          const display = live
+            ? {
+                ...card,
+                x: (card.x ?? 0) + live.dx,
+                y: (card.y ?? 0) + live.dy,
+              }
+            : card;
+          return (
+            <Card
+              key={card.id}
+              card={display}
+              boardRef={boardRef}
+              readOnly={readOnly}
+              allowVisibilityToggle={allowVisibilityToggle}
+              clusterSelect={cardClusterSelect(card)}
+              onChange={handleCardChange}
+              onDelete={deleteCard}
+            />
+          );
+        })}
 
-      {/* Drag ghost — follows the pointer, ignores pointer events. */}
-      {ghost && ghostCard && ghostColor ? (
-        <div
-          aria-hidden
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
-          className={cn(
-            "pointer-events-none fixed z-50 max-w-[12rem] truncate rounded-md border border-black/10 px-2 py-1 text-sm shadow-md",
-            ghostColor.surface,
-          )}
-        >
-          {ghostCard.text || "—"}
-        </div>
-      ) : null}
+        {cards.length === 0 && clusters.length === 0 ? (
+          <p className="pointer-events-none absolute inset-x-0 top-1/2 text-center text-sm text-faint">
+            Keine Karten.
+          </p>
+        ) : null}
+      </div>
 
       {!readOnly ? <NoPersonalDataHint example="Arbeitslast" /> : null}
     </div>
