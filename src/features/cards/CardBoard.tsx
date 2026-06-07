@@ -135,8 +135,8 @@ export function CardBoard({
       {anchorCard ? (
         <div
           className={cn(
-            "absolute top-4 w-44 rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm",
-            large ? "left-6" : "left-1/2 -translate-x-1/2",
+            "absolute left-1/2 top-1/2 w-44 -translate-x-1/2 -translate-y-1/2",
+            "rounded-lg border border-ist/40 bg-ist/10 p-3 text-center shadow-sm",
           )}
         >
           <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">

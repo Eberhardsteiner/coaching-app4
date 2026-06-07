@@ -306,7 +306,7 @@ export function ClusterBoard({
         >
           {/* IST anchor — rosa, never clustered. */}
           {anchorCard ? (
-            <div className="absolute left-6 top-4 w-48 rounded-lg border border-ist/40 bg-ist/10 p-2.5 text-center shadow-sm">
+            <div className="absolute left-1/2 top-1/2 w-48 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-ist/40 bg-ist/10 p-2.5 text-center shadow-sm">
               <p className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
                 {anchorCard.label ?? "IST-Zustand"}
               </p>
