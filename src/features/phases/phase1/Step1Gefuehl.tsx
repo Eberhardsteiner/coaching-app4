@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   AlertDialog,
@@ -17,11 +17,37 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import { cn } from "@/lib/utils";
 
-/** The feeling-question intro (verbatim, three paragraphs). */
-const INTRO_PARAGRAPHS = [
-  "Noch bevor unser Verstand weiß: ‚Da ist etwas faul‘, wissen unsere Gefühle, dass wir uns nicht wohlfühlen. Treten unangenehme Gefühle regelmäßig in bestimmten Situationen auf, kann das der Auslöser für einen Veränderungswunsch — für ein Coaching — sein. Also wundere dich bitte nicht, wenn die erste Frage lautet: ‚Wie fühlst du dich in Bezug auf dein Thema?‘",
-  "Bitte beginne damit, dass du dich innerlich mit deiner aktuellen Situation in Bezug setzt. Welches Gefühl spürst du vor allem, wenn du an das denkst, was du verändern möchtest? Wenn du mehrere Gefühle spürst, dann nimm dasjenige, das am stärksten und häufigsten auftritt. Die Liste der Gefühle kann dir helfen — sie ist jedoch erweiterbar. Wenn du dein Gefühl darauf nicht findest, dann fühl dich frei, ein eigenes zu benennen. Stelle dabei bitte sicher, dass du wirklich ein Gefühl aufschreibst und keinen gedanklichen Zustand (z. B. ‚Unentschlossen‘ ist ein gedanklicher Zustand, kein Gefühl. ‚Zerrissenheit‘ dagegen ist ein Gefühl).",
-  "Wenn du dein Ausgangsgefühl gefunden hast, steht dieses im Mittelpunkt deiner weiteren Reflexion zu deiner Ist-Situation.",
+/** Dezente, Token-basierte Hervorhebung (fett) wichtiger Punkte. */
+function Em({ children }: { children: ReactNode }) {
+  return <strong className="font-semibold text-foreground">{children}</strong>;
+}
+
+/** The feeling-question intro (verbatim, three paragraphs) with key points bold. */
+const INTRO_PARAGRAPHS: ReactNode[] = [
+  <>
+    Noch bevor unser Verstand weiß: ‚Da ist etwas faul‘, wissen unsere{" "}
+    <Em>Gefühle</Em>, dass wir uns nicht wohlfühlen. Treten unangenehme Gefühle
+    regelmäßig in bestimmten Situationen auf, kann das der{" "}
+    <Em>Auslöser für einen Veränderungswunsch — für ein Coaching</Em> — sein.
+    Also wundere dich bitte nicht, wenn die erste Frage lautet:{" "}
+    <Em>‚Wie fühlst du dich in Bezug auf dein Thema?‘</Em>
+  </>,
+  <>
+    Bitte beginne damit, dass du dich innerlich mit deiner aktuellen Situation
+    in Bezug setzt. <Em>Welches Gefühl spürst du vor allem</Em>, wenn du an das
+    denkst, was du verändern möchtest? Wenn du mehrere Gefühle spürst, dann nimm
+    dasjenige, das <Em>am stärksten und häufigsten</Em> auftritt. Die Liste der
+    Gefühle kann dir helfen — sie ist jedoch erweiterbar. Wenn du dein Gefühl
+    darauf nicht findest, dann fühl dich frei, ein eigenes zu benennen. Stelle
+    dabei bitte sicher, dass du <Em>wirklich ein Gefühl</Em> aufschreibst und{" "}
+    <Em>keinen gedanklichen Zustand</Em> (z. B. ‚Unentschlossen‘ ist ein{" "}
+    <Em>gedanklicher Zustand</Em>, kein Gefühl. ‚Zerrissenheit‘ dagegen ist{" "}
+    <Em>ein Gefühl</Em>).
+  </>,
+  <>
+    Wenn du dein <Em>Ausgangsgefühl</Em> gefunden hast, steht dieses{" "}
+    <Em>im Mittelpunkt deiner weiteren Reflexion</Em> zu deiner Ist-Situation.
+  </>,
 ];
 
 /**
