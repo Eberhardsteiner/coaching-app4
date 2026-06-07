@@ -29,30 +29,38 @@ import { SummaryView } from "@/routes/SummaryView";
  *   /design   Design-System demo — DEV only; redirects to / in production
  *   *         404 fallback
  */
-export const router = createBrowserRouter([
-  { path: "/", element: <LandingPage /> },
-  { path: "/start", element: <BranchSelectPage /> },
-  { path: "/sessions", element: <SessionsPage /> },
-  { path: "/rechtliches", element: <LegalPage kind="rechtliches" /> },
-  { path: "/datenschutz", element: <LegalPage kind="datenschutz" /> },
-  { path: "/impressum", element: <LegalPage kind="impressum" /> },
-  {
-    path: "/session",
-    element: <SessionRoute />,
-    children: [{ index: true, element: <SessionView /> }],
-  },
-  { path: "/zusammenfassung", element: <SummaryView /> },
-  { path: "/buehne", element: <BuehneView /> },
-  { path: "/einfuehrung", element: <IntroView /> },
-  { path: "/grundwerte", element: <GrundwerteView /> },
-  { path: "/anforderungen", element: <AnforderungenView /> },
-  {
-    path: "/design",
-    element: import.meta.env.DEV ? (
-      <DesignSystem />
-    ) : (
-      <Navigate to="/" replace />
-    ),
-  },
-  { path: "*", element: <NotFoundPage /> },
-]);
+// Strip the trailing slash from the Vite base ("/coaching-app4/" → "/coaching-app4");
+// at the domain root BASE_URL is "/" → basename stays "/". All <Link>/Navigate/
+// programmatic navigation is then automatically relative to this basename.
+const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
+
+export const router = createBrowserRouter(
+  [
+    { path: "/", element: <LandingPage /> },
+    { path: "/start", element: <BranchSelectPage /> },
+    { path: "/sessions", element: <SessionsPage /> },
+    { path: "/rechtliches", element: <LegalPage kind="rechtliches" /> },
+    { path: "/datenschutz", element: <LegalPage kind="datenschutz" /> },
+    { path: "/impressum", element: <LegalPage kind="impressum" /> },
+    {
+      path: "/session",
+      element: <SessionRoute />,
+      children: [{ index: true, element: <SessionView /> }],
+    },
+    { path: "/zusammenfassung", element: <SummaryView /> },
+    { path: "/buehne", element: <BuehneView /> },
+    { path: "/einfuehrung", element: <IntroView /> },
+    { path: "/grundwerte", element: <GrundwerteView /> },
+    { path: "/anforderungen", element: <AnforderungenView /> },
+    {
+      path: "/design",
+      element: import.meta.env.DEV ? (
+        <DesignSystem />
+      ) : (
+        <Navigate to="/" replace />
+      ),
+    },
+    { path: "*", element: <NotFoundPage /> },
+  ],
+  { basename },
+);

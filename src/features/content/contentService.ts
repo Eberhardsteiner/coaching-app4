@@ -17,8 +17,11 @@ import {
   type ModelSummary,
   type ModelTerm,
 } from "@/features/content/contentTypes";
+import { publicAsset } from "@/lib/asset";
 
-const BASE_PATH = "/content/models/";
+// Ends with "/", so `${BASE_PATH}index.json` and `${BASE_PATH}${entry.file}` stay
+// correct — and the Vite base prefix makes it work under /coaching-app4/.
+const BASE_PATH = publicAsset("content/models/");
 
 /** A user-facing content load error (its message is safe to show in the UI). */
 export class ContentError extends Error {}

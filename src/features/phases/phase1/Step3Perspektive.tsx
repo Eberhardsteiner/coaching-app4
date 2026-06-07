@@ -10,6 +10,7 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Card } from "@/features/session/types";
+import { publicAsset } from "@/lib/asset";
 import { cn } from "@/lib/utils";
 
 /** Intro before the model choice (verbatim). */
@@ -41,7 +42,7 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "(Betriebs-)wirtschaftliche Herausforderungen",
     summary:
       "Die Organisation als System: Umweltsphären, Anspruchsgruppen, Interaktionsthemen, Ordnungsmomente, Prozesse und Entwicklungsmodi.",
-    image: "/content/models/images/st-galler.png",
+    image: publicAsset("content/models/images/st-galler.png"),
     subtitle: "Change in Unternehmen",
     description: (
       <>
@@ -76,7 +77,9 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Gesundheitliche Probleme",
     summary:
       "Faktoren der selbst erlebten Gesundheit (u. a. Erfahrungen, Biografie, Bewältigbarkeit, Verstehbarkeit, Bedeutsamkeit).",
-    image: "/content/models/images/gesundheit-konstruktivistisch.png",
+    image: publicAsset(
+      "content/models/images/gesundheit-konstruktivistisch.png",
+    ),
     subtitle: "Selbst erlebtes Wohlbefinden",
     description: (
       <>
@@ -167,7 +170,7 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Konflikte",
     summary:
       "Die Aspekte eines Konflikts: Ich, andere Partei, Dritte, Thema, Werte, Emotionen, Abhängigkeiten u. a.",
-    image: "/content/models/images/drei-k.png",
+    image: publicAsset("content/models/images/drei-k.png"),
     subtitle: "Der konstruktivistische Konflikt-Kontext",
     description: (
       <>
@@ -271,7 +274,7 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Persönliches Wohlbefinden",
     summary:
       "Felder des Wohlbefindens: u. a. psycho-biologisches Wohlbefinden, Erfahrungen, Erwartungen, Körper, Gedanken, Umwelt, Sinn, Beziehung.",
-    image: "/content/models/images/zehn-felder.png",
+    image: publicAsset("content/models/images/zehn-felder.png"),
     subtitle: "Einflüsse auf das psychobiologische Empfinden",
     description: (
       <>

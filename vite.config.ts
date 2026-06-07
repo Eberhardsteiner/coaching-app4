@@ -13,7 +13,9 @@ const pkg = JSON.parse(
 ) as { version: string };
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Production build is served from the /coaching-app4/ subfolder; dev stays at root.
+  base: command === "build" ? "/coaching-app4/" : "/",
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
@@ -24,4 +26,4 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-});
+}));

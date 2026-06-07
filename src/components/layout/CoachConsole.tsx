@@ -58,8 +58,10 @@ export function CoachConsole() {
   /** Open the read-only presenter stage in a second window (reused if open). */
   function openStage() {
     if (!sessionId) return;
+    // BASE_URL keeps the path correct under the /coaching-app4/ subfolder
+    // (window.open is a raw browser navigation — not routed through the basename).
     window.open(
-      `/buehne?id=${encodeURIComponent(sessionId)}`,
+      `${import.meta.env.BASE_URL}buehne?id=${encodeURIComponent(sessionId)}`,
       "nhs-coaching-buehne",
     );
   }

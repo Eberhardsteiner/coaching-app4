@@ -1,0 +1,13 @@
+# SPA-Fallback für /coaching-app4/ (Apache).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /coaching-app4/
+
+  # echte Dateien/Verzeichnisse direkt ausliefern
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # alles andere → index.html (clientseitiges Routing)
+  RewriteRule ^ index.html [L]
+</IfModule>
