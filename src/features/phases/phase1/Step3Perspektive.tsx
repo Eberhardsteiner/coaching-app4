@@ -86,6 +86,41 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Persönliches Wohlbefinden",
     summary:
       "Felder des Wohlbefindens: u. a. psycho-biologisches Wohlbefinden, Erfahrungen, Erwartungen, Körper, Gedanken, Umwelt, Sinn, Beziehung.",
+    subtitle: "Einflüsse auf das psychobiologische Empfinden",
+    description: (
+      <>
+        <p>
+          Dieses Modell bildet Zusammenhänge ab, die unser individuelles{" "}
+          <strong className="font-semibold text-foreground">
+            psychobiologisches Befinden
+          </strong>{" "}
+          beeinflussen. Jeder Veränderung liegt eine psychische und biologische
+          Befindlichkeit zu Grunde. Eine Veränderung ist dann für uns{" "}
+          <strong className="font-semibold text-foreground">
+            attraktiv, wenn sie einen Beitrag zu unserem psychobiologischen
+            Wohlbefinden leistet
+          </strong>
+          . Einer selbst gewollten Veränderung geht immer ein{" "}
+          <strong className="font-semibold text-foreground">
+            „psychobiologisches Unbehagen“
+          </strong>{" "}
+          voraus.
+        </p>
+        <p className="mt-2">
+          Wird die Beschäftigung mit sich selbst als Anlass gesehen, sich
+          coachen zu lassen, bietet das 10-Felder-Modell die Möglichkeit, sich
+          strukturiert mit den aktuellen Einflüssen auf das eigene
+          psychobiologische Befinden („Unbehagen“) auseinanderzusetzen und so zu
+          erkennen, was zusätzlich noch bei der eigenen Veränderung von
+          Bedeutung ist. Das 10-Felder-Modell trägt der Tatsache Rechnung, dass{" "}
+          <strong className="font-semibold text-foreground">
+            jede Entscheidung, sich selbst zu verändern, auf einer Beurteilung
+            des eigenen psychobiologischen Empfindens beruht
+          </strong>
+          .
+        </p>
+      </>
+    ),
   },
 };
 
