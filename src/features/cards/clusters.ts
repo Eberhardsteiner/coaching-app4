@@ -38,7 +38,7 @@ export function normalizeClusters(
     ...cluster,
     cardIds: cards
       // `card.clusterId != null` guards against an id-less cluster matching every
-      // *unassigned* card (both `undefined`) — see ensureClusterIds.
+      // *unassigned* card (both `undefined`) — see ensureUniqueIds.
       .filter((card) => card.clusterId != null && card.clusterId === cluster.id)
       .map((card) => card.id),
     isCore: index === coreIndex,
@@ -46,30 +46,31 @@ export function normalizeClusters(
 }
 
 /**
- * Guarantee every cluster carries a **stable, unique** id. Legacy or imported
- * sessions can hold clusters with a missing or duplicated id, which collapses
- * cluster identity: renaming one would rename every id-less/duplicate cluster
- * (`updateCluster(id)` matches them all), an unassigned card would appear inside
- * an id-less cluster (`undefined === undefined`), and duplicate React keys can
- * crash the board. Keeps the FIRST occurrence of each id (so existing
- * `card.clusterId` references stay valid) and re-mints only the missing/duplicate
- * ones. Returns the same array reference when nothing needed fixing.
+ * Guarantee every item in a list carries a **stable, unique** `id`. Legacy or
+ * imported sessions can hold **cards or clusters** with a missing or duplicated
+ * id, which collapses identity: an id-scoped update (`items.map(i => i.id === id
+ * ? … : i)`) then hits **every** item sharing that id — so renaming a cluster or
+ * assigning a card leaks onto the others — an unassigned card matches an id-less
+ * cluster (`undefined === undefined`), and duplicate React keys can crash the
+ * board. Keeps the FIRST occurrence of each id (so existing references such as
+ * `card.clusterId` stay valid) and re-mints only the missing/duplicate ones.
+ * Returns the same array reference when nothing needed fixing.
  */
-export function ensureClusterIds(clusters: Cluster[]): Cluster[] {
+export function ensureUniqueIds<T extends { id: string }>(items: T[]): T[] {
   const seen = new Set<string>();
   let changed = false;
-  const next = clusters.map((cluster) => {
-    if (cluster.id && !seen.has(cluster.id)) {
-      seen.add(cluster.id);
-      return cluster;
+  const next = items.map((item) => {
+    if (item.id && !seen.has(item.id)) {
+      seen.add(item.id);
+      return item;
     }
     changed = true;
     let fresh = crypto.randomUUID();
     while (seen.has(fresh)) fresh = crypto.randomUUID();
     seen.add(fresh);
-    return { ...cluster, id: fresh };
+    return { ...item, id: fresh } as T;
   });
-  return changed ? next : clusters;
+  return changed ? next : items;
 }
 
 /**

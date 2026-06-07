@@ -4,7 +4,7 @@
  */
 
 import { db } from "@/lib/db";
-import { ensureClusterIds } from "@/features/cards/clusters";
+import { ensureUniqueIds, normalizeClusters } from "@/features/cards/clusters";
 import { migrateSession } from "@/features/session/migrations";
 import {
   CURRENT_SCHEMA_VERSION,
@@ -29,11 +29,12 @@ export async function createSession(
 /**
  * Load a single session by id. If it predates the current schema, migrate it
  * (e.g. add `progress`) and persist the upgrade so local data stays consistent.
- * Independently of the schema version, heal any legacy clusters that lack a
- * stable, unique id (missing/duplicate ids leak cluster labels + assignments and
- * can crash the board via duplicate React keys — see ensureClusterIds). Corrupt
- * data can sit in already-current sessions, so this runs every load, not only on
- * a version upgrade; it persists once when something actually changed.
+ * Independently of the schema version, heal any legacy Phase-1 cards or clusters
+ * that lack a stable, unique id: a missing/duplicate id collapses identity, so an
+ * id-scoped update (assign/rename) leaks onto every item sharing the id, and
+ * duplicate React keys can crash the board (see ensureUniqueIds). Corrupt data
+ * can sit in already-current sessions, so this runs every load, not only on a
+ * version upgrade; it persists once when something actually changed.
  */
 export async function getSession(id: string): Promise<Session | undefined> {
   const raw = await db.sessions.get(id);
@@ -51,11 +52,21 @@ export async function getSession(id: string): Promise<Session | undefined> {
     dirty = true;
   }
 
-  const healedClusters = ensureClusterIds(session.phase1.clusters);
-  if (healedClusters !== session.phase1.clusters) {
+  const healedCards = ensureUniqueIds(session.phase1.cards);
+  const healedClusters = ensureUniqueIds(session.phase1.clusters);
+  if (
+    healedCards !== session.phase1.cards ||
+    healedClusters !== session.phase1.clusters
+  ) {
     session = {
       ...session,
-      phase1: { ...session.phase1, clusters: healedClusters },
+      phase1: {
+        ...session.phase1,
+        cards: healedCards,
+        // Re-derive cardIds/isCore from the healed ids so the persisted
+        // membership stays consistent after a re-mint.
+        clusters: normalizeClusters(healedCards, healedClusters),
+      },
     };
     dirty = true;
   }
