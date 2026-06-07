@@ -1,6 +1,16 @@
 import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Plus, RotateCcw, Trash2 } from "lucide-react";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/features/cards/Card";
 import { MAX_CLUSTERS } from "@/features/cards/clusters";
@@ -67,6 +77,7 @@ export function ClusterBoard({
     dy: number;
   } | null>(null);
   const ovalStart = useRef<{ px: number; py: number } | null>(null);
+  const [resetOpen, setResetOpen] = useState(false);
 
   /** Bottom edge of a cluster's oval (incl. the Kernproblem line) — for sizing. */
   function clusterBottom(cluster: Cluster): number {
@@ -81,11 +92,30 @@ export function ClusterBoard({
       ...clusters.map((c) => clusterBottom(c)),
     ]) + CANVAS_MARGIN;
 
+  /** At least one card is assigned to a cluster — gates the reset affordance. */
+  const hasAssignments = cards.some((c) => c.clusterId != null);
+
   /** Set a card's cluster (via the dropdown). Logical only — never moves the card. */
   function assignCard(card: CardModel, clusterId: string | undefined) {
     onCardsChange(
       cards.map((c) => (c.id === card.id ? { ...c, clusterId } : c)),
     );
+  }
+
+  /**
+   * Clear EVERY card's cluster assignment — a deliberate bulk reset (not
+   * id-scoped: "all" is the point). Cards (text/colour/position/visibility),
+   * clusters (name/weight/position) and everything else stay untouched; the
+   * parent's onCardsChange re-runs normalizeClusters, so all cardIds become
+   * empty while isCore stays driven by the weights.
+   */
+  function resetAssignments() {
+    onCardsChange(
+      cards.map((c) =>
+        c.clusterId != null ? { ...c, clusterId: undefined } : c,
+      ),
+    );
+    setResetOpen(false);
   }
 
   /** Persist a card change (move/edit). Moving a card never touches a cluster. */
@@ -230,16 +260,28 @@ export function ClusterBoard({
   return (
     <div className="space-y-3">
       {!readOnly ? (
-        <div className="flex items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={addCluster}
-            disabled={clusters.length >= MAX_CLUSTERS}
-          >
-            <Plus />
-            Cluster hinzufügen
-          </Button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={addCluster}
+              disabled={clusters.length >= MAX_CLUSTERS}
+            >
+              <Plus />
+              Cluster hinzufügen
+            </Button>
+            {hasAssignments ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setResetOpen(true)}
+              >
+                <RotateCcw />
+                Zuordnungen zurücksetzen
+              </Button>
+            ) : null}
+          </div>
           <p className="text-xs text-faint">
             {clusters.length} / {MAX_CLUSTERS} Cluster
             {clusters.length >= MAX_CLUSTERS ? " — Maximum erreicht" : ""}
@@ -404,6 +446,31 @@ export function ClusterBoard({
       </div>
 
       {!readOnly ? <NoPersonalDataHint example="Arbeitslast" /> : null}
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cluster-Zuordnungen zurücksetzen?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Alle Karten-Zuordnungen zu Clustern werden entfernt. Deine Karten
+              und Cluster bleiben erhalten — du ordnest danach neu zu.
+              Fortfahren?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <Button variant="outline">Abbrechen</Button>
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button onClick={resetAssignments}>
+                Zuordnungen zurücksetzen
+              </Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
