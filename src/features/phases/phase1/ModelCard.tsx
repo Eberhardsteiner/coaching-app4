@@ -13,6 +13,8 @@ export interface ModelMeta {
   subtitle?: string;
   /** Optionale ausführliche Beschreibung, gezeigt sobald das Modell gewählt ist. */
   description?: ReactNode;
+  /** Optionaler Pfad zum Modell-Schaubild (statisches Asset unter /public). */
+  image?: string;
 }
 
 /** Per-model identity accent (Tailwind classes backed by the --color-model-* tokens). */
