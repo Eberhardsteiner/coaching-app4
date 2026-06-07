@@ -40,6 +40,34 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "(Betriebs-)wirtschaftliche Herausforderungen",
     summary:
       "Die Organisation als System: Umweltsphären, Anspruchsgruppen, Interaktionsthemen, Ordnungsmomente, Prozesse und Entwicklungsmodi.",
+    subtitle: "Change in Unternehmen",
+    description: (
+      <>
+        <p>
+          Dieses Modell bildet{" "}
+          <strong className="font-semibold text-foreground">22 Merkmale</strong>{" "}
+          ab, die mit jeder Veränderung innerhalb eines unternehmerischen
+          Kontextes in Zusammenhang stehen. Verändert sich ein Merkmal, z. B.
+          eine rechtliche Grundlage, wirkt sich das auf die anderen Merkmale
+          aus.{" "}
+          <strong className="font-semibold text-foreground">
+            Veränderung im Unternehmen ist systemisch.
+          </strong>
+        </p>
+        <p className="mt-2">
+          Jede Person, die sich selbst gewollt in einem unternehmerischen
+          Kontext verändern will,{" "}
+          <strong className="font-semibold text-foreground">
+            unterliegt genauso
+          </strong>{" "}
+          den durch die Merkmale des Modells beschriebenen{" "}
+          <strong className="font-semibold text-foreground">
+            Wechselwirkungen
+          </strong>
+          .
+        </p>
+      </>
+    ),
   },
   "gesundheit-konstruktivistisch": {
     icon: HeartPulse,
@@ -198,6 +226,20 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           />
         ) : loaded.model ? (
           <div className="space-y-4">
+            {/* Ausführliche Modellbeschreibung — sobald hinterlegt (Selected-State). */}
+            {MODEL_META[selectedModel]?.description ? (
+              <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+                {MODEL_META[selectedModel]?.subtitle ? (
+                  <p className="text-xs font-medium uppercase tracking-wide text-faint">
+                    {MODEL_META[selectedModel]?.subtitle}
+                  </p>
+                ) : null}
+                <div className="mt-1 text-sm leading-relaxed text-muted">
+                  {MODEL_META[selectedModel]?.description}
+                </div>
+              </div>
+            ) : null}
+
             {/* B5 — 3K conflict-aspects special note */}
             {selectedModel === "drei-k" ? (
               <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">

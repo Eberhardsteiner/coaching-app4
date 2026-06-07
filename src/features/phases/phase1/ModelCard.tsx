@@ -1,5 +1,5 @@
 import { HelpCircle, type LucideIcon } from "lucide-react";
-import { type PointerEvent, useId, useState } from "react";
+import { type PointerEvent, type ReactNode, useId, useState } from "react";
 
 import { useModel } from "@/features/content/useModel";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,10 @@ export interface ModelMeta {
   icon: LucideIcon;
   anliegen: string;
   summary: string;
+  /** Optionaler Untertitel/Thema des Modells (z. B. „Change in Unternehmen"). */
+  subtitle?: string;
+  /** Optionale ausführliche Beschreibung, gezeigt sobald das Modell gewählt ist. */
+  description?: ReactNode;
 }
 
 /** Per-model identity accent (Tailwind classes backed by the --color-model-* tokens). */
