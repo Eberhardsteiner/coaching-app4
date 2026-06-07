@@ -92,15 +92,15 @@ const MODEL_META: Record<string, ModelMeta> = {
             „Das Fehlen von Krankheit.“
           </strong>{" "}
           Diese Herangehensweise ist einfach, da es z. B. mit der von der WHO
-          herausgegebenen ICD 10 (ICD, englisch = International Statistical
-          Classification of Diseases and Related Health Problems) ein
-          Klassifikationssystem der weltweit bekannten Krankheiten gibt. Es
-          müsste nur durch eine Untersuchung eines Arztes festgestellt werden,
-          dass keine Krankheit vorliegt – der Patient also „gesund“ ist. Ein
-          Unternehmen könnte das z. B. durch einen Betriebsarzt realisieren und
-          dokumentieren lassen. Die WHO bietet jedoch eine weitreichende
-          Definition von Gesundheit an, die dem individuellen Erleben besser
-          gerecht wird als das schlichte „Fehlen von Krankheit“:{" "}
+          herausgegebenen ICD-11 (ICD, englisch = International Classification
+          of Diseases) ein Klassifikationssystem der weltweit bekannten
+          Krankheiten gibt. Es müsste nur durch eine Untersuchung eines Arztes
+          festgestellt werden, dass keine Krankheit vorliegt – der Patient also
+          „gesund“ ist. Ein Unternehmen könnte das z. B. durch einen
+          Betriebsarzt realisieren und dokumentieren lassen. Die WHO bietet
+          jedoch eine weitreichende Definition von Gesundheit an, die dem
+          individuellen Erleben besser gerecht wird als das schlichte „Fehlen
+          von Krankheit“:{" "}
           <strong className="font-semibold text-foreground">
             „Gesundheit ist ein Zustand vollkommenen körperlichen, geistigen und
             sozialen Wohlbefindens und nicht allein das Fehlen von Krankheit und
@@ -346,6 +346,17 @@ const CONFLICT_ASPECTS = [
   { term: "Dritte", gloss: "Unbeteiligte, die Folgen des Konflikts spüren" },
 ];
 
+/** Die vier in jedem Konflikt gesetzten Kategorien (3K — immer relevant). */
+const CONFLICT_FACTORS = [
+  {
+    term: "Abhängigkeiten",
+    gloss: "wovon hängen die Parteien voneinander ab?",
+  },
+  { term: "Zeit", gloss: "Vorlauf und die verbleibende Zeit zur Lösung" },
+  { term: "Werte", gloss: "welche Werte prallen aufeinander?" },
+  { term: "Emotionen", gloss: "welche Gefühle löst das aus?" },
+];
+
 /**
  * Phase 1, Step 1.3 — Perspektive wechseln („Vogelperspektive"). Verbatim intro
  * + four model buttons (icon + Anliegen + Kurzbeschreibung + accessible
@@ -483,8 +494,27 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                   <Info className="size-4 shrink-0 text-accent" aria-hidden />
                   Achtung Besonderheit
                 </p>
+
                 <p className="mt-1.5 text-sm text-muted">
-                  Zu jedem Konflikt gehören diese Aspekte:
+                  Diese vier Kategorien sind in{" "}
+                  <span className="font-medium text-foreground">jedem</span>{" "}
+                  Konflikt relevant — geh sie auf jeden Fall durch (z. B.: „Was
+                  haben Abhängigkeiten mit deinem IST-Zustand zu tun?“):
+                </p>
+                <ul className="mt-2 space-y-1 text-sm text-muted">
+                  {CONFLICT_FACTORS.map((factor) => (
+                    <li key={factor.term}>
+                      <span className="font-medium text-foreground">
+                        {factor.term}
+                      </span>{" "}
+                      (= {factor.gloss})
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="mt-3 text-sm text-muted">
+                  Zu jedem Konflikt gehören außerdem diese festen Bestandteile
+                  (die „Statik“):
                 </p>
                 <ul className="mt-2 space-y-1 text-sm text-muted">
                   {CONFLICT_ASPECTS.map((aspect) => (
@@ -496,7 +526,8 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2 text-sm text-muted">
+
+                <p className="mt-3 text-sm text-muted">
                   Sollte davon etwas fehlen, ergänze diese Punkte bitte in jedem
                   Fall.
                 </p>
