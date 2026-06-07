@@ -1,11 +1,13 @@
 import { ChevronDown, Info, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { AddStage } from "@/features/cards/CardBoard";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { StepNav } from "@/features/phases/StepNav";
 import { Step2Guide } from "@/features/phases/phase1/Step2Guide";
+import { Step2Intro } from "@/features/phases/phase1/Step2Intro";
+import { consumeStep2Intro } from "@/features/phases/phase1/step2IntroSignal";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Card } from "@/features/session/types";
@@ -121,6 +123,19 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
 
   // Schritt-für-Schritt-Coach: nur per Button geöffnet (kein Auto-Öffnen).
   const [guideOpen, setGuideOpen] = useState(false);
+
+  // Überleitung 1 → 2: das transiente Signal beim Mounten einmalig verbrauchen
+  // (ref-gesichert gegen den Strict-Mode-Doppel-Effekt).
+  const [showIntro, setShowIntro] = useState(false);
+  const introConsumed = useRef(false);
+  useEffect(() => {
+    if (introConsumed.current) return;
+    introConsumed.current = true;
+    // Einmaliger Verbrauch eines transienten Mount-Signals (impur, ref-gesichert)
+    // — nicht im Render ableitbar, daher bewusst hier.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (consumeStep2Intro()) setShowIntro(true);
+  }, []);
 
   return (
     <div>
@@ -264,6 +279,8 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
       />
 
       <Step2Guide open={guideOpen} onClose={() => setGuideOpen(false)} />
+
+      {showIntro ? <Step2Intro onDone={() => setShowIntro(false)} /> : null}
     </div>
   );
 }

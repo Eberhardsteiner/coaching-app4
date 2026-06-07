@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { StepNav } from "@/features/phases/StepNav";
+import { armStep2Intro } from "@/features/phases/phase1/step2IntroSignal";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import { cn } from "@/lib/utils";
@@ -116,6 +117,12 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
   }
   function setBurden(value: number) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, istBurden: value } }));
+  }
+
+  /** Forward to Schritt 2 — arm the 1 → 2 transition intro first. */
+  function goNext() {
+    armStep2Intro();
+    nav.advance();
   }
 
   /** Commit a feeling from the (pre-checked) list — no dialog. */
@@ -297,7 +304,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
                   variant="ghost"
                   size="sm"
                   disabled={!canNext}
-                  onClick={() => nav.advance()}
+                  onClick={goNext}
                 >
                   Trotzdem weiter
                 </Button>
@@ -310,7 +317,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
       <StepNav
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
-        onNext={nav.advance}
+        onNext={goNext}
         canNext={canNext}
       />
 
