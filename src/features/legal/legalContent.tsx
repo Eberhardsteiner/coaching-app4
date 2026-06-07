@@ -17,16 +17,45 @@ const LINK =
 /** Rechtliche Entlastung (Disclaimer). */
 export function DisclaimerText() {
   return (
-    <p className={PROSE}>
-      Dieses Angebot dient der Selbsthilfe und Weiterbildung. Es ist keine
-      Heilbehandlung, Psychotherapie oder medizinische bzw. psychologische
-      Beratung und ersetzt keine fachliche Hilfe. Ein bestimmtes Ergebnis wird
-      nicht zugesichert; Entscheidungen und Handlungen liegen in deiner
-      Eigenverantwortung. Die App stellt Struktur bereit, keine Ratschläge.
-      Deine Eingaben werden ausschließlich lokal in deinem Browser gespeichert
-      und verlassen dein Gerät nur, wenn du selbst exportierst oder Inhalte
-      kopierst.
-    </p>
+    <div className="space-y-3">
+      <p className={PROSE}>
+        Dieses Angebot dient der{" "}
+        <strong className="font-medium text-foreground">
+          Selbsthilfe und Weiterbildung
+        </strong>
+        . Es ist{" "}
+        <strong className="font-medium text-foreground">
+          keine Heilbehandlung, Psychotherapie oder medizinische bzw.
+          psychologische Beratung
+        </strong>{" "}
+        und ersetzt keine fachliche Hilfe.
+      </p>
+      <p className={PROSE}>
+        Ein bestimmtes Ergebnis wird{" "}
+        <strong className="font-medium text-foreground">
+          nicht zugesichert
+        </strong>
+        ; Entscheidungen und Handlungen liegen in deiner{" "}
+        <strong className="font-medium text-foreground">
+          Eigenverantwortung
+        </strong>
+        . Die App stellt{" "}
+        <strong className="font-medium text-foreground">Struktur</strong>{" "}
+        bereit,{" "}
+        <strong className="font-medium text-foreground">
+          keine Ratschläge
+        </strong>
+        .
+      </p>
+      <p className={PROSE}>
+        Deine Eingaben werden{" "}
+        <strong className="font-medium text-foreground">
+          ausschließlich lokal in deinem Browser
+        </strong>{" "}
+        gespeichert und verlassen dein Gerät nur, wenn du selbst exportierst
+        oder Inhalte kopierst.
+      </p>
+    </div>
   );
 }
 
@@ -54,13 +83,51 @@ export function PrivacyText() {
 /** Fachärztlicher / psychotherapeutischer Hinweis (v. a. Selbstcoaching). */
 export function MedicalNoticeText() {
   return (
+    <div className="space-y-3">
+      <p className={PROSE}>
+        Coaching ist{" "}
+        <strong className="font-medium text-foreground">
+          kein Ersatz für ärztliche oder psychotherapeutische Hilfe
+        </strong>
+        . Wenn dein Thema mit einer{" "}
+        <strong className="font-medium text-foreground">Sucht</strong>, einer{" "}
+        <strong className="font-medium text-foreground">
+          akuten psychischen Belastung
+        </strong>{" "}
+        (z. B. anhaltende Niedergeschlagenheit, Angst, Krisen) oder dem Wunsch
+        zu tun hat, dass sich andere ändern, ist Selbstcoaching nicht das
+        richtige Werkzeug.
+      </p>
+      <p className={PROSE}>
+        Bitte hole dir in{" "}
+        <strong className="font-medium text-foreground">akuten Krisen</strong>{" "}
+        ärztliche oder psychotherapeutische Hilfe.
+      </p>
+    </div>
+  );
+}
+
+/** Kurzer Datenschutz-Hinweis für das Consent-Gate. */
+export function PrivacyNoticeText() {
+  return (
     <p className={PROSE}>
-      Coaching ist kein Ersatz für ärztliche oder psychotherapeutische Hilfe.
-      Wenn dein Thema mit einer Sucht, einer akuten psychischen Belastung (z. B.
-      anhaltende Niedergeschlagenheit, Angst, Krisen) oder dem Wunsch zu tun
-      hat, dass sich andere ändern, ist Selbstcoaching nicht das richtige
-      Werkzeug. Bitte wende dich an deine Hausärztin/deinen Hausarzt, eine
-      psychotherapeutische Praxis — oder an ein begleitetes Coaching.
+      <strong className="font-medium text-foreground">
+        Datenschutz-Hinweis:
+      </strong>{" "}
+      Alle Eingaben bleiben{" "}
+      <strong className="font-medium text-foreground">
+        lokal in deinem Browser
+      </strong>{" "}
+      gespeichert. Es gibt{" "}
+      <strong className="font-medium text-foreground">
+        keinen Server und kein Tracking
+      </strong>{" "}
+      und es findet{" "}
+      <strong className="font-medium text-foreground">
+        keine automatisierte Datenübertragung
+      </strong>{" "}
+      statt. Daten verlassen dein Gerät nur, wenn du selbst exportierst oder
+      Inhalte kopierst. Sitzungen kannst du jederzeit löschen.
     </p>
   );
 }

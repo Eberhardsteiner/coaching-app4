@@ -1,4 +1,5 @@
-import { CircleHelp, Save } from "lucide-react";
+import { CircleHelp, FileDown, Save } from "lucide-react";
+import { Link } from "react-router";
 
 import { PhaseBar } from "@/features/phases/PhaseBar";
 import { downloadSession } from "@/features/session/exportSession";
@@ -31,6 +32,16 @@ export function TopBar() {
         >
           <Save className="size-5" />
         </button>
+
+        {/* Open the print-ready summary page (the user prints to PDF there). */}
+        <Link
+          to="/zusammenfassung"
+          aria-label="Ergebnisse als PDF speichern"
+          title="Ergebnisse als PDF speichern"
+          className="flex size-9 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
+        >
+          <FileDown className="size-5" />
+        </Link>
 
         {/* Import a previously saved session. */}
         <ImportButton iconOnly label="Sitzung importieren" />

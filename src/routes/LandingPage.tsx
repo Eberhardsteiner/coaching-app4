@@ -111,7 +111,8 @@ export function LandingPage() {
               </Button>
 
               <p className="text-sm text-blue-100/80">
-                5+1 Phasen · vertraulich · läuft nur in deinem Browser
+                5 Phasen · vertraulich · läuft nur in deinem Browser · keine
+                automatisierte Datenübertragung
               </p>
 
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">

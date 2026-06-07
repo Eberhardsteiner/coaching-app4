@@ -38,7 +38,9 @@ export function usePhaseNavigation(): PhaseNavigation {
 
   const phaseDef = PHASES[progress.phase];
   const stepCount = phaseDef.steps.length;
-  const stepIndex = progress.step;
+  // Clamp the stored step into range — a session saved mid-phase before its step
+  // count shrank (e.g. Phase 0: 4 → 2 steps) must not land on an empty screen.
+  const stepIndex = Math.min(Math.max(progress.step, 0), stepCount - 1);
   const isFirstStep = stepIndex === 0;
   const isLastStep = stepIndex >= stepCount - 1;
   const canGoBack = stepIndex > 0 || progress.phase > 0;
@@ -60,8 +62,9 @@ export function usePhaseNavigation(): PhaseNavigation {
   function advance() {
     setProgress((p) => {
       const steps = PHASES[p.phase].steps.length;
-      if (p.step < steps - 1) {
-        return { ...p, step: p.step + 1 };
+      const cur = Math.min(Math.max(p.step, 0), steps - 1);
+      if (cur < steps - 1) {
+        return { ...p, step: cur + 1 };
       }
       // Last step → complete this phase and move to the next.
       const completedPhases = p.completedPhases.includes(p.phase)
@@ -74,7 +77,9 @@ export function usePhaseNavigation(): PhaseNavigation {
 
   function goPrevStep() {
     setProgress((p) => {
-      if (p.step > 0) return { ...p, step: p.step - 1 };
+      const steps = PHASES[p.phase].steps.length;
+      const cur = Math.min(Math.max(p.step, 0), steps - 1);
+      if (cur > 0) return { ...p, step: cur - 1 };
       if (p.phase > 0) {
         const prevPhase = (p.phase - 1) as PhaseId;
         return {

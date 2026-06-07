@@ -91,16 +91,37 @@ export function BranchSelectPage() {
               aria-hidden
             />
           </summary>
-          <div className="border-t border-subtle px-5 py-4 text-sm leading-relaxed text-muted">
+          <div className="space-y-3 border-t border-subtle px-5 py-4 text-sm leading-relaxed text-muted">
             <p>
-              Beim begleiteten Coaching hält ein Mensch den Prozess: Eine
-              ausgebildete Person ist per Videogespräch dabei, stellt Fragen und
-              sorgt für Sicherheit — du entscheidest über Inhalte und Tempo.
-              Beim Selbstcoaching führt die App dich allein durch dieselben
-              Phasen, ergänzt um Erklärtexte, kurze Videos und KI-Impulse an
-              passenden Stellen. Selbstcoaching eignet sich für klar umrissene
-              Anliegen; bei belastenden oder gesundheitlich relevanten Themen
-              ist die menschliche Begleitung der bessere Weg.
+              Beim{" "}
+              <strong className="font-medium text-foreground">
+                begleiteten Coaching
+              </strong>{" "}
+              hält ein Mensch den Prozess: Eine ausgebildete Person ist{" "}
+              <strong className="font-medium text-foreground">
+                per Videogespräch
+              </strong>{" "}
+              dabei, stellt Fragen und sorgt für Sicherheit — du entscheidest
+              über Inhalte und Tempo.
+            </p>
+            <p>
+              Beim{" "}
+              <strong className="font-medium text-foreground">
+                Selbstcoaching
+              </strong>{" "}
+              führt die App dich allein durch dieselben Phasen, ergänzt um
+              Erklärtexte, kurze Videos und KI-Impulse an passenden Stellen.
+            </p>
+            <p>
+              Selbstcoaching eignet sich für{" "}
+              <strong className="font-medium text-foreground">
+                klar umrissene Anliegen
+              </strong>
+              ; bei belastenden oder gesundheitlich relevanten Themen ist die{" "}
+              <strong className="font-medium text-foreground">
+                menschliche Begleitung
+              </strong>{" "}
+              der bessere Weg.
             </p>
           </div>
         </details>

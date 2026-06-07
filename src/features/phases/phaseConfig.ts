@@ -19,33 +19,23 @@ export interface PhaseDef {
 
 /**
  * Central phase configuration — all phases are fully built: Phase 0
- * (Vereinbarung, 4 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
+ * (Vereinbarung, 2 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
  * Phase 3 (Ressourcen, 7 steps), Phase 4 (Handlungsplan, 3 steps) and Phase 5
- * (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the 5+1 process.
+ * (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the process.
  */
 export const PHASES: PhaseDef[] = [
   {
     id: 0,
     title: "Vereinbarung",
-    short: "Ankommen, Werte und dein Thema klären.",
+    short: "Werte, Rollen und dein Thema klären.",
     steps: [
       {
         id: "0.1",
-        title: "Ankommen & Erwartungen",
-        intro: "Kurz ankommen — und klären, was dieser Weg von dir braucht.",
+        title: "Vereinbarung",
+        intro: "Werte, Rollen und der grobe Weg — kurz bestätigt.",
       },
       {
         id: "0.2",
-        title: "Werte & Vorgehen",
-        intro: "Worauf dieses Coaching baut — und wie der Weg grob verläuft.",
-      },
-      {
-        id: "0.3",
-        title: "Wer steuert was",
-        intro: "Wer im Prozess wofür verantwortlich ist.",
-      },
-      {
-        id: "0.4",
         title: "Dein Thema",
         intro: "Skizziere dein Thema kurz — ein paar Fakten genügen.",
       },

@@ -1,26 +1,19 @@
 import { LifeBuoy } from "lucide-react";
 
-import { DEFAULT_REGION, getHelpResources } from "@/config/helpResources";
-import type { HelpRegion } from "@/config/helpResources";
 import { MedicalNoticeText } from "@/features/legal/legalContent";
 import { cn } from "@/lib/utils";
 
 type SafetyNoticeProps = {
-  region?: HelpRegion;
   className?: string;
 };
 
 /**
- * Reusable "Hilfe & Sicherheit" element: the medical/psychotherapy notice plus
- * configurable emergency references. Built to be embedded on the legal page,
- * and later in the help drawer and the consent gate (Prompt 2).
+ * Reusable "Hilfe & Sicherheit" element: the medical/psychotherapy notice.
+ * Embedded on the legal page, the help drawer and the consent gate. Concrete
+ * emergency numbers are intentionally not shown here — the protective hint
+ * (seek help in a crisis) lives in MedicalNoticeText.
  */
-export function SafetyNotice({
-  region = DEFAULT_REGION,
-  className,
-}: SafetyNoticeProps) {
-  const help = getHelpResources(region);
-
+export function SafetyNotice({ className }: SafetyNoticeProps) {
   return (
     <section
       aria-labelledby="safety-notice-title"
@@ -37,49 +30,6 @@ export function SafetyNotice({
           </h3>
 
           <MedicalNoticeText />
-
-          <div className="rounded-lg bg-surface-2 p-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-faint">
-              Im Notfall
-            </p>
-            <ul className="mt-2 space-y-1 text-sm text-muted">
-              <li>
-                <span className="font-medium text-foreground">
-                  {help.emergency.label}:
-                </span>{" "}
-                {help.emergency.href ? (
-                  <a
-                    className="text-accent underline-offset-4 hover:underline"
-                    href={help.emergency.href}
-                  >
-                    {help.emergency.value}
-                  </a>
-                ) : (
-                  help.emergency.value
-                )}
-              </li>
-              {help.crisisLines.map((line) => (
-                <li key={line.value}>
-                  <span className="font-medium text-foreground">
-                    {line.label}:
-                  </span>{" "}
-                  {line.href ? (
-                    <a
-                      className="text-accent underline-offset-4 hover:underline"
-                      href={line.href}
-                    >
-                      {line.value}
-                    </a>
-                  ) : (
-                    line.value
-                  )}
-                  {line.note ? (
-                    <span className="text-faint"> — {line.note}</span>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       </div>
     </section>

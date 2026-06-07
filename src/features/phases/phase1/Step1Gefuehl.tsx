@@ -62,7 +62,7 @@ const LOW_BURDEN_THRESHOLD = 3;
  * single IST feeling (phase1.istWord), shown prominently as "Dein Ausgangsgefühl".
  * Picking from the (pre-checked) list commits directly; the free-text path runs a
  * verbatim quality check (AlertDialog) before committing. The existing
- * Leidensdruck / "Thema anpassen" logic (low burden → goTo(0,3)) is kept.
+ * Leidensdruck / "Thema anpassen" logic (low burden → goTo(0,1)) is kept.
  *
  * Commit across input methods: a single click/tap *marks* a feeling (rosa IST
  * accent); committing happens via double-click (mouse), Enter/Space on the
@@ -263,7 +263,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => nav.goTo(0, 3)}
+                  onClick={() => nav.goTo(0, 1)}
                 >
                   Thema anpassen
                 </Button>

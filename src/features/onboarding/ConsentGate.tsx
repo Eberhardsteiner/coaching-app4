@@ -3,7 +3,10 @@ import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { BRANDING } from "@/config/branding";
-import { DisclaimerText } from "@/features/legal/legalContent";
+import {
+  DisclaimerText,
+  PrivacyNoticeText,
+} from "@/features/legal/legalContent";
 import { SafetyNotice } from "@/features/safety/SafetyNotice";
 import { useSessionStore } from "@/features/session/sessionStore";
 
@@ -90,6 +93,10 @@ export function ConsentGate() {
 
         <div className="mt-8 space-y-6">
           <DisclaimerText />
+
+          <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+            <PrivacyNoticeText />
+          </div>
 
           {isSelf ? <SafetyNotice /> : null}
 
