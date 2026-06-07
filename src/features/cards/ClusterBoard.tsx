@@ -4,6 +4,7 @@ import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/features/cards/Card";
 import { MAX_CLUSTERS } from "@/features/cards/clusters";
+import { useFullWidthBoard } from "@/features/cards/useFullWidthBoard";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -22,15 +23,12 @@ type ClusterBoardProps = {
 
 /* Layout constants (card height mirrors Card.tsx). */
 const CARD_H = 88;
-const CARD_APPROX_W = 160;
 const OVAL_W = 230;
 const OVAL_H = 44;
 const KEY_STEP = 16;
 
-/* Whiteboard canvas — much bigger than the viewport; scrolls both ways and
-   grows to fit the furthest card/oval. */
-const CANVAS_MIN_W = 1800;
-const CANVAS_MIN_H = 1300;
+/* The field fills the full content width (see useFullWidthBoard) and only grows
+   vertically when cards/ovals are placed lower — no needless horizontal scroll. */
 const CANVAS_MARGIN = 320;
 
 /** The unique 1..10 weight scale (10 = "drückt am meisten"). */
@@ -58,6 +56,8 @@ export function ClusterBoard({
   allowVisibilityToggle,
 }: ClusterBoardProps) {
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const fullWidthStyle = useFullWidthBoard(wrapRef);
   const clusterById = new Map(clusters.map((c) => [c.id, c]));
 
   // Live offset while a cluster's oval is being dragged (oval only — cards never follow).
@@ -73,20 +73,13 @@ export function ClusterBoard({
     return (cluster.y ?? 0) + OVAL_H + 28;
   }
 
-  const canvasW = Math.max(
-    CANVAS_MIN_W,
-    atLeast(0, [
-      ...cards.map((c) => (c.x ?? 0) + CARD_APPROX_W),
-      ...clusters.map((c) => (c.x ?? 0) + OVAL_W),
-    ]) + CANVAS_MARGIN,
-  );
-  const canvasH = Math.max(
-    CANVAS_MIN_H,
+  // The canvas fills the full width (w-full) and grows vertically to fit the
+  // lowest card/oval, so there is room to place items below the fold.
+  const canvasH =
     atLeast(0, [
       ...cards.map((c) => (c.y ?? 0) + CARD_H),
       ...clusters.map((c) => clusterBottom(c)),
-    ]) + CANVAS_MARGIN,
-  );
+    ]) + CANVAS_MARGIN;
 
   /** Set a card's cluster (via the dropdown). Logical only — never moves the card. */
   function assignCard(card: CardModel, clusterId: string | undefined) {
@@ -138,8 +131,13 @@ export function ClusterBoard({
   function moveOval(id: string, dx: number, dy: number) {
     const cluster = clusterById.get(id);
     if (!cluster) return;
-    const nx = Math.max(0, (cluster.x ?? 0) + dx);
-    const ny = Math.max(0, (cluster.y ?? 0) + dy);
+    // Clamp to the board so the oval stays within the full-width field (drag
+    // bounds = the whole canvas, mirroring the cards). Only the oval moves.
+    const rect = boardRef.current?.getBoundingClientRect();
+    const maxX = rect ? Math.max(0, rect.width - OVAL_W) : Infinity;
+    const maxY = rect ? Math.max(0, rect.height - OVAL_H) : Infinity;
+    const nx = Math.min(Math.max(0, (cluster.x ?? 0) + dx), maxX);
+    const ny = Math.min(Math.max(0, (cluster.y ?? 0) + dy), maxY);
     onClustersChange(
       clusters.map((c) => (c.id === id ? { ...c, x: nx, y: ny } : c)),
     );
@@ -244,14 +242,19 @@ export function ClusterBoard({
       ) : null}
 
       <div
+        ref={wrapRef}
+        style={fullWidthStyle ?? undefined}
         tabIndex={0}
-        aria-label="Arbeitsfläche — scrollbar; Karten und Cluster frei platzieren"
-        className="h-[78vh] w-full overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+        aria-label="Arbeitsfläche in voller Breite — Karten und Cluster frei platzieren"
+        className={cn(
+          "h-[78vh] overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
+          fullWidthStyle ? null : "w-full",
+        )}
       >
         <div
           ref={boardRef}
-          className="relative"
-          style={{ width: canvasW, height: canvasH }}
+          className="relative min-h-full w-full"
+          style={{ height: canvasH }}
         >
           {/* IST anchor — rosa, never clustered. */}
           {anchorCard ? (

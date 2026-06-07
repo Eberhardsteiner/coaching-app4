@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/features/cards/Card";
 import { ClusterBoard } from "@/features/cards/ClusterBoard";
 import { DEFAULT_CARD_COLOR, getCardColor } from "@/features/cards/cardColors";
+import { useFullWidthBoard } from "@/features/cards/useFullWidthBoard";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -12,12 +13,10 @@ import { cn } from "@/lib/utils";
 /** A colour-coded "add card" affordance: a new card takes this stage's colour. */
 export type AddStage = { colorId: string; addLabel: string };
 
-/* Whiteboard canvas (large mode) — much bigger than the viewport, scrolls both
-   ways and grows as cards are dragged towards its edges. */
-const CANVAS_MIN_W = 1800;
-const CANVAS_MIN_H = 1300;
+/* Full-width board (large mode): the field fills the whole content area (see
+   useFullWidthBoard) and only grows vertically when cards are placed lower —
+   horizontal stays within the real width, so no needless horizontal scrolling. */
 const CANVAS_MARGIN = 320;
-const CARD_APPROX_W = 160;
 const CARD_APPROX_H = 100;
 
 export type CardBoardProps = {
@@ -79,7 +78,10 @@ export function CardBoard({
 }: CardBoardProps) {
   // Hooks must run unconditionally (free mode owns this local state).
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
+  // Full-width breakout for the large board (ignored in cluster mode below).
+  const fullWidthStyle = useFullWidthBoard(wrapRef);
 
   // In stage mode the recolour button cycles within the stage palette.
   const stagePalette = addStages?.map((stage) => getCardColor(stage.colorId));
@@ -121,15 +123,12 @@ export function CardBoard({
     onCardsChange(cards.filter((c) => c.id !== id));
   }
 
-  // Large canvas grows to fit the furthest card (so the board can keep expanding).
-  const rightMost = cards.length
-    ? Math.max(...cards.map((c) => (c.x ?? 0) + CARD_APPROX_W))
-    : 0;
+  // The canvas fills the full width (w-full) and grows vertically to fit the
+  // lowest card, so there is room to place cards below the fold.
   const bottomMost = cards.length
     ? Math.max(...cards.map((c) => (c.y ?? 0) + CARD_APPROX_H))
     : 0;
-  const canvasW = Math.max(CANVAS_MIN_W, rightMost + CANVAS_MARGIN);
-  const canvasH = Math.max(CANVAS_MIN_H, bottomMost + CANVAS_MARGIN);
+  const canvasH = bottomMost + CANVAS_MARGIN;
 
   const boardContent = (
     <>
@@ -215,14 +214,19 @@ export function CardBoard({
 
       {large ? (
         <div
+          ref={wrapRef}
+          style={fullWidthStyle ?? undefined}
           tabIndex={0}
-          aria-label="Arbeitsfläche — scrollbar; Karten frei platzieren"
-          className="h-[78vh] w-full overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+          aria-label="Arbeitsfläche in voller Breite — Karten frei platzieren"
+          className={cn(
+            "h-[78vh] overflow-auto rounded-xl border border-subtle bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
+            fullWidthStyle ? null : "w-full",
+          )}
         >
           <div
             ref={boardRef}
-            className="relative"
-            style={{ width: canvasW, height: canvasH }}
+            className="relative min-h-full w-full"
+            style={{ height: canvasH }}
           >
             {boardContent}
           </div>
