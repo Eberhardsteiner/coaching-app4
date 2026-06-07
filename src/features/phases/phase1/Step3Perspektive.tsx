@@ -80,6 +80,103 @@ const MODEL_META: Record<string, ModelMeta> = {
     anliegen: "Konflikte",
     summary:
       "Die Aspekte eines Konflikts: Ich, andere Partei, Dritte, Thema, Werte, Emotionen, Abhängigkeiten u. a.",
+    subtitle: "Der konstruktivistische Konflikt-Kontext",
+    description: (
+      <>
+        <p>
+          Das Modell beschreibt die zentralen Merkmale eines Konflikt-Kontextes,
+          die{" "}
+          <strong className="font-semibold text-foreground">
+            durch die Person (Ich) (konstruktivistisch) gedeutet
+          </strong>{" "}
+          werden. Einer (konstruktivistischen) Deutung folgen auch die Partei,
+          mit der ein Konflikt vorliegt, und die Dritten, die in irgendeiner
+          Form beteiligt sind.
+        </p>
+        <p className="mt-2">
+          Jede Deutung basiert auf Erfahrungen des Deutenden und auf den zur
+          Deutung genutzten Ressourcen im Sinne von eigenen Motiven, Werten,
+          Intelligenzen, aber auch rein biologischer Ressourcen, wie der zur
+          Wahrnehmung zur Verfügung stehenden Sensorik.{" "}
+          <strong className="font-semibold text-foreground">
+            Ein Konflikt kann nicht losgelöst vom Konstruktivismus betrachtet
+            werden.
+          </strong>
+        </p>
+        <p className="mt-2">
+          Um einen Konflikt handelt es sich dann, wenn eine{" "}
+          <strong className="font-semibold text-foreground">
+            Abhängigkeit der beiden Parteien
+          </strong>{" "}
+          vorliegt. Ohne diese Abhängigkeit gäbe es keinen Grund, sich zu
+          vertragen. Jeder Konflikt hat einen zeitlichen Vorlauf, der die
+          Deutung beeinflusst, und auch Zeit im Sinne eines Kontingentes, die
+          zur Lösung bleibt. Wird die zur Lösung verbleibende Zeit als gering
+          empfunden, kann ein{" "}
+          <strong className="font-semibold text-foreground">Tunnelblick</strong>{" "}
+          entstehen. Dies wirkt sich auf die Emotionen aus. In einem Konflikt
+          prallen unterschiedliche Werte aufeinander (psychologisch: die Werte
+          konfligieren). Werte werden sprachlich häufig auch mit Interessen oder
+          Bedürfnissen gleichgesetzt. Die eigene „Be-Wert-ung“ der Situation
+          und/oder die Verletzung von Werten rufen Emotionen hervor.
+        </p>
+        <p className="mt-2">
+          <strong className="font-semibold text-foreground">
+            Abhängigkeiten, Zeit, Werte und Emotionen sind faktisch Bestandteil
+            jedes Konfliktes.
+          </strong>{" "}
+          Diese vier Begriffe sind im Modell etwas dunkler hervorgehoben. Das
+          führt zur{" "}
+          <strong className="font-semibold text-foreground">
+            ersten Besonderheit
+          </strong>{" "}
+          in der Arbeit mit dem Modell: Da faktisch immer ein Zusammenhang
+          besteht, fragt der Coach z. B. „Was haben Abhängigkeiten mit Ihrem
+          IST-Zustand zu tun?“
+        </p>
+        <p className="mt-2">
+          Der Unterschied zur bisherigen Vorgehensweise besteht darin: Es wird
+          postuliert, dass Zeit, Abhängigkeit, Werte und Emotionen immer
+          relevant für Konflikte sind. Wählt der Coachee als deduktive
+          Wahrnehmungserweiterung zu seinem Thema z. B. „St. Galler
+          Management-Modell“, so kann er aus sich heraus (aus seinem
+          Konstruktivismus) entscheiden, ob z. B. „Staat“ oder
+          „Unterstützungsprozesse“ mit seinem Thema zu tun haben. Bei „Konflikt“
+          sind{" "}
+          <strong className="font-semibold text-foreground">
+            die vier Grundbegriffe gesetzt
+          </strong>
+          , d. h., der Coachee muss sich mit ihnen auseinandersetzen, weil jeder
+          Konflikt eben diese vier Kategorien umfasst. Die{" "}
+          <strong className="font-semibold text-foreground">
+            zweite Besonderheit
+          </strong>{" "}
+          in der Arbeit mit dem Modell ist die „Statik“ eines Konfliktes. Zu
+          einem Konflikt gehören mindestens „zwei“. Das können zwei Menschen,
+          aber auch zwei Teams oder zwei Unternehmenseinheiten sein, im Modell
+          beschrieben durch „Ich“ und „Die andere Partei“. In einer systemischen
+          Konfliktbetrachtung kann sich ein Konflikt nicht nur auf die beiden
+          Parteien auswirken, es gibt in der Regel „Dritte“, die gewollt oder
+          ungewollt daran beteiligt sind.
+        </p>
+        <p className="mt-2">
+          Wenn nicht klar ist, worüber oder worum gestritten wird – also was das
+          eigentliche Streit-„Thema“ bzw. der Grund der Auseinandersetzung ist
+          –, kann ein Konflikt selten gelöst werden.{" "}
+          <strong className="font-semibold text-foreground">
+            „Ich“, „Die andere Partei“, „Dritte“ und das „Thema“ sind feste,
+            faktische Bestandteile eines Konfliktes.
+          </strong>{" "}
+          Diese Begriffe bilden die{" "}
+          <strong className="font-semibold text-foreground">
+            Statik, das Gerüst des Konfliktes
+          </strong>{" "}
+          ab. Als Prozessverantwortlicher sorgt der Coach dafür, dass in jedem
+          Fall eine Auseinandersetzung mit diesen Begriffen erfolgt und diese
+          Begriffe geeignet visualisiert werden.
+        </p>
+      </>
+    ),
   },
   "zehn-felder": {
     icon: LayoutGrid,
