@@ -1,14 +1,12 @@
 import { ChevronDown, Info, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { PHASE1_STEP2_GUIDE_SEEN_KEY } from "@/config/constants";
 import type { AddStage } from "@/features/cards/CardBoard";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { StepNav } from "@/features/phases/StepNav";
 import { Step2Guide } from "@/features/phases/phase1/Step2Guide";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
-import { getKvFlag, setKvFlag } from "@/features/session/sessionRepository";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Card } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -121,27 +119,13 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, istWord: text } }));
   }
 
-  // Schritt-für-Schritt-Coach: beim ersten Besuch automatisch öffnen.
+  // Schritt-für-Schritt-Coach: nur per Button geöffnet (kein Auto-Öffnen).
   const [guideOpen, setGuideOpen] = useState(false);
-  useEffect(() => {
-    let active = true;
-    void getKvFlag(PHASE1_STEP2_GUIDE_SEEN_KEY).then((seen) => {
-      if (active && !seen) setGuideOpen(true);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  function closeGuide(dontShowAgain: boolean) {
-    if (dontShowAgain) void setKvFlag(PHASE1_STEP2_GUIDE_SEEN_KEY, true);
-    setGuideOpen(false);
-  }
 
   return (
     <div>
       <div className="space-y-6">
-        {/* Schritt-für-Schritt-Coach erneut öffnen (auch bei zugeklappter Anleitung). */}
+        {/* Schritt-für-Schritt-Coach öffnen (auch bei zugeklappter Anleitung). */}
         <div className="flex justify-end">
           <Button
             variant="outline"
@@ -279,7 +263,7 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
         canNext
       />
 
-      <Step2Guide open={guideOpen} onClose={closeGuide} />
+      <Step2Guide open={guideOpen} onClose={() => setGuideOpen(false)} />
     </div>
   );
 }

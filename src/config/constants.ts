@@ -12,9 +12,6 @@ export const ONBOARDING_TOUR_SEEN_KEY = "onboardingTourSeen";
 /** kv-table key: the self-coaching intro (Rubikon page) has been seen. */
 export const INTRO_SEEN_KEY = "introSeen";
 
-/** kv-table key: der Schritt-2-Coach (Zusammenhänge) wurde gesehen / ausgeblendet. */
-export const PHASE1_STEP2_GUIDE_SEEN_KEY = "phase1Step2GuideSeen";
-
 /**
  * The two branches of the coaching process. Held in the URL (?branch=) for
  * now; full session-state logic arrives in WP1.

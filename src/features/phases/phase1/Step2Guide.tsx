@@ -54,28 +54,26 @@ const SLIDES: GuideSlide[] = [
 
 type Step2GuideProps = {
   open: boolean;
-  onClose: (dontShowAgain: boolean) => void;
+  onClose: () => void;
 };
 
 /**
  * Schritt-für-Schritt-Coach für die IST-Analyse (Schritt 2). Zentrierter,
  * ruhiger Stepper ohne Blur: erklärt die vier Fragen, jeweils mit ihrer Farbe
- * und einem kurzen „so geht's". Weiter / Zurück / Überspringen + „Nicht mehr
- * automatisch anzeigen". Esc schließt; der Primär-Button erhält Fokus.
+ * und einem kurzen „so geht's". Wird nur per Button geöffnet. Weiter / Zurück /
+ * Schließen; Esc schließt; der Primär-Button erhält Fokus.
  */
 export function Step2Guide({ open, onClose }: Step2GuideProps) {
   const [step, setStep] = useState(0);
-  const [dontShowAgain, setDontShowAgain] = useState(true);
   const primaryRef = useRef<HTMLButtonElement | null>(null);
 
   const current = SLIDES[step];
   const isLast = step === SLIDES.length - 1;
 
   const close = useCallback(() => {
-    onClose(dontShowAgain);
+    onClose();
     setStep(0);
-    setDontShowAgain(true);
-  }, [onClose, dontShowAgain]);
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -167,19 +165,9 @@ export function Step2Guide({ open, onClose }: Step2GuideProps) {
           </span>
         </div>
 
-        <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-muted">
-          <input
-            type="checkbox"
-            checked={dontShowAgain}
-            onChange={(event) => setDontShowAgain(event.target.checked)}
-            className="size-4 accent-accent"
-          />
-          Nicht mehr automatisch anzeigen
-        </label>
-
         <div className="mt-4 flex items-center justify-between gap-3">
           <Button variant="ghost" size="sm" onClick={close}>
-            Überspringen
+            Schließen
           </Button>
           <div className="flex gap-2">
             {step > 0 ? (
