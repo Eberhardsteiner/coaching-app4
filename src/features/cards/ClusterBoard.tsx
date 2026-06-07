@@ -20,13 +20,10 @@ type ClusterBoardProps = {
   allowVisibilityToggle?: boolean;
 };
 
-/* Layout constants (card size mirrors Card.tsx). */
-const CARD_W = 152;
+/* Layout constants (card height mirrors Card.tsx). */
 const CARD_H = 88;
 const OVAL_W = 230;
 const OVAL_H = 44;
-const GAP = 12;
-const MEMBER_STEP = CARD_H + GAP;
 const KEY_STEP = 16;
 const FIELD_MIN = 560;
 
@@ -38,11 +35,11 @@ const atLeast = (min: number, values: number[]) =>
 
 /**
  * Cluster mode of the moderation board — the **same free field** as Schritt 3.
- * The colour cards are the unchanged `Card` component (free xy, stage colours);
- * a new **blue oval** card per cluster sits on the field as a draggable, named
- * label. Dragging a colour card onto an oval (or the per-card cluster select)
- * assigns it (`card.clusterId`) and snaps it into the stack **under** that oval,
- * so a cluster's cards lie together. Each cluster gets a **unique** weight 1–10
+ * Every colour card (unchanged `Card` component, free xy, stage colours) and
+ * every **blue oval** cluster label is an **independent** draggable object: moving
+ * one never moves another (no group/overlap coupling). Cluster membership is set
+ * purely via the per-card cluster select (`card.clusterId`) and is logical — it
+ * does not reposition the card. Each cluster gets a **unique** weight 1–10
  * (10 = drückt am meisten); taken values are locked. No Kanban columns, no list.
  */
 export function ClusterBoard({
@@ -56,7 +53,6 @@ export function ClusterBoard({
 }: ClusterBoardProps) {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const clusterById = new Map(clusters.map((c) => [c.id, c]));
-  const cardById = new Map(cards.map((c) => [c.id, c]));
 
   // Live offset while a cluster's oval (and its member cards) is being dragged.
   const [ovalDrag, setOvalDrag] = useState<{
@@ -66,17 +62,9 @@ export function ClusterBoard({
   } | null>(null);
   const ovalStart = useRef<{ px: number; py: number } | null>(null);
 
-  function membersOf(clusterId: string): CardModel[] {
-    return cards.filter((card) => card.clusterId === clusterId);
-  }
-
+  /** Bottom edge of a cluster's oval (incl. the Kernproblem line) — for sizing. */
   function clusterBottom(cluster: Cluster): number {
-    return (
-      (cluster.y ?? 0) +
-      OVAL_H +
-      GAP +
-      membersOf(cluster.id).length * MEMBER_STEP
-    );
+    return (cluster.y ?? 0) + OVAL_H + 28;
   }
 
   const fieldMinHeight =
@@ -85,64 +73,16 @@ export function ClusterBoard({
       ...clusters.map((c) => clusterBottom(c)),
     ]) + 24;
 
-  /** Which cluster oval (by its header rect) sits under a board point. */
-  function clusterAtPoint(x: number, y: number): Cluster | null {
-    for (const cluster of clusters) {
-      const ox = cluster.x ?? 0;
-      const oy = cluster.y ?? 0;
-      if (x >= ox && x <= ox + OVAL_W && y >= oy && y <= oy + OVAL_H)
-        return cluster;
-    }
-    return null;
-  }
-
-  /** The slot position for the next card added to a cluster (under its oval). */
-  function slotFor(
-    clusterId: string,
-    excludeId: string,
-  ): { x: number; y: number } {
-    const cluster = clusterById.get(clusterId);
-    const ox = cluster?.x ?? 0;
-    const oy = cluster?.y ?? 0;
-    const count = cards.filter(
-      (c) => c.clusterId === clusterId && c.id !== excludeId,
-    ).length;
-    return { x: ox, y: oy + OVAL_H + GAP + count * MEMBER_STEP };
-  }
-
-  /** Assign a card to a cluster (or none) and snap it under the oval. */
+  /** Set a card's cluster (via the dropdown). Logical only — never moves the card. */
   function assignCard(card: CardModel, clusterId: string | undefined) {
-    let next: CardModel = { ...card, clusterId };
-    if (clusterId) {
-      const slot = slotFor(clusterId, card.id);
-      next = { ...next, x: slot.x, y: slot.y };
-    }
-    onCardsChange(cards.map((c) => (c.id === card.id ? next : c)));
+    onCardsChange(
+      cards.map((c) => (c.id === card.id ? { ...c, clusterId } : c)),
+    );
   }
 
-  /**
-   * A card moved (drag or keyboard) → if its centre now sits over a different
-   * cluster's oval, re-assign + snap; if it left its cluster onto free space,
-   * unassign. Otherwise just persist the new position.
-   */
+  /** Persist a card change (move/edit). Moving a card never touches a cluster. */
   function handleCardChange(updated: CardModel) {
-    const prev = cardById.get(updated.id);
-    const moved = prev && (prev.x !== updated.x || prev.y !== updated.y);
-    let next = updated;
-    if (moved) {
-      const cx = (updated.x ?? 0) + CARD_W / 2;
-      const cy = (updated.y ?? 0) + CARD_H / 2;
-      const target = clusterAtPoint(cx, cy);
-      const targetId = target?.id;
-      if (targetId !== prev.clusterId) {
-        next = { ...next, clusterId: targetId };
-        if (targetId) {
-          const slot = slotFor(targetId, updated.id);
-          next = { ...next, x: slot.x, y: slot.y };
-        }
-      }
-    }
-    onCardsChange(cards.map((c) => (c.id === next.id ? next : c)));
+    onCardsChange(cards.map((c) => (c.id === updated.id ? updated : c)));
   }
 
   function deleteCard(id: string) {
@@ -179,27 +119,14 @@ export function ClusterBoard({
     onClustersChange(clusters.filter((c) => c.id !== id));
   }
 
-  /** Move a cluster's oval + all its member cards by (dx, dy), clamped to ≥ 0. */
-  function moveCluster(id: string, dx: number, dy: number) {
+  /** Move ONLY the cluster's oval by (dx, dy). Cards are never dragged along. */
+  function moveOval(id: string, dx: number, dy: number) {
     const cluster = clusterById.get(id);
     if (!cluster) return;
     const nx = Math.max(0, (cluster.x ?? 0) + dx);
     const ny = Math.max(0, (cluster.y ?? 0) + dy);
-    const adx = nx - (cluster.x ?? 0);
-    const ady = ny - (cluster.y ?? 0);
     onClustersChange(
       clusters.map((c) => (c.id === id ? { ...c, x: nx, y: ny } : c)),
-    );
-    onCardsChange(
-      cards.map((c) =>
-        c.clusterId === id
-          ? {
-              ...c,
-              x: Math.max(0, (c.x ?? 0) + adx),
-              y: Math.max(0, (c.y ?? 0) + ady),
-            }
-          : c,
-      ),
     );
   }
 
@@ -241,7 +168,7 @@ export function ClusterBoard({
     const id = ovalDrag.id;
     ovalStart.current = null;
     setOvalDrag(null);
-    if (dx !== 0 || dy !== 0) moveCluster(id, dx, dy);
+    if (dx !== 0 || dy !== 0) moveOval(id, dx, dy);
   }
 
   function onOvalKeyDown(id: string, event: KeyboardEvent<HTMLButtonElement>) {
@@ -255,7 +182,7 @@ export function ClusterBoard({
     const delta = deltas[event.key];
     if (!delta) return;
     event.preventDefault();
-    moveCluster(id, delta[0], delta[1]);
+    moveOval(id, delta[0], delta[1]);
   }
 
   /* Rendering ------------------------------------------------------------- */
@@ -425,30 +352,19 @@ export function ClusterBoard({
         })}
 
         {/* Colour cards — the unchanged Card component (free xy, stage colours).
-            Members of a dragged cluster follow its live offset. */}
-        {cards.map((card) => {
-          const live =
-            card.clusterId && ovalDrag?.id === card.clusterId ? ovalDrag : null;
-          const display = live
-            ? {
-                ...card,
-                x: (card.x ?? 0) + live.dx,
-                y: (card.y ?? 0) + live.dy,
-              }
-            : card;
-          return (
-            <Card
-              key={card.id}
-              card={display}
-              boardRef={boardRef}
-              readOnly={readOnly}
-              allowVisibilityToggle={allowVisibilityToggle}
-              clusterSelect={cardClusterSelect(card)}
-              onChange={handleCardChange}
-              onDelete={deleteCard}
-            />
-          );
-        })}
+            Each card is an independent object; it never follows an oval. */}
+        {cards.map((card) => (
+          <Card
+            key={card.id}
+            card={card}
+            boardRef={boardRef}
+            readOnly={readOnly}
+            allowVisibilityToggle={allowVisibilityToggle}
+            clusterSelect={cardClusterSelect(card)}
+            onChange={handleCardChange}
+            onDelete={deleteCard}
+          />
+        ))}
 
         {cards.length === 0 && clusters.length === 0 ? (
           <p className="pointer-events-none absolute inset-x-0 top-1/2 text-center text-sm text-faint">
