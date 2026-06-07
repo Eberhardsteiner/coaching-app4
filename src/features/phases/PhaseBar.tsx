@@ -14,7 +14,7 @@ export function PhaseBar({ compact }: { compact?: boolean }) {
   const { progress, isReachable, goToPhase } = usePhaseNavigation();
 
   return (
-    <nav aria-label="Phasen">
+    <nav aria-label="Phasen" data-tour="phases">
       <ol className={cn("flex items-center", compact ? "gap-1" : "gap-1.5")}>
         {PHASES.map((phase) => {
           const isCurrent = phase.id === progress.phase;

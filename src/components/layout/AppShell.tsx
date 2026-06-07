@@ -128,7 +128,7 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
         <div className="flex min-h-0 flex-1">
-          <main className="min-w-0 flex-1 overflow-y-auto">
+          <main data-tour="stage" className="min-w-0 flex-1 overflow-y-auto">
             <div className="mx-auto h-full w-full max-w-[var(--stage-max-width)] p-[var(--stage-padding)]">
               <Outlet />
             </div>
@@ -189,6 +189,7 @@ export function AppShell() {
       {/* Rail: persistent icon tabs (hidden in the Frei persona via CSS). */}
       <nav
         aria-label="Schubladen"
+        data-tour="drawers"
         className="app-rail z-50 flex w-14 shrink-0 flex-col items-center gap-1 border-l border-subtle bg-surface py-3"
       >
         {DRAWERS.map((drawer) => {
@@ -200,6 +201,7 @@ export function AppShell() {
                 tabRefs.current[drawer.id] = el;
               }}
               type="button"
+              data-tour={drawer.id === "help" ? "help" : undefined}
               onClick={() => toggle(drawer.id)}
               aria-label={drawer.label}
               title={drawer.label}

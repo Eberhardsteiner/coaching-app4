@@ -22,6 +22,7 @@ export function TopBar() {
         {/* Export the active session as a JSON file. */}
         <button
           type="button"
+          data-tour="export"
           onClick={() => {
             if (session) downloadSession(session);
           }}
@@ -44,7 +45,9 @@ export function TopBar() {
         </Link>
 
         {/* Import a previously saved session. */}
-        <ImportButton iconOnly label="Sitzung importieren" />
+        <span data-tour="import" className="inline-flex">
+          <ImportButton iconOnly label="Sitzung importieren" />
+        </span>
 
         {/* Help — placeholder, wired up in a later package. */}
         <button
