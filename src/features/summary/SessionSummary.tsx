@@ -58,10 +58,53 @@ export function SessionSummary({ session }: { session: Session }) {
     .map((e) => e.item.text.trim())
     .filter(Boolean);
 
-  // Ziel
-  const hasGoal = Boolean(phase2.goalText.trim() || phase2.datum);
-  const goalDatum = phase2.datum ? formatDate(phase2.datum) : "—";
-  const goalText = phase2.goalText.trim() || "—";
+  // Ziel — goalText holds the fully assembled mantra sentence (MP2 contract);
+  // old sessions may still carry a free-form goal state text, shown as-is.
+  const goalText = phase2.goalText.trim();
+  const gefuehl = (phase2.gefuehl ?? "").trim();
+  const hasGoal = Boolean(goalText || gefuehl || phase2.datum);
+  const comp = phase2.components;
+  const fulfilledChecks = (
+    [
+      ["kontextbezug", "Bezug zum Kernthema"],
+      ["terminiert", "Terminiert"],
+      ["adressat", "Adressat"],
+      ["futurII", "Futur II"],
+    ] as const
+  )
+    .filter(([key]) => Boolean(comp[key]))
+    .map(([, label]) => label);
+  const hasCriteria =
+    comp.emotionalAttraktiv > 0 ||
+    comp.selbstErreichbar > 0 ||
+    fulfilledChecks.length > 0;
+
+  // Zielfolgen — one per cluster (guided pass) plus legacy free perspectives.
+  const goalValuationLabel = (value: string): string =>
+    value === "gut"
+      ? "Gut"
+      : value === "schlecht"
+        ? "Schlecht"
+        : value === "neutral"
+          ? "Neutral"
+          : value.trim();
+  const consequenceRows = phase2.consequences
+    .filter((c) => c.recognition.trim() || c.valuation.trim())
+    .map((c) => {
+      const cluster = c.clusterId
+        ? phase1.clusters.find((cl) => cl.id === c.clusterId)
+        : undefined;
+      return {
+        id: c.id,
+        name: cluster?.name.trim() || c.perspective.trim() || "Perspektive",
+        isCore: Boolean(cluster?.isCore),
+        recognition: c.recognition.trim(),
+        valuation: goalValuationLabel(c.valuation),
+      };
+    });
+
+  // Erkenntnisboard (persistent cross-phase notes)
+  const notebook = (session.notebook ?? "").trim();
 
   // Handlungsplan
   const plansByCluster = new Map(phase4.plans.map((p) => [p.clusterId, p]));
@@ -151,10 +194,61 @@ export function SessionSummary({ session }: { session: Session }) {
       {/* Dein Ziel */}
       {hasGoal ? (
         <Section title="Dein Ziel">
-          <p className="text-foreground">
-            Ab dem {goalDatum} werde ich {goalText} in Bezug auf {coreLabel}{" "}
-            erreicht haben.
-          </p>
+          <p className="font-medium text-foreground">{goalText || "—"}</p>
+          {gefuehl ? (
+            <p className="text-sm text-muted">
+              <span className="text-foreground">Zielgefühl:</span> {gefuehl}
+            </p>
+          ) : null}
+          {hasCriteria ? (
+            <ul className="text-sm text-muted">
+              {comp.emotionalAttraktiv > 0 ? (
+                <li>
+                  <span className="text-foreground">Emotional attraktiv:</span>{" "}
+                  {comp.emotionalAttraktiv}/10
+                </li>
+              ) : null}
+              {comp.selbstErreichbar > 0 ? (
+                <li>
+                  <span className="text-foreground">Selbst erreichbar:</span>{" "}
+                  {comp.selbstErreichbar}/10
+                </li>
+              ) : null}
+              {fulfilledChecks.length > 0 ? (
+                <li>
+                  <span className="text-foreground">Erfüllt:</span>{" "}
+                  {fulfilledChecks.join(", ")}
+                </li>
+              ) : null}
+            </ul>
+          ) : null}
+        </Section>
+      ) : null}
+
+      {/* Folgen deines Ziels */}
+      {consequenceRows.length > 0 ? (
+        <Section title="Folgen deines Ziels">
+          <ul className="space-y-2">
+            {consequenceRows.map((row) => (
+              <li key={row.id}>
+                <p className="text-sm font-medium text-foreground">
+                  {row.name}
+                  {row.isCore ? (
+                    <span className="font-normal text-muted"> (Kernthema)</span>
+                  ) : null}
+                  {row.valuation ? (
+                    <span className="font-normal text-muted">
+                      {" "}
+                      — {row.valuation}
+                    </span>
+                  ) : null}
+                </p>
+                {row.recognition ? (
+                  <p className="text-sm text-muted">{row.recognition}</p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </Section>
       ) : null}
 
@@ -259,6 +353,13 @@ export function SessionSummary({ session }: { session: Session }) {
       {phase5.insights.trim() ? (
         <Section title="Erkenntnisse">
           <p className="text-foreground">{phase5.insights.trim()}</p>
+        </Section>
+      ) : null}
+
+      {/* Erkenntnisboard (Notizbuch — über alle Phasen hinweg) */}
+      {notebook ? (
+        <Section title="Erkenntnisboard">
+          <p className="whitespace-pre-wrap text-foreground">{notebook}</p>
         </Section>
       ) : null}
 

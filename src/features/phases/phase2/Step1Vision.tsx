@@ -1,3 +1,6 @@
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import {
@@ -7,18 +10,91 @@ import {
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
+import { cn } from "@/lib/utils";
+
+/** Brainstorming-Anmoderation (Methodik-Vorlage, wortgetreu). */
+const INTRO =
+  "Stell dir einmal vor, es würde dir mit deinem Thema und Anliegen, das du in Phase 1 beschrieben hast, richtig gut gehen — wie geht es dir dann? Wie fühlst du dich? Was ist dann anders? Was erlebst du? Welche Veränderungen nehmen andere an dir wahr? Beginne mit dem Gefühl, das du dann hast …";
+
+/** Ergänzender Perspektivwechsel-Hinweis (Methodik-Vorlage, wortgetreu). */
+const PERSPEKTIV_HINT =
+  "Nimm bitte bewusst eine neue Perspektive ein. Such dir einen Platz, an dem du dich wohlfühlst. Und stell dir vor — du weißt zwar nicht wie — aber deine Probleme aus der Ist-Situation wären verschwunden. Die Dinge haben sich zum Guten gewendet. Welches Gefühl stellt sich bei dir ein? Du kannst zunächst einfach frei assoziieren und dir in einer Art Brainstorming vorstellen, wie sich deine Situation geändert hat. Verschwende erst einmal gar keinen Gedanken an das Wie — beschreibe einfach den neuen, positiven Zustand.";
+
+/** Liste positiver Gefühle (Methodik-Vorlage) — ohne Anspruch auf Vollständigkeit. */
+const FEELINGS = [
+  "Ausgeglichenheit",
+  "Erleichterung",
+  "Freude",
+  "Gelassenheit",
+  "Glück",
+  "Hoffnung",
+  "Leichtigkeit",
+  "Lust",
+  "Ruhe",
+  "Selbstsicherheit",
+  "Stolz",
+  "Zufriedenheit",
+  "Zuversicht",
+];
+
+/** Das stärkste Gefühl wählen — zwei sind auch ok (Methodik). */
+const MAX_FEELINGS = 2;
+
+/** Split the persisted gefuehl ("A und B") into its trimmed parts. */
+function splitGefuehl(gefuehl: string): string[] {
+  return gefuehl
+    .split(" und ")
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
 
 /**
- * Phase 2, Step 2.1 — Wunsch & Vision. Free text describing the desired state
- * (not the path) in relation to Phase 1's core theme. No AI here.
+ * Phase 2, Step 2.1 — Was strebe ich an? Two sections following the method:
+ * (1) free brainstorming of the positive future state (phase2.vision, ungated),
+ * (2) pulling out the feeling words — pick ONE positive feeling (two are ok,
+ * max 2) from the list or a custom noun; the choice writes phase2.gefuehl
+ * ("A und B" when two). Forward is gated on at least one feeling. No AI here.
  */
 export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
   const vision = useSessionStore((s) => s.session?.phase2.vision ?? "");
+  const gefuehl = useSessionStore((s) => s.session?.phase2.gefuehl ?? "");
   const patch = useSessionStore((s) => s.patch);
   const core = useCoreTheme();
 
+  // Mirror the persisted value back into the UI: list words become chips, the
+  // rest is the custom entry (kept in local state so typing a list word does
+  // not "jump" out of the input mid-edit).
+  const parts = splitGefuehl(gefuehl);
+  const chipParts = parts.filter((part) => FEELINGS.includes(part));
+  const [custom, setCustom] = useState(() =>
+    parts.filter((part) => !FEELINGS.includes(part)).join(" und "),
+  );
+
+  const count = chipParts.length + (custom.trim() ? 1 : 0);
+  const canAddMore = count < MAX_FEELINGS;
+
   function setVision(value: string) {
     patch((s) => ({ ...s, phase2: { ...s.phase2, vision: value } }));
+  }
+
+  /** Persist the combined choice ("A und B" when two feelings). */
+  function persistGefuehl(chips: string[], customValue: string) {
+    const next = [...chips, customValue.trim()].filter(Boolean).join(" und ");
+    patch((s) => ({ ...s, phase2: { ...s.phase2, gefuehl: next } }));
+  }
+
+  function toggleChip(feeling: string) {
+    const isSelected = chipParts.includes(feeling);
+    if (!isSelected && !canAddMore) return; // gesperrt bis eine Abwahl erfolgt
+    const nextChips = isSelected
+      ? chipParts.filter((part) => part !== feeling)
+      : [...chipParts, feeling];
+    persistGefuehl(nextChips, custom);
+  }
+
+  function changeCustom(value: string) {
+    setCustom(value);
+    persistGefuehl(chipParts, value);
   }
 
   // Exceptional: no core theme (gating should prevent this).
@@ -44,31 +120,135 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
   }
 
   const label = coreThemeLabel(core);
+  const customLocked = !canAddMore && !custom.trim();
 
   return (
     <div>
-      <div className="space-y-5">
-        <p className="text-muted">
-          Was strebst du an — in Bezug auf dein Kernthema „{label}“? Beschreibe
-          den gewünschten Zustand, nicht den Weg dorthin.
-        </p>
+      <div className="space-y-6">
+        {/* C1 — Brainstorming des positiven Zukunftszustands */}
+        <div className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm">
+          <span className="text-muted">Dein Kernthema aus Phase 1: </span>
+          <span className="font-medium text-foreground">{label}</span>
+        </div>
+
+        <p className="text-muted">{INTRO}</p>
+
+        <details className="group rounded-xl border border-subtle bg-surface p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
+            Tipp: So gelingt der Perspektivwechsel
+            <ChevronDown
+              className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
+              aria-hidden
+            />
+          </summary>
+          <p className="mt-3 text-sm text-muted">{PERSPEKTIV_HINT}</p>
+        </details>
 
         <div className="space-y-2">
           <label
             htmlFor="phase2-vision"
             className="block text-sm font-medium text-foreground"
           >
-            Dein Wunsch
+            Dein Brainstorming
           </label>
           <textarea
             id="phase2-vision"
             value={vision}
-            rows={4}
+            rows={8}
             onChange={(event) => setVision(event.target.value)}
             placeholder="Wenn alles gut läuft, dann …"
             className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
           <NoPersonalDataHint />
+        </div>
+
+        {/* C2 — Gefühlswörter herausziehen (Auswahl → phase2.gefuehl) */}
+        <div className="space-y-4 border-t border-subtle pt-6">
+          <p className="text-muted">
+            Unterstreiche nun gedanklich die{" "}
+            <strong className="font-semibold text-foreground">
+              Gefühlswörter
+            </strong>{" "}
+            in deiner Beschreibung: Welches positive Gefühl stellt sich ein,
+            wenn dein neuer Zustand erreicht ist? Wähle das{" "}
+            <strong className="font-semibold text-foreground">stärkste</strong>{" "}
+            —{" "}
+            <strong className="font-semibold text-foreground">
+              zwei Gefühle sind auch ok
+            </strong>
+            .
+          </p>
+
+          <div
+            role="group"
+            aria-label="Positive Gefühle (höchstens zwei wählen)"
+            className="flex flex-wrap gap-2"
+          >
+            {FEELINGS.map((feeling) => {
+              const selected = chipParts.includes(feeling);
+              const locked = !selected && !canAddMore;
+              return (
+                <button
+                  key={feeling}
+                  type="button"
+                  aria-pressed={selected}
+                  disabled={locked}
+                  onClick={() => toggleChip(feeling)}
+                  className={cn(
+                    "rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                    selected
+                      ? "border-accent bg-accent text-white"
+                      : "border-subtle bg-surface text-muted hover:text-foreground",
+                    locked && "cursor-not-allowed opacity-45 hover:text-muted",
+                  )}
+                >
+                  {feeling}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-faint">
+            Die Liste hat keinen Anspruch auf Vollständigkeit.
+          </p>
+
+          <div className="max-w-sm space-y-1.5">
+            <label
+              htmlFor="phase2-custom-gefuehl"
+              className="block text-sm font-medium text-foreground"
+            >
+              Eigenes Gefühl
+            </label>
+            <input
+              id="phase2-custom-gefuehl"
+              type="text"
+              value={custom}
+              disabled={customLocked}
+              onChange={(event) => changeCustom(event.target.value)}
+              placeholder="z. B. Klarheit"
+              className={cn(
+                "w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                customLocked && "cursor-not-allowed opacity-45",
+              )}
+            />
+            <p className="text-xs text-faint">
+              Als Substantiv — z. B. „Gelassenheit“ statt „gelassen“. Zählt mit
+              in die Zwei-Gefühle-Grenze.
+            </p>
+          </div>
+
+          {gefuehl.trim() ? (
+            <div className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm">
+              <span className="text-muted">Dein Zielgefühl: </span>
+              <span className="font-medium text-foreground">
+                {gefuehl.trim()}
+              </span>
+            </div>
+          ) : (
+            <p className="text-xs text-faint">
+              „Weiter“ öffnet sich, sobald du mindestens ein Gefühl gewählt
+              hast.
+            </p>
+          )}
         </div>
       </div>
 
@@ -76,7 +256,7 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext
+        canNext={gefuehl.trim().length > 0}
       />
     </div>
   );

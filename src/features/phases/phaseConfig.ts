@@ -81,23 +81,24 @@ export const PHASES: PhaseDef[] = [
     steps: [
       {
         id: "2.1",
-        title: "Wunsch & Vision",
-        intro: "Den gewünschten Zustand beschreiben — nicht den Weg.",
+        title: "Was strebe ich an?",
+        intro:
+          "Stell dir vor, es geht dir richtig gut — beschreibe den Zustand, nicht den Weg.",
       },
       {
         id: "2.2",
-        title: "Zielformel",
-        intro: "Dein Ziel als erreichten Zustand formulieren (Futur II).",
+        title: "Mein Zielsatz",
+        intro: "Dein Ziel als ein Satz — wie ein Mantra, im Futur II.",
       },
       {
         id: "2.3",
         title: "Zielprüfung",
-        intro: "Prüfen, ob das Ziel trägt — mit dem 10/10-Check.",
+        intro: "Sechs Qualitätskriterien — und der 10/10-Check.",
       },
       {
         id: "2.4",
-        title: "Zielfolgen",
-        intro: "Was sich für dein Umfeld ändert, wenn du das Ziel erreichst.",
+        title: "Folgen meines Ziels",
+        intro: "Rückenwind oder Gegenwind? Geh durch alle deine Cluster.",
       },
       {
         id: "2.5",

@@ -4,6 +4,7 @@ import { Outlet } from "react-router";
 
 import { CoachConsole } from "@/components/layout/CoachConsole";
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
+import { NotebookDrawerContent } from "@/components/layout/NotebookDrawerContent";
 import { ToolsDrawerContent } from "@/components/layout/ToolsDrawerContent";
 import { TopBar } from "@/components/layout/TopBar";
 import { ONBOARDING_TOUR_SEEN_KEY } from "@/config/constants";
@@ -31,9 +32,8 @@ const DRAWERS: DrawerDef[] = [
   },
   {
     id: "notebook",
-    label: "Notizbuch",
+    label: "Erkenntnisboard",
     icon: NotebookPen,
-    body: "Platz für persönliche Notizen — folgt in einem späteren Paket.",
   },
   {
     id: "models",
@@ -179,6 +179,8 @@ export function AppShell() {
               <HelpDrawerContent onStartTour={startTour} />
             ) : openDrawer.id === "tools" ? (
               <ToolsDrawerContent />
+            ) : openDrawer.id === "notebook" ? (
+              <NotebookDrawerContent />
             ) : (
               <p className="text-sm text-muted">{openDrawer.body}</p>
             )}

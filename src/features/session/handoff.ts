@@ -15,7 +15,9 @@ import type { Session } from "@/features/session/types";
  *    `cardIds` + `isCore` (no orphan references; stays schema-valid),
  *  - drop `coachNotes`,
  *  - set `meta.branch = "self"` (opens in the console-free work view).
- * Everything else (phases 0, 2–5, progress, the rest of meta) is unchanged.
+ * Everything else (phases 0, 2–5, progress, the rest of meta) is unchanged —
+ * including `notebook` (the Erkenntnisboard): that is coachee content and
+ * deliberately travels in the handoff, unlike coachNotes.
  */
 export function cleanSessionForHandoff(session: Session): Session {
   const cards = stageVisibleCards(session.phase1.cards);

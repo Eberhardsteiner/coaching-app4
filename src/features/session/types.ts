@@ -229,6 +229,13 @@ export interface Session {
    * schema bump (analogous to istBurden / preMortem).
    */
   coachNotes?: string;
+  /**
+   * Erkenntnisboard — the coachee's persistent cross-phase notes (Notizbuch
+   * drawer). Coachee content: travels in export, import AND the coachee
+   * handoff (unlike coachNotes). Additive-optional, default-safe — no schema
+   * bump (analogous to istBurden / preMortem / coachNotes).
+   */
+  notebook?: string;
 }
 
 /** An empty four-part phase check. */

@@ -12,12 +12,15 @@ const EMPTY_CHECK: PhaseCheckValue = {
 };
 
 /**
- * Phase 2, Step 2.5 — Abschluss & Check. The shared four-part phase check
- * (optional) bound to phase2.check. "Phase abschließen" advances from the last
- * step → completes Phase 2 → unlocks and navigates to Phase 3.
+ * Phase 2, Step 2.5 — Abschluss & Check. The method's closing text (the
+ * coordinates of the journey are set, insights go onto the Erkenntnisboard),
+ * the assembled mantra as a calm card, then the shared four-part phase check
+ * bound to phase2.check. "Phase abschließen" completes Phase 2 → unlocks and
+ * navigates to Phase 3.
  */
 export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
   const check = useSessionStore((s) => s.session?.phase2.check) ?? EMPTY_CHECK;
+  const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
   const patch = useSessionStore((s) => s.patch);
 
   function setCheck(next: PhaseCheckValue) {
@@ -27,9 +30,33 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-5">
       <p className="text-muted">
-        Du hast ein tragfähiges Ziel formuliert. Halte kurz fest, was du
-        mitnimmst — dann geht es zu deinen Ressourcen.
+        Du hast die wichtigen{" "}
+        <strong className="font-semibold text-foreground">
+          Koordinaten deiner Veränderungsreise
+        </strong>{" "}
+        bestimmt: Du weißt, wo du stehst — und wo du hin möchtest. Du bist dir
+        über dein Ziel sicher, denn du hast dir seine Folgen klar gemacht und
+        ihnen zugestimmt. Wenn du Erkenntnisse aus deiner bisherigen Reflexion
+        hast, notiere sie auf deinem{" "}
+        <strong className="font-semibold text-foreground">
+          Erkenntnisboard
+        </strong>{" "}
+        (Notizbuch rechts). Vergegenwärtige dir noch einmal die Schritte, wie du
+        zu deinem Ergebnis gekommen bist — dann geht es weiter mit Phase 3: der
+        Identifikation deiner{" "}
+        <strong className="font-semibold text-foreground">Ressourcen</strong>.
       </p>
+
+      {goalText.trim() ? (
+        <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-faint">
+            Dein Zielsatz
+          </p>
+          <p className="mt-2 font-medium leading-relaxed text-foreground">
+            {goalText.trim()}
+          </p>
+        </div>
+      ) : null}
 
       <PhaseCheck value={check} onChange={setCheck} />
 

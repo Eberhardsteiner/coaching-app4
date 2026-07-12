@@ -1,17 +1,34 @@
 import { FileText } from "lucide-react";
 import { Link } from "react-router";
 
+import { useSessionStore } from "@/features/session/sessionStore";
+
 /**
- * Content of the "Werkzeuge" drawer. For now: an entry point to the session
- * summary / PDF (reachable during and after the session). More phase-specific
- * tools will follow.
+ * Content of the "Werkzeuge" drawer. Once a goal sentence exists (Phase 2),
+ * it is shown on top as a calm read-only card — keeping the mantra "stets vor
+ * Augen". Below: the entry point to the session summary / PDF. More
+ * phase-specific tools will follow.
  */
 export function ToolsDrawerContent() {
+  const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
+
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted">
-        Hier erscheinen später Werkzeuge für die aktuelle Phase.
-      </p>
+      {goalText.trim() ? (
+        <div className="rounded-xl border border-accent/30 bg-accent/5 p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-faint">
+            Dein Zielsatz
+          </p>
+          <p className="mt-1.5 text-sm font-medium leading-relaxed text-foreground">
+            {goalText.trim()}
+          </p>
+        </div>
+      ) : (
+        <p className="text-sm text-muted">
+          Hier erscheinen Werkzeuge für die aktuelle Phase — ab Phase 2 zum
+          Beispiel dein Zielsatz.
+        </p>
+      )}
 
       <Link
         to="/zusammenfassung"

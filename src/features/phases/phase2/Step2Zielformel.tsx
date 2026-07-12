@@ -8,7 +8,7 @@ import {
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
-import type { Phase2 } from "@/features/session/types";
+import { cn } from "@/lib/utils";
 
 /** Format an ISO date (yyyy-mm-dd) as a German date without timezone shifts. */
 function formatGermanDate(iso: string): string {
@@ -16,7 +16,28 @@ function formatGermanDate(iso: string): string {
   return y && m && d ? `${d}.${m}.${y}` : iso;
 }
 
-/** A filled or placeholder slot in the live goal sentence. */
+/**
+ * Assemble the complete mantra sentence from its building blocks (data
+ * contract: phase2.goalText always holds the full assembled sentence).
+ * The feeling is the core — without it there is no sentence yet ("").
+ * An unset date shows as "…" until picked (forward is gated on it anyway).
+ */
+function assembleGoalText(
+  datum: string,
+  rolle: string,
+  gefuehl: string,
+  coreLabel: string,
+): string {
+  const feeling = gefuehl.trim();
+  if (!feeling) return "";
+  const datePart = datum ? formatGermanDate(datum) : "…";
+  const rollePart = rolle.trim()
+    ? `in meiner Funktion als ${rolle.trim()} `
+    : "";
+  return `Ab dem ${datePart} werde ich ${rollePart}${feeling} in Bezug auf ${coreLabel} erreicht haben.`;
+}
+
+/** A filled or placeholder slot in the live mantra preview. */
 function Slot({ value, placeholder }: { value: string; placeholder?: string }) {
   const filled = value.trim().length > 0;
   return (
@@ -29,40 +50,65 @@ function Slot({ value, placeholder }: { value: string; placeholder?: string }) {
 }
 
 /**
- * Phase 2, Step 2.2 — Zielformel. A Futur-II goal-sentence builder assembled
- * live from a date, the goal state, the core-theme reference (prefilled) and
- * optional role + feeling. Forward is gated on goalText + datum. No AI here.
+ * Phase 2, Step 2.2 — Mein Zielsatz. The mantra builder following the method's
+ * fixed pattern: „Ab dem DATUM werde ich (in meiner Funktion als ROLLE) GEFÜHL
+ * in Bezug auf KERNTHEMA erreicht haben." The FEELING (a noun, prefilled from
+ * 2.1) is the core; the role bracket disappears entirely when empty. Every
+ * building-block change re-assembles and persists phase2.goalText (the full
+ * sentence). Forward is gated on gefuehl + datum. No AI here.
  */
 export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
   const datum = useSessionStore((s) => s.session?.phase2.datum ?? "");
-  const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
   const rolle = useSessionStore((s) => s.session?.phase2.rolle ?? "");
   const gefuehl = useSessionStore((s) => s.session?.phase2.gefuehl ?? "");
   const patch = useSessionStore((s) => s.patch);
   const core = useCoreTheme();
   const label = coreThemeLabel(core);
 
-  /** Patch a Phase-2 field and keep clusterRef in sync with the core theme. */
-  function setField(partial: Partial<Phase2>) {
-    patch((s) => ({
-      ...s,
-      phase2: {
-        ...s.phase2,
-        ...partial,
-        clusterRef: core ? core.name : s.phase2.clusterRef,
-      },
-    }));
+  /**
+   * Patch a building block, re-assemble goalText from the NEW values and keep
+   * clusterRef in sync with the core theme (data contract).
+   */
+  function setField(
+    partial: Partial<{ datum: string; rolle: string; gefuehl: string }>,
+  ) {
+    patch((s) => {
+      const merged = { ...s.phase2, ...partial };
+      return {
+        ...s,
+        phase2: {
+          ...merged,
+          goalText: assembleGoalText(
+            merged.datum ?? "",
+            merged.rolle ?? "",
+            merged.gefuehl ?? "",
+            label,
+          ),
+          clusterRef: core ? core.name : s.phase2.clusterRef,
+        },
+      };
+    });
   }
 
-  const canNext = goalText.trim().length > 0 && datum.length > 0;
+  const canNext = gefuehl.trim().length > 0 && datum.length > 0;
 
   return (
     <div>
       <div className="space-y-5">
-        {/* Live Futur-II preview */}
+        <p className="text-muted">
+          Du hast nun eine Vorstellung deiner positiven neuen Situation. Die
+          Stichworte aus deinem Brainstorming wirst du dir nicht alle merken
+          können. Deshalb legst du dir jetzt{" "}
+          <strong className="font-semibold text-foreground">einen Satz</strong>{" "}
+          zurecht, der wie ein{" "}
+          <strong className="font-semibold text-foreground">Mantra</strong>{" "}
+          dienen kann — der in einem Satz beschreibt, wonach du strebst.
+        </p>
+
+        {/* Live mantra preview — the feeling is the core of the sentence. */}
         <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-faint">
-            Deine Zielformel
+            Dein Zielsatz
           </p>
           <p className="mt-2 leading-relaxed text-muted">
             Ab dem{" "}
@@ -73,46 +119,60 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
             werde ich{" "}
             {rolle.trim() ? (
               <>
-                als <Slot value={rolle} />{" "}
+                in meiner Funktion als <Slot value={rolle} />{" "}
               </>
             ) : null}
-            <Slot value={goalText} placeholder="dein Zielzustand" /> in Bezug
-            auf <Slot value={label} /> erreicht haben.
-            {gefuehl.trim() ? (
-              <>
-                {" "}
-                Ich werde mich dabei <Slot value={gefuehl} /> fühlen.
-              </>
-            ) : null}
+            <Slot value={gefuehl} placeholder="Gefühl" /> in Bezug auf{" "}
+            <Slot value={label} /> erreicht haben.
           </p>
         </div>
 
-        <Field
-          label="Datum"
-          htmlFor="phase2-datum"
-          hint="Wann willst du es erreicht haben?"
-        >
-          <input
-            id="phase2-datum"
-            type="date"
-            value={datum}
-            onChange={(event) => setField({ datum: event.target.value })}
-            className="rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          />
-        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Datum"
+            htmlFor="phase2-datum"
+            hint="Wann willst du es erreicht haben?"
+          >
+            <input
+              id="phase2-datum"
+              type="date"
+              value={datum}
+              onChange={(event) => setField({ datum: event.target.value })}
+              className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            />
+          </Field>
+
+          <Field
+            label="Gefühl"
+            htmlFor="phase2-gefuehl"
+            hint="Als Substantiv, z. B. „Gelassenheit“ statt „gelassen“."
+          >
+            <input
+              id="phase2-gefuehl"
+              type="text"
+              value={gefuehl}
+              onChange={(event) => setField({ gefuehl: event.target.value })}
+              placeholder="z. B. Gelassenheit"
+              className={cn(
+                "w-full rounded-lg border bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                gefuehl.trim() ? "border-subtle" : "border-amber-600/50",
+              )}
+            />
+          </Field>
+        </div>
 
         <Field
-          label="Zielzustand"
-          htmlFor="phase2-goal"
-          hint="Als bereits erreicht formuliert — ein Zustand, kein Weg."
+          label="Rolle / Funktion (optional)"
+          htmlFor="phase2-rolle"
+          hint="Ist sie leer, entfällt der Einschub „in meiner Funktion als …“ komplett."
         >
-          <textarea
-            id="phase2-goal"
-            value={goalText}
-            rows={3}
-            onChange={(event) => setField({ goalText: event.target.value })}
-            placeholder="… ruhig und klar mit meiner Arbeitslast umgehen"
-            className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          <input
+            id="phase2-rolle"
+            type="text"
+            value={rolle}
+            onChange={(event) => setField({ rolle: event.target.value })}
+            placeholder="z. B. Teamleitung"
+            className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
         </Field>
 
@@ -121,28 +181,14 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
           <span className="font-medium text-foreground">{label}</span>
         </div>
 
-        {/* Optional refinements */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Rolle / Adressat (optional)" htmlFor="phase2-rolle">
-            <input
-              id="phase2-rolle"
-              type="text"
-              value={rolle}
-              onChange={(event) => setField({ rolle: event.target.value })}
-              placeholder="z. B. als Teamleitung"
-              className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            />
-          </Field>
-          <Field label="Gefühl (optional)" htmlFor="phase2-gefuehl">
-            <input
-              id="phase2-gefuehl"
-              type="text"
-              value={gefuehl}
-              onChange={(event) => setField({ gefuehl: event.target.value })}
-              placeholder="z. B. gelassen"
-              className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            />
-          </Field>
+        <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+          <p className="text-sm text-muted">
+            Lies dir deinen Satz{" "}
+            <strong className="font-semibold text-foreground">laut</strong> vor
+            und spüre, ob er in dir ein gutes Gefühl auslöst. Auch wenn es „nur“
+            um einen Satz geht: Lass dir Zeit — ist dein Ziel nicht attraktiv
+            für dich, wird es keine Motivation und keine Bewegung auslösen.
+          </p>
         </div>
 
         <NoPersonalDataHint />
