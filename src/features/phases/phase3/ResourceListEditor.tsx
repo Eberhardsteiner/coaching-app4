@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
 import type { ResourceItem } from "@/features/session/types";
 
 type ResourceListEditorProps = {
@@ -15,12 +16,25 @@ type ResourceListEditorProps = {
   itemLabel?: string;
   /** Message shown when the list is empty. */
   emptyHint?: string;
+  /**
+   * When set, each row gets a second (narrower) input bound to `item.note` —
+   * e.g. the model name for "Ressourcen aus Modellen" (MP3). Existing
+   * usages without this prop are unchanged (text-only rows).
+   */
+  noteLabel?: string;
+  notePlaceholder?: string;
+  /**
+   * When true, each row gets a förderlich/hinderlich toggle bound to
+   * `item.polarity` — MP3 rates directly in each step (3.6/3.8), so these
+   * entries stay reachable for the counters and the Phase-4/5 pickers.
+   */
+  withPolarity?: boolean;
 };
 
 /**
- * Small reusable list editor for ResourceItem[] (text only): add / edit /
- * delete. Used for the various Phase-3 resource lists and inside KiImpuls.
- * `card.text` is the single field edited here; notes/polarity come later.
+ * Small reusable list editor for ResourceItem[]: add / edit / delete on
+ * `item.text`, plus an optional prop-driven `item.note` field per row. Used
+ * for the various Phase-3 resource lists and inside KiImpuls.
  */
 export function ResourceListEditor({
   items,
@@ -29,6 +43,9 @@ export function ResourceListEditor({
   placeholder = "…",
   itemLabel = "Eintrag",
   emptyHint,
+  noteLabel,
+  notePlaceholder,
+  withPolarity = false,
 }: ResourceListEditorProps) {
   const [focusId, setFocusId] = useState<string | null>(null);
 
@@ -38,9 +55,9 @@ export function ResourceListEditor({
     onItemsChange([...items, item]);
   }
 
-  function update(id: string, text: string) {
+  function update(id: string, partial: Partial<ResourceItem>) {
     onItemsChange(
-      items.map((item) => (item.id === id ? { ...item, text } : item)),
+      items.map((item) => (item.id === id ? { ...item, ...partial } : item)),
     );
   }
 
@@ -56,15 +73,36 @@ export function ResourceListEditor({
 
       {items.map((item, index) => (
         <div key={item.id} className="flex items-center gap-2">
+          {noteLabel ? (
+            <input
+              type="text"
+              value={item.note ?? ""}
+              aria-label={`${noteLabel} für ${itemLabel} ${index + 1}`}
+              onChange={(event) =>
+                update(item.id, { note: event.target.value })
+              }
+              placeholder={notePlaceholder ?? noteLabel}
+              className="w-32 shrink-0 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:w-44"
+            />
+          ) : null}
           <input
             type="text"
             value={item.text}
             autoFocus={item.id === focusId}
             aria-label={`${itemLabel} ${index + 1}`}
-            onChange={(event) => update(item.id, event.target.value)}
+            onChange={(event) => update(item.id, { text: event.target.value })}
             placeholder={placeholder}
             className="min-w-0 flex-1 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
+          {withPolarity ? (
+            <PolarityToggle
+              value={item.polarity}
+              onChange={(next) => update(item.id, { polarity: next })}
+              helpLabel="förderlich"
+              hinderLabel="hinderlich"
+              ariaContext={`${itemLabel} ${index + 1}`}
+            />
+          ) : null}
           <button
             type="button"
             onClick={() => remove(item.id)}

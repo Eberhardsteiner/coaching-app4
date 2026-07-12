@@ -273,7 +273,8 @@ function ClusterPlanCard({
             {foerderliche.length === 0 ? (
               <p className="text-xs text-faint">
                 Keine als förderlich markierten Ressourcen. Du kannst trotzdem
-                Maßnahmen formulieren oder in Phase 3 sortieren.
+                Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
+                förderlich werten.
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">

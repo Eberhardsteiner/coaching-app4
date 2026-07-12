@@ -45,7 +45,7 @@
     },
     {
       "id": "motive",
-      "name": "Motive",
+      "name": "Motive & Persönlichkeitseigenschaften (EPP)",
       "category": "resource",
       "file": "motive.json"
     },

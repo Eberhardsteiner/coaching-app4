@@ -2,48 +2,52 @@
   "id": "intelligenzarten",
   "name": "Intelligenzarten",
   "category": "resource",
-  "intro": "Geh die verschiedenen Intelligenzarten durch — welche davon ist eine Stärke, die du für dein Ziel nutzen kannst?",
-  "_todo": "gegen Buch/PPT prüfen/anpassen",
+  "intro": "Identifiziere mit Hilfe der Beschreibungen, welche Intelligenzarten dich besonders kennzeichnen — womit du dich leicht tust.",
   "terms": [
     {
+      "id": "logisch-mathematisch",
+      "label": "Logisch-mathematische Intelligenz",
+      "hint": "Probleme analytisch angehen; Situationen auf Muster und Regelmäßigkeiten hin untersuchen; logische und numerische Muster wahrnehmen und unterscheiden; mit Ketten langer Schlussfolgerungen umgehen."
+    },
+    {
       "id": "sprachlich",
-      "label": "Sprachlich-linguistisch",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
-    },
-    {
-      "id": "logisch",
-      "label": "Logisch-mathematisch",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
-    },
-    {
-      "id": "raeumlich",
-      "label": "Räumlich-visuell",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "label": "Sprachliche Intelligenz",
+      "hint": "Ein Gespür für Sprache entwickeln und treffsicher einsetzen; die eigenen Gedanken ausdrücken; das Sprechen anderer verstehen."
     },
     {
       "id": "musikalisch",
-      "label": "Musikalisch-rhythmisch",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "label": "Musikalische Intelligenz",
+      "hint": "Rhythmen produzieren; Tonhöhen und Klangqualitäten erkennen; musikalischen Ausdruck schätzen; Musik komponieren."
     },
     {
-      "id": "koerperlich",
-      "label": "Körperlich-kinästhetisch",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "id": "raeumlich",
+      "label": "Räumliche Intelligenz",
+      "hint": "Räumliche Zusammenhänge erkennen und gedanklich umformen; gedanklich komplizierte Objekte rotieren lassen."
     },
     {
-      "id": "interpersonal",
-      "label": "Interpersonal",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "id": "koerperlich-kinaesthetisch",
+      "label": "Körperlich-kinästhetische Intelligenz",
+      "hint": "Den eigenen Körper beherrschen, kontrollieren und koordinieren; geschickt mit Gegenständen umgehen; Gespür für Bewegungsabläufe entwickeln."
     },
     {
       "id": "intrapersonal",
-      "label": "Intrapersonal",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "label": "Intrapersonale Intelligenz",
+      "hint": "Die eigenen emotionalen Impulse kontrollieren; eigene Grenzen kennen; die eigenen Gefühle kennen und klug mit ihnen umgehen; das eigene Wissen, die eigenen Stärken und Schwächen erkennen."
+    },
+    {
+      "id": "interpersonal",
+      "label": "Interpersonale Intelligenz",
+      "hint": "Andere Menschen und die Beweggründe ihres Verhaltens verstehen; Stimmungslagen anderer erfassen und einfühlsam kommunizieren; sich für die Gedanken und Gefühle der Mitmenschen interessieren."
     },
     {
       "id": "naturalistisch",
-      "label": "Naturalistisch",
-      "hint": "Wie kannst du diese Stärke für dein Ziel nutzen?"
+      "label": "Naturalistische Intelligenz",
+      "hint": "Lebendiges beobachten, unterscheiden und klassifizieren; Sensibilität für größere natürliche Zusammenhänge; Liebe zur Natur."
+    },
+    {
+      "id": "existenziell-spirituell",
+      "label": "Existenzielle oder spirituelle Intelligenz (in Diskussion)",
+      "hint": "Interesse an existenziellen und spirituellen Fragen; Fähigkeit zum spirituellen Erleben, z. B. Tranceerleben."
     }
   ],
   "bookRef": ""

@@ -16,6 +16,11 @@ type KiImpulsProps = {
   onItemsChange: (next: ResourceItem[]) => void;
   /** Label for the capture add-button / rows. */
   captureLabel?: string;
+  /** Optional second capture field per row (→ item.note), e.g. "Modell". */
+  captureNoteLabel?: string;
+  captureNotePlaceholder?: string;
+  /** Rate each captured entry förderlich/hinderlich in place (MP3). */
+  captureWithPolarity?: boolean;
 };
 
 /**
@@ -31,6 +36,9 @@ export function KiImpuls({
   items,
   onItemsChange,
   captureLabel = "Impuls",
+  captureNoteLabel,
+  captureNotePlaceholder,
+  captureWithPolarity = false,
 }: KiImpulsProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [copied, setCopied] = useState(false);
@@ -103,6 +111,9 @@ export function KiImpuls({
           placeholder="ein Impuls, eine Frage, eine Ressource …"
           itemLabel={captureLabel}
           emptyHint="Noch nichts erfasst."
+          noteLabel={captureNoteLabel}
+          notePlaceholder={captureNotePlaceholder}
+          withPolarity={captureWithPolarity}
         />
         <NoPersonalDataHint />
       </div>

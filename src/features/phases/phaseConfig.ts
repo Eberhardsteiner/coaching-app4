@@ -20,8 +20,10 @@ export interface PhaseDef {
 /**
  * Central phase configuration — all phases are fully built: Phase 0
  * (Vereinbarung, 2 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
- * Phase 3 (Ressourcen, 7 steps), Phase 4 (Handlungsplan, 3 steps) and Phase 5
- * (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the process.
+ * Phase 3 (Ressourcen, 10 steps — MP3), Phase 4 (Handlungsplan, 3 steps) and
+ * Phase 5 (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the process.
+ * Old sessions saved mid-phase before a step-count change are clamped in
+ * usePhaseNavigation (stepIndex never exceeds the current step count).
  */
 export const PHASES: PhaseDef[] = [
   {
@@ -114,38 +116,54 @@ export const PHASES: PhaseDef[] = [
     steps: [
       {
         id: "3.1",
-        title: "Eigene Ressourcen",
-        intro: "Mit einem Modell deine Stärken, Werte und Fähigkeiten sammeln.",
+        title: "Orientierung: Ressourcen & Cockpit",
+        intro:
+          "Das Kompetenzmodell als Landkarte — und dein Cockpit, das sich füllt.",
       },
       {
         id: "3.2",
-        title: "Werte der Beteiligten",
-        intro: "Was den Menschen rund um dein Kernthema wichtig ist.",
+        title: "Meine Intelligenzen",
+        intro: "Deine Begabungen — und ob sie dir Richtung Ziel helfen.",
       },
       {
         id: "3.3",
-        title: "Hypothesen & Impulse",
-        intro: "Mit guten Fragen weitere Ressourcen entdecken.",
+        title: "Motive & Persönlichkeitseigenschaften",
+        intro: "Was dich antreibt und ausmacht — gewertet am Ziel.",
       },
       {
         id: "3.4",
-        title: "Erfahrungen & Muster",
-        intro: "Erfahrungen, äußere Ressourcen und alte Muster sammeln.",
+        title: "Meine Werte",
+        intro: "Als Mensch, in deiner Funktion, für dein Ziel — je max. fünf.",
       },
       {
         id: "3.5",
-        title: "Körpersignale",
-        intro: "Wahrnehmen, was sich stimmig oder unstimmig anfühlt.",
+        title: "Werte der Anderen",
+        intro: "Was deine systemischen Mitspieler wichtig nehmen — je Cluster.",
       },
       {
         id: "3.6",
-        title: "Sortieren",
-        intro: "Ressourcen als förderlich oder hinderlich einstufen.",
+        title: "Ressourcen aus Modellen",
+        intro: "Die Vogelperspektive: wissenschaftliche Modelle als Impuls.",
       },
       {
         id: "3.7",
+        title: "Biografie & Umfeld",
+        intro: "Gemeisterte Situationen und äußere Ressourcen sammeln.",
+      },
+      {
+        id: "3.8",
+        title: "Körpersignale",
+        intro: "Deine bekannten Signalgeber — Wahrnehmung, keine Symptome.",
+      },
+      {
+        id: "3.9",
+        title: "Bisheriges Muster — Don’t!",
+        intro: "Welche Ressourcenkombination dich immer wieder hineinführt.",
+      },
+      {
+        id: "3.10",
         title: "Abschluss & Check",
-        intro: "Kurz festhalten, was du aus dieser Phase mitnimmst.",
+        intro: "Dein Cockpit im Überblick — kurz festhalten, was du mitnimmst.",
       },
     ],
   },

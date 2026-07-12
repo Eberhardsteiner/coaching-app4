@@ -16,8 +16,10 @@ import type { Session } from "@/features/session/types";
  *  - drop `coachNotes`,
  *  - set `meta.branch = "self"` (opens in the console-free work view).
  * Everything else (phases 0, 2–5, progress, the rest of meta) is unchanged —
- * including `notebook` (the Erkenntnisboard): that is coachee content and
- * deliberately travels in the handoff, unlike coachNotes.
+ * including `notebook` (the Erkenntnisboard) and the additive MP3 Phase-3
+ * fields (personalityTraits, othersValuesInsight, dontPattern, per-item
+ * category/clusterId): all coachee content, deliberately travelling in the
+ * handoff, unlike coachNotes.
  */
 export function cleanSessionForHandoff(session: Session): Session {
   const cards = stageVisibleCards(session.phase1.cards);

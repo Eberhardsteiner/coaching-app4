@@ -1,16 +1,26 @@
-import { FileText } from "lucide-react";
+import { FileText, LayoutDashboard } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
 
+import { Button } from "@/components/ui/button";
+import { RessourcenCockpitOverlay } from "@/features/phases/phase3/RessourcenCockpit";
 import { useSessionStore } from "@/features/session/sessionStore";
 
 /**
  * Content of the "Werkzeuge" drawer. Once a goal sentence exists (Phase 2),
  * it is shown on top as a calm read-only card — keeping the mantra "stets vor
- * Augen". Below: the entry point to the session summary / PDF. More
- * phase-specific tools will follow.
+ * Augen". From Phase 3 on, the Ressourcen-Cockpit is one click away (full
+ * overlay). Below: the entry point to the session summary / PDF.
  */
 export function ToolsDrawerContent() {
   const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
+  const phase = useSessionStore((s) => s.session?.progress.phase ?? 0);
+  const phase2Done = useSessionStore(
+    (s) => s.session?.progress.completedPhases.includes(2) ?? false,
+  );
+  const [cockpitOpen, setCockpitOpen] = useState(false);
+
+  const cockpitAvailable = phase >= 3 || phase2Done;
 
   return (
     <div className="space-y-4">
@@ -30,6 +40,18 @@ export function ToolsDrawerContent() {
         </p>
       )}
 
+      {cockpitAvailable ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full justify-start"
+          onClick={() => setCockpitOpen(true)}
+        >
+          <LayoutDashboard />
+          Mein Ressourcen-Cockpit
+        </Button>
+      ) : null}
+
       <Link
         to="/zusammenfassung"
         className="inline-flex items-center gap-2 text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -37,6 +59,11 @@ export function ToolsDrawerContent() {
         <FileText className="size-4" />
         Zusammenfassung ansehen &amp; als PDF speichern
       </Link>
+
+      <RessourcenCockpitOverlay
+        open={cockpitOpen}
+        onClose={() => setCockpitOpen(false)}
+      />
     </div>
   );
 }

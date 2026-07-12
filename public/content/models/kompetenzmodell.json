@@ -2,8 +2,58 @@
   "id": "kompetenzmodell",
   "name": "Kompetenzmodell",
   "category": "resource",
-  "intro": "Welche Kompetenzen bringst du mit, die deinem Ziel dienen?",
-  "_todo": "Begriffe/Texte gegen Buch/PPT ergänzen — nichts erfinden",
-  "terms": [],
+  "intro": "Das Kompetenzmodell, das der Ressourcenanalyse zugrunde liegt — du beginnst von innen nach außen.",
+  "terms": [
+    {
+      "id": "soma",
+      "label": "Soma",
+      "hint": "unser Körper als Träger unserer Fähigkeiten"
+    },
+    {
+      "id": "motive",
+      "label": "Motive",
+      "hint": "Innerer emotionaler Antrieb"
+    },
+    {
+      "id": "intelligenzen",
+      "label": "Intelligenzen",
+      "hint": "Angeborene Begabungen"
+    },
+    {
+      "id": "persoenlichkeitseigenschaften",
+      "label": "Persönlichkeitseigenschaften",
+      "hint": "Stabile Charakteristika"
+    },
+    {
+      "id": "leitwerte",
+      "label": "Leitwerte",
+      "hint": "Langfristige Wertorientierung"
+    },
+    {
+      "id": "denk-bewertungsstrukturen",
+      "label": "Denk- und Bewertungs-Strukturen",
+      "hint": "Geprägte Wahrnehmungsmuster und Weltsichten"
+    },
+    {
+      "id": "glaubenssaetze",
+      "label": "Glaubenssätze",
+      "hint": "Unhinterfragte Überzeugungen"
+    },
+    {
+      "id": "innere-antreiber",
+      "label": "Innere Antreiber",
+      "hint": "Handlungsleitende Selbstbilder"
+    },
+    {
+      "id": "feldkompetenz",
+      "label": "Feldkompetenz",
+      "hint": "Anwendungswissen in Branchen und Kontexten"
+    },
+    {
+      "id": "handlungskompetenz",
+      "label": "Handlungskompetenz/Selbstorganisation",
+      "hint": "Alles, was wir in verschiedenen Kontexten konkret abrufen können; beobachtbares Handeln"
+    }
+  ],
   "bookRef": ""
 }

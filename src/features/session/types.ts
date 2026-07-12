@@ -141,18 +141,54 @@ export interface ResourceItem {
   text: string;
   note?: string;
   polarity?: "foerderlich" | "hinderlich";
+  /**
+   * Generic sub-category (additive, MP3): `values` uses the value column
+   * ("mensch" | "funktion" | "ziel"); `othersValues` uses "wer" (the people/
+   * groups of a cluster) and "skip" (cluster deliberately skipped);
+   * `experiential` uses "erfahrung" | "aussen". Unused by other lists.
+   */
+  category?: string;
+  /** Owning Phase-1 cluster (additive, MP3): used by othersValues. */
+  clusterId?: string;
+}
+
+/** One structured "Bisheriges Muster — Don't!" entry (MP3, Folie 14). */
+export interface DontPatternEntry {
+  id: string;
+  /** Which resources fed the pattern. */
+  resources: string;
+  /** The behaviour shown on that basis. */
+  behavior: string;
+  /** What it caused / the insight gained. */
+  effect: string;
 }
 
 export interface Phase3 {
   motives: ResourceItem[];
-  values: ResourceItem[];
+  values: ResourceItem[]; // je Eintrag category "mensch"|"funktion"|"ziel" (MP3)
   intelligences: ResourceItem[];
   innerResources: ResourceItem[]; // nach polarity sortierbar
-  othersValues: ResourceItem[];
-  hypotheses: ResourceItem[]; // Teilphase 3.3 — späterer KI-Einsatzpunkt
-  experiential: ResourceItem[]; // 3.4
-  pastPatterns: ResourceItem[]; // 3.5
-  somaticMarkers: ResourceItem[]; // 3.6
+  othersValues: ResourceItem[]; // je Eintrag clusterId (+ category "wer"/"skip")
+  /**
+   * MP3: repurposed (field name is the persistence contract and stays) — now
+   * holds the "Ressourcen aus Modellen" (3.6): `note` = model name, `text` =
+   * insight/resource. Old free hypothesis entries stay valid (no `note`).
+   */
+  hypotheses: ResourceItem[];
+  experiential: ResourceItem[]; // 3.7 — category "erfahrung" | "aussen"
+  /** Legacy (pre-MP3): free "so nicht mehr" notes. Superseded by dontPattern. */
+  pastPatterns: ResourceItem[];
+  somaticMarkers: ResourceItem[]; // 3.8
+  /**
+   * Persönlichkeitseigenschaften (MP3, additive-optional — no schema bump,
+   * pattern preMortem/istBurden): previously wrongly mixed into motives.
+   * Not initialised in createEmptySession; always read defensively (?? []).
+   */
+  personalityTraits?: ResourceItem[];
+  /** MP3: insights from comparing own values with the others' (Folie 10). */
+  othersValuesInsight?: string;
+  /** MP3: structured "Bisheriges Muster — Don't!" (Folie 14). */
+  dontPattern?: DontPatternEntry[];
   selectedModels?: string[];
   check: PhaseCheck;
 }

@@ -2,21 +2,160 @@
   "id": "werteliste",
   "name": "Werteliste",
   "category": "resource",
-  "intro": "Welche dieser Werte sind dir wichtig — und wie stützen sie dein Ziel? Wähle aus und ergänze, was fehlt.",
-  "_todo": "öffentliche Auswahl, gegen Buch/PPT anpassbar",
+  "intro": "Eine exemplarische Werteliste als Anregung — kein Anspruch auf Vollständigkeit.",
   "terms": [
-    { "id": "freiheit", "label": "Freiheit" },
-    { "id": "sicherheit", "label": "Sicherheit" },
-    { "id": "verantwortung", "label": "Verantwortung" },
-    { "id": "verbundenheit", "label": "Verbundenheit" },
-    { "id": "wachstum", "label": "Wachstum" },
-    { "id": "gerechtigkeit", "label": "Gerechtigkeit" },
-    { "id": "autonomie", "label": "Autonomie" },
-    { "id": "anerkennung", "label": "Anerkennung" },
-    { "id": "gesundheit", "label": "Gesundheit" },
-    { "id": "kreativitaet", "label": "Kreativität" },
-    { "id": "verlaesslichkeit", "label": "Verlässlichkeit" },
-    { "id": "sinn", "label": "Sinn" }
+    {
+      "id": "persoenliche-werte",
+      "label": "Persönliche Werte",
+      "subterms": [
+        "Ehrlichkeit",
+        "Integrität",
+        "Verantwortungsbewusstsein",
+        "Statusbewusstsein",
+        "Selbstständigkeit",
+        "Zielstrebigkeit",
+        "Mut",
+        "Geltungsstreben",
+        "Genusssucht",
+        "Selbstoptimierung"
+      ]
+    },
+    {
+      "id": "zwischenmenschliche-werte",
+      "label": "Zwischenmenschliche Werte",
+      "subterms": [
+        "Respekt",
+        "Empathie",
+        "Toleranz",
+        "Vertrauen",
+        "Misstrauen",
+        "Mitgefühl",
+        "Dominanz",
+        "Wertschätzung",
+        "Konkurrenzdenken",
+        "Loyalität"
+      ]
+    },
+    {
+      "id": "gesellschaftliche-werte",
+      "label": "Gesellschaftliche Werte",
+      "subterms": [
+        "Gerechtigkeit",
+        "Solidarität",
+        "Abgrenzung (Wir-gegen-sie)",
+        "Vielfalt",
+        "Freiheit",
+        "Leistungselite-Denken",
+        "Nachhaltigkeit",
+        "Gemeinsinn",
+        "Konformitätsdruck",
+        "Sicherheit"
+      ]
+    },
+    {
+      "id": "kulturelle-werte",
+      "label": "Kulturelle Werte",
+      "subterms": [
+        "Offenheit",
+        "Bildung",
+        "Kreativität",
+        "Neugier",
+        "Distinktion („Guter Geschmack“ als Abgrenzung)"
+      ]
+    },
+    {
+      "id": "werte-familie",
+      "label": "Werte in der Familie",
+      "subterms": [
+        "Liebe",
+        "Geborgenheit",
+        "Kontrolle („ich weiß, was gut für dich ist“)",
+        "Harmonie",
+        "Pflichterfüllung um jeden Preis",
+        "Zusammenhalt",
+        "Gehorsam",
+        "Ehrlichkeit"
+      ]
+    },
+    {
+      "id": "wirtschaftliche-werte",
+      "label": "Wirtschaftliche Werte",
+      "subterms": [
+        "Nachhaltigkeit im Wirtschaften",
+        "Profitmaximierung",
+        "Kundenorientierung",
+        "Teamgeist",
+        "Innovationskraft",
+        "Zuverlässigkeit",
+        "Ellenbogenmentalität",
+        "Effizienz",
+        "Qualität",
+        "Statussymbole (Prestige durch Besitz)"
+      ]
+    },
+    {
+      "id": "ethische-werte",
+      "label": "Ethische Werte",
+      "subterms": [
+        "Fairness",
+        "Altruismus",
+        "Risikobereitschaft (auch zulasten anderer)",
+        "Achtung vor dem Leben",
+        "Zweckrationalität („der Zweck heiligt die Mittel“)",
+        "Achtsamkeit",
+        "Transparenz",
+        "Machtstreben",
+        "Verantwortung gegenüber der Natur"
+      ]
+    },
+    {
+      "id": "werte-bildung",
+      "label": "Werte in der Bildung",
+      "subterms": [
+        "Wissbegierde",
+        "Disziplin",
+        "Notendruck/Leistungszwang",
+        "Kreativität",
+        "Lernbereitschaft",
+        "Konkurrenz unter Lernenden",
+        "Eigenverantwortung",
+        "Anpassung an Erwartungen statt eigener Meinung",
+        "Autoritätsgläubigkeit",
+        "Nachhaltiges Denken"
+      ]
+    },
+    {
+      "id": "globale-werte",
+      "label": "Globale Werte",
+      "subterms": [
+        "Frieden",
+        "Klimaschutz",
+        "Tierschutz",
+        "Nationale Überlegenheit",
+        "Globale Gerechtigkeit",
+        "Abschottung (Schutz des Eigenen vor dem Fremden)",
+        "Internationale Zusammenarbeit",
+        "Nachhaltige Entwicklung",
+        "Ressourcendominanz",
+        "Kulturelle Verständigung"
+      ]
+    },
+    {
+      "id": "spirituelle-werte",
+      "label": "Spirituelle Werte",
+      "subterms": [
+        "Sinnsuche",
+        "Demut",
+        "Dankbarkeit",
+        "Meditation",
+        "Erlösungsversprechen (Heil durch Unterordnung)",
+        "Weltoffenheit",
+        "Sendungsbewusstsein („Wir haben die Wahrheit“)",
+        "Achtung vor anderen Glaubensrichtungen",
+        "Reflexion",
+        "Fatalismus („es ist ohnehin vorbestimmt“)"
+      ]
+    }
   ],
   "bookRef": ""
 }

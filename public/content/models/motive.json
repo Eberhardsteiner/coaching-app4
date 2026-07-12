@@ -1,9 +1,129 @@
 {
   "id": "motive",
-  "name": "Motive",
+  "name": "Motive & Persönlichkeitseigenschaften (EPP)",
   "category": "resource",
-  "intro": "Welche inneren Beweggründe treiben dich an — und tragen dein Ziel?",
-  "_todo": "Begriffe/Texte gegen Buch/PPT ergänzen — nichts erfinden",
-  "terms": [],
+  "intro": "Identifiziere deine stärksten Motive und Persönlichkeitseigenschaften — du erkennst sie an hohen Werten in deinem EPP.",
+  "terms": [
+    {
+      "id": "motiv-abwechslung",
+      "label": "Abwechslung",
+      "hint": "Die Lust auf neue emotionale Erfahrungen"
+    },
+    {
+      "id": "motiv-aktivitaet",
+      "label": "Aktivität",
+      "hint": "Die Lust, körperlich aktiv zu sein"
+    },
+    {
+      "id": "motiv-balance",
+      "label": "Balance",
+      "hint": "Die Lust, sich für den Interessensausgleich einzusetzen"
+    },
+    {
+      "id": "motiv-beziehung",
+      "label": "Beziehung",
+      "hint": "Die Lust, verlässliche Beziehungen zu anderen einzugehen"
+    },
+    {
+      "id": "motiv-dominanz",
+      "label": "Dominanz",
+      "hint": "Die Lust, sich durchzusetzen"
+    },
+    {
+      "id": "motiv-einfluss",
+      "label": "Einfluss",
+      "hint": "Die Lust, etwas zu gestalten und zu verantworten"
+    },
+    {
+      "id": "motiv-erkenntnis",
+      "label": "Erkenntnis",
+      "hint": "Die Lust auf neue Erkenntnisse und das Verstehen von Zusammenhängen"
+    },
+    {
+      "id": "motiv-fremdanerkennung",
+      "label": "Fremdanerkennung",
+      "hint": "Die Lust, von anderen positive Rückmeldungen zu erhalten"
+    },
+    {
+      "id": "motiv-selbstanerkennung",
+      "label": "Selbstanerkennung",
+      "hint": "Die Lust, stolz auf die eigene Leistungsfähigkeit zu sein"
+    },
+    {
+      "id": "motiv-status",
+      "label": "Status",
+      "hint": "Die Lust auf öffentliche Beachtung des im Leben Erreichten (work/live/virtual)"
+    },
+    {
+      "id": "motiv-distanz",
+      "label": "Distanz",
+      "hint": "Die Lust auf emotionale Distanz zu anderen"
+    },
+    {
+      "id": "motiv-flexibilitaet",
+      "label": "Flexibilität",
+      "hint": "Die Lust auf flexibles Vorgehen"
+    },
+    {
+      "id": "motiv-freiheit",
+      "label": "Freiheit",
+      "hint": "Die Lust auf Unabhängigkeit"
+    },
+    {
+      "id": "motiv-kooperation",
+      "label": "Kooperation",
+      "hint": "Die Lust, Entscheidungen mit anderen zu treffen"
+    },
+    {
+      "id": "motiv-naehe",
+      "label": "Nähe",
+      "hint": "Die Lust, anderen die eigenen Gefühle mitzuteilen"
+    },
+    {
+      "id": "motiv-risiko",
+      "label": "Risiko",
+      "hint": "Die Lust an Situationen mit offenem Ausgang"
+    },
+    {
+      "id": "motiv-struktur",
+      "label": "Struktur",
+      "hint": "Die Lust auf planvolles Vorgehen"
+    },
+    {
+      "id": "motiv-vorsicht",
+      "label": "Vorsicht",
+      "hint": "Die Lust zu wissen, wie etwas endet"
+    },
+    {
+      "id": "pe-emotionale-ruhe",
+      "label": "Emotionale Ruhe",
+      "hint": "Grundsätzliche Orientierung an der Stabilität des eigenen Wohlgefühls"
+    },
+    {
+      "id": "pe-gewissenhaftigkeit",
+      "label": "Gewissenhaftigkeit",
+      "hint": "Grundsätzliche Orientierung am Genauen"
+    },
+    {
+      "id": "pe-prinzipienorientierung",
+      "label": "Prinzipienorientierung",
+      "hint": "Grundsätzliche Orientierung am Vereinbarten"
+    },
+    {
+      "id": "pe-routine",
+      "label": "Routine",
+      "hint": "Grundsätzliche Orientierung am gewohnten Verhalten"
+    },
+    {
+      "id": "pe-selbstorientierung",
+      "label": "Selbstorientierung",
+      "hint": "Grundsätzliche Orientierung am eigenen Vorteil"
+    },
+    {
+      "id": "pe-umgaenglichkeit",
+      "label": "Umgänglichkeit",
+      "hint": "Grundsätzliches Wohlwollen anderen gegenüber"
+    }
+  ],
   "bookRef": ""
 }

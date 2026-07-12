@@ -3,7 +3,11 @@ import type { ReactNode } from "react";
 import { BRANDING } from "@/config/branding";
 import { PHASES } from "@/features/phases/phaseConfig";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
-import type { PhaseCheck, Session } from "@/features/session/types";
+import type {
+  PhaseCheck,
+  ResourceItem,
+  Session,
+} from "@/features/session/types";
 
 /** Format an ISO datetime's date part as a German date, timezone-safe. */
 function formatDate(iso: string): string {
@@ -45,18 +49,108 @@ export function SessionSummary({ session }: { session: Session }) {
     (a, b) => Number(b.isCore ?? false) - Number(a.isCore ?? false),
   );
 
-  // Ressourcen (Phase 3) + id→text resolution for Phase-4 references
+  // Ressourcen (Phase 3, MP3-Cockpit-Gliederung) + id→text for Phase 4 refs
   const sortable = collectSortableResources(phase3);
   const resById = new Map(sortable.map((e) => [e.item.id, e.item]));
   const resText = (id: string) => resById.get(id)?.text.trim() || "—";
-  const foerderliche = sortable
-    .filter((e) => e.item.polarity === "foerderlich")
-    .map((e) => e.item.text.trim())
-    .filter(Boolean);
-  const hinderliche = sortable
-    .filter((e) => e.item.polarity === "hinderlich")
-    .map((e) => e.item.text.trim())
-    .filter(Boolean);
+  const polarityMark = (item: ResourceItem): string =>
+    item.polarity === "foerderlich"
+      ? " (förderlich)"
+      : item.polarity === "hinderlich"
+        ? " (hinderlich)"
+        : "";
+  const listWithPolarity = (items: ResourceItem[]): string =>
+    items
+      .filter((i) => i.text.trim())
+      .map((i) => `${i.text.trim()}${polarityMark(i)}`)
+      .join(" · ");
+  const personalityTraits = phase3.personalityTraits ?? [];
+  const ownResourceRows = (
+    [
+      ["Intelligenzen", phase3.intelligences],
+      ["Motive", phase3.motives],
+      ["Persönlichkeitseigenschaften", personalityTraits],
+    ] as const
+  )
+    .map(([label, items]) => ({ label, text: listWithPolarity(items) }))
+    .filter((row) => row.text);
+  const valueColumns = (
+    [
+      ["mensch", "Als Mensch"],
+      ["funktion", "In meiner Funktion"],
+      ["ziel", "Für mein Ziel"],
+    ] as const
+  )
+    .map(([category, label]) => ({
+      label,
+      text: listWithPolarity(
+        phase3.values.filter((i) => i.category === category),
+      ),
+    }))
+    .filter((row) => row.text);
+  const valueLegacyText = listWithPolarity(
+    phase3.values.filter(
+      (i) => !["mensch", "funktion", "ziel"].includes(i.category ?? ""),
+    ),
+  );
+  const othersGroups = clustersSorted
+    .map((cluster) => {
+      const entries = phase3.othersValues.filter(
+        (i) => i.clusterId === cluster.id,
+      );
+      return {
+        id: cluster.id,
+        name: cluster.name.trim() || "Cluster",
+        wer: entries
+          .filter((i) => i.category === "wer")
+          .map((i) => i.text.trim())
+          .filter(Boolean)
+          .join(", "),
+        werte: entries
+          .filter((i) => !i.category && i.text.trim())
+          .map((i) => i.text.trim()),
+      };
+    })
+    .filter((g) => g.wer || g.werte.length > 0);
+  const othersLegacy = phase3.othersValues
+    .filter(
+      (i) =>
+        !i.category &&
+        i.text.trim() &&
+        (!i.clusterId || !phase1.clusters.some((c) => c.id === i.clusterId)),
+    )
+    .map((i) => i.text.trim());
+  const othersInsight = (phase3.othersValuesInsight ?? "").trim();
+  const modelResources = phase3.hypotheses.filter((i) => i.text.trim());
+  const erfahrungenText = listWithPolarity(
+    phase3.experiential.filter((i) => i.category !== "aussen"),
+  );
+  const aussenText = listWithPolarity(
+    phase3.experiential.filter((i) => i.category === "aussen"),
+  );
+  const innerText = listWithPolarity(phase3.innerResources);
+  const markerText = phase3.somaticMarkers
+    .filter((i) => i.text.trim())
+    .map((i) => i.text.trim())
+    .join(" · ");
+  const dontRows = (phase3.dontPattern ?? []).filter(
+    (d) => d.resources.trim() || d.behavior.trim() || d.effect.trim(),
+  );
+  const pastText = phase3.pastPatterns
+    .filter((i) => i.text.trim())
+    .map((i) => i.text.trim())
+    .join(" · ");
+  const hasPhase3 =
+    ownResourceRows.length > 0 ||
+    valueColumns.length > 0 ||
+    Boolean(valueLegacyText) ||
+    othersGroups.length > 0 ||
+    othersLegacy.length > 0 ||
+    Boolean(othersInsight) ||
+    modelResources.length > 0 ||
+    Boolean(erfahrungenText || aussenText || innerText || markerText) ||
+    dontRows.length > 0 ||
+    Boolean(pastText);
 
   // Ziel — goalText holds the fully assembled mantra sentence (MP2 contract);
   // old sessions may still carry a free-form goal state text, shown as-is.
@@ -252,29 +346,151 @@ export function SessionSummary({ session }: { session: Session }) {
         </Section>
       ) : null}
 
-      {/* Deine Ressourcen */}
-      {foerderliche.length > 0 || hinderliche.length > 0 ? (
+      {/* Deine Ressourcen — Cockpit-Gliederung (MP3) */}
+      {hasPhase3 ? (
         <Section title="Deine Ressourcen">
-          {foerderliche.length > 0 ? (
-            <div>
-              <p className="text-sm font-medium text-foreground">Förderlich</p>
-              <ul className="ml-4 list-disc text-foreground">
-                {foerderliche.map((text, i) => (
-                  <li key={`f-${i}-${text}`}>{text}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          {hinderliche.length > 0 ? (
-            <div className="mt-2">
-              <p className="text-sm font-medium text-foreground">Hinderlich</p>
-              <ul className="ml-4 list-disc text-muted">
-                {hinderliche.map((text, i) => (
-                  <li key={`h-${i}-${text}`}>{text}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+          <div className="space-y-3 text-sm">
+            {ownResourceRows.map((row) => (
+              <p key={row.label} className="text-muted">
+                <span className="font-medium text-foreground">
+                  {row.label}:
+                </span>{" "}
+                {row.text}
+              </p>
+            ))}
+            {valueColumns.length > 0 || valueLegacyText ? (
+              <div>
+                <p className="font-medium text-foreground">Meine Werte</p>
+                <ul className="ml-4 list-disc text-muted">
+                  {valueColumns.map((row) => (
+                    <li key={row.label}>
+                      <span className="text-foreground">{row.label}:</span>{" "}
+                      {row.text}
+                    </li>
+                  ))}
+                  {valueLegacyText ? (
+                    <li>
+                      <span className="text-foreground">Weitere:</span>{" "}
+                      {valueLegacyText}
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            ) : null}
+            {othersGroups.length > 0 || othersLegacy.length > 0 ? (
+              <div>
+                <p className="font-medium text-foreground">Werte der Anderen</p>
+                <ul className="ml-4 list-disc text-muted">
+                  {othersGroups.map((group) => (
+                    <li key={group.id}>
+                      <span className="text-foreground">{group.name}</span>
+                      {group.wer ? ` (${group.wer})` : ""}
+                      {group.werte.length > 0
+                        ? `: ${group.werte.join(" · ")}`
+                        : ""}
+                    </li>
+                  ))}
+                  {othersLegacy.length > 0 ? (
+                    <li>
+                      <span className="text-foreground">Weitere:</span>{" "}
+                      {othersLegacy.join(" · ")}
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            ) : null}
+            {othersInsight ? (
+              <p className="text-muted">
+                <span className="font-medium text-foreground">
+                  Erkenntnisse aus dem Werte-Abgleich:
+                </span>{" "}
+                {othersInsight}
+              </p>
+            ) : null}
+            {modelResources.length > 0 ? (
+              <div>
+                <p className="font-medium text-foreground">
+                  Ressourcen aus Modellen
+                </p>
+                <ul className="ml-4 list-disc text-muted">
+                  {modelResources.map((i) => (
+                    <li key={i.id}>
+                      {i.note?.trim() ? (
+                        <span className="text-foreground">
+                          {i.note.trim()}:{" "}
+                        </span>
+                      ) : null}
+                      {i.text.trim()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {erfahrungenText || aussenText || innerText ? (
+              <div>
+                <p className="font-medium text-foreground">
+                  Weitere Ressourcen
+                </p>
+                <ul className="ml-4 list-disc text-muted">
+                  {erfahrungenText ? (
+                    <li>
+                      <span className="text-foreground">Biografie:</span>{" "}
+                      {erfahrungenText}
+                    </li>
+                  ) : null}
+                  {aussenText ? (
+                    <li>
+                      <span className="text-foreground">
+                        Fakten des Kontexts / Andere:
+                      </span>{" "}
+                      {aussenText}
+                    </li>
+                  ) : null}
+                  {innerText ? (
+                    <li>
+                      <span className="text-foreground">
+                        Innere Ressourcen:
+                      </span>{" "}
+                      {innerText}
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            ) : null}
+            {markerText ? (
+              <p className="text-muted">
+                <span className="font-medium text-foreground">
+                  Körpersignale:
+                </span>{" "}
+                {markerText}
+              </p>
+            ) : null}
+            {dontRows.length > 0 ? (
+              <div>
+                <p className="font-medium text-ist">
+                  Bisheriges Muster — Don’t!
+                </p>
+                <ul className="ml-4 list-disc text-muted">
+                  {dontRows.map((d) => (
+                    <li key={d.id}>
+                      <span className="text-foreground">
+                        {d.resources.trim() || "—"}
+                      </span>{" "}
+                      → {d.behavior.trim() || "—"} → {d.effect.trim() || "—"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {pastText ? (
+              <p className="text-muted">
+                <span className="font-medium text-foreground">
+                  Frühere Notizen:
+                </span>{" "}
+                {pastText}
+              </p>
+            ) : null}
+          </div>
         </Section>
       ) : null}
 

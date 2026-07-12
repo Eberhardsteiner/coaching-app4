@@ -92,6 +92,9 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
     index: number,
     partial: Partial<Consequence>,
   ) {
+    // Pin the cluster being edited — otherwise the derived "first incomplete"
+    // active cluster would jump away the moment this one becomes complete.
+    setSelectedId(cluster.id);
     patch((s) => {
       const list = s.phase2.consequences;
       const existing = list.find((c) => c.clusterId === cluster.id);
