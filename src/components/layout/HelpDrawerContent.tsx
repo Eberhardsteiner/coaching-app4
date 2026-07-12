@@ -1,6 +1,7 @@
 import { Map, RotateCcw } from "lucide-react";
 import { Link } from "react-router";
 
+import { ContactCard } from "@/components/ContactCard";
 import { Button } from "@/components/ui/button";
 import { SafetyNotice } from "@/features/safety/SafetyNotice";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -21,6 +22,8 @@ export function HelpDrawerContent({ onStartTour }: HelpDrawerContentProps) {
   return (
     <div className="space-y-5">
       <SafetyNotice />
+
+      <ContactCard />
 
       <div className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-wide text-faint">

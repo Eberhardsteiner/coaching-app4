@@ -106,6 +106,29 @@ export async function deleteSession(id: string): Promise<void> {
 }
 
 /**
+ * Delete a session AND clean up the last-active pointer when it referenced it
+ * (extracted from the SessionsPage flow, MP5): a deleted session must never be
+ * resumed — no orphan pointer state. Callers still clear their in-memory store
+ * themselves (clearActive) when the deleted session is the active one.
+ */
+export async function deleteSessionAndPointer(id: string): Promise<void> {
+  await db.sessions.delete(id);
+  if ((await getLastActiveId()) === id) {
+    await clearLastActiveId();
+  }
+}
+
+/**
+ * Delete ALL local app data (MP5, "Alle lokalen Daten löschen"): every session
+ * plus every kv flag (last-active pointer, consent/intro/tour/phase-start
+ * flags). The notebook lives inside the sessions and goes with them. After
+ * this the app starts in its pristine first-run state.
+ */
+export async function deleteAllData(): Promise<void> {
+  await Promise.all([db.sessions.clear(), db.kv.clear()]);
+}
+
+/**
  * Switch a session's branch (coach ↔ coachee). This is a view/role change only
  * — it never migrates data or touches the schema. No-op if the session is gone.
  */

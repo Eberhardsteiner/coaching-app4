@@ -3,27 +3,19 @@ import { ArrowLeft, ArrowRight, Plus, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 
 import { usePersona } from "@/app/theme-context";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { BRANCH_LABELS } from "@/config/constants";
+import { downloadSession } from "@/features/session/exportSession";
 import { ImportButton } from "@/features/session/ImportButton";
 import {
-  clearLastActiveId,
-  deleteSession,
-  getLastActiveId,
+  deleteAllData,
+  deleteSessionAndPointer,
   listSessions,
+  peekSession,
   setSessionBranch,
 } from "@/features/session/sessionRepository";
 import { useSessionStore } from "@/features/session/sessionStore";
+import { StrictDeleteDialog } from "@/features/session/StrictDeleteDialog";
 import type { Session } from "@/features/session/types";
 
 function formatDateTime(iso: string): string {
@@ -62,6 +54,7 @@ export function SessionsPage() {
 
   const [sessions, setSessions] = useState<Session[] | null>(null); // null = loading
   const [pendingDelete, setPendingDelete] = useState<Session | null>(null);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
   async function reload() {
     setSessions(await listSessions());
@@ -94,18 +87,39 @@ export function SessionsPage() {
   async function handleConfirmDelete() {
     const target = pendingDelete;
     if (!target) return;
-    await deleteSession(target.meta.id);
-    // Clear the in-memory active session if it was the deleted one...
+    // Deletes the session AND the persisted last-active pointer when it
+    // referenced it (repository helper) — a deleted session is never resumed.
+    await deleteSessionAndPointer(target.meta.id);
+    // Clear the in-memory active session if it was the deleted one.
     if (activeId === target.meta.id) {
       clearActive();
     }
-    // ...and the persisted pointer too (even when no session is active in this
-    // tab), so a deleted session is never resumed — no orphan state.
-    if ((await getLastActiveId()) === target.meta.id) {
-      await clearLastActiveId();
-    }
     setPendingDelete(null);
     await reload();
+  }
+
+  /** F3 — wipe ALL local data (sessions + kv flags); app back to first run. */
+  async function handleConfirmDeleteAll() {
+    await deleteAllData();
+    clearActive();
+    setDeleteAllOpen(false);
+    await reload();
+  }
+
+  /**
+   * Export for the delete dialogs — always a FRESH read from Dexie (not the
+   * list snapshot from mount): a pending 400 ms autosave flush or a second
+   * tab may have written since; the pre-delete backup must be current.
+   */
+  async function exportFresh(id: string) {
+    const fresh = await peekSession(id);
+    if (fresh) downloadSession(fresh);
+  }
+
+  /** F3 export reminder: back up EVERY session before the full wipe. */
+  async function exportAllFresh() {
+    const all = await listSessions();
+    for (const session of all) downloadSession(session);
   }
 
   const isEmpty = sessions !== null && sessions.length === 0;
@@ -208,40 +222,70 @@ export function SessionsPage() {
             ))}
           </ul>
         )}
+
+        {/* F3 — Gefahrenbereich: alle lokalen Daten löschen. */}
+        {sessions !== null && sessions.length > 0 ? (
+          <div className="mt-12 rounded-xl border border-subtle bg-surface-2 p-4">
+            <p className="text-sm font-medium text-foreground">
+              Alle lokalen Daten löschen
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              Entfernt alle Sitzungen ({sessions.length}{" "}
+              {sessions.length === 1 ? "Sitzung" : "Sitzungen"}) und
+              Einstellungen auf diesem Gerät — die App startet danach wie beim
+              ersten Besuch.
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2 text-muted"
+              onClick={() => setDeleteAllOpen(true)}
+            >
+              <Trash2 />
+              Alle Daten löschen
+            </Button>
+          </div>
+        ) : null}
       </main>
 
-      <AlertDialog
+      {/* F4 — Einzel-Löschung im strengen Standard. */}
+      <StrictDeleteDialog
         open={pendingDelete !== null}
         onOpenChange={(open) => {
           if (!open) setPendingDelete(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sitzung löschen?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pendingDelete
-                ? `„${sessionTitle(pendingDelete)}“ wird unwiderruflich von diesem Gerät gelöscht.`
-                : ""}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel asChild>
-              <Button variant="outline">Abbrechen</Button>
-            </AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  void handleConfirmDelete();
-                }}
-              >
-                Löschen
-              </Button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="Sitzung löschen?"
+        description={
+          pendingDelete
+            ? `„${sessionTitle(pendingDelete)}“ wird endgültig gelöscht. Die Sitzung ist nur lokal auf diesem Gerät gespeichert — es gibt kein Backup durch uns.`
+            : ""
+        }
+        checkboxLabel="Ich habe verstanden, dass meine Sitzung unwiderruflich gelöscht wird."
+        confirmLabel="Endgültig löschen"
+        onExport={() => {
+          if (pendingDelete) void exportFresh(pendingDelete.meta.id);
+        }}
+        onConfirm={() => {
+          void handleConfirmDelete();
+        }}
+      />
+
+      {/* F3 — Alle Daten löschen, gleicher strenger Standard. */}
+      <StrictDeleteDialog
+        open={deleteAllOpen}
+        onOpenChange={setDeleteAllOpen}
+        title="Alle lokalen Daten löschen?"
+        description={`Alle Sitzungen (${sessions?.length ?? 0}) und Einstellungen auf diesem Gerät werden endgültig gelöscht — es gibt kein Backup durch uns.`}
+        checkboxLabel="Ich habe verstanden, dass alle Sitzungen und Einstellungen unwiderruflich gelöscht werden."
+        confirmLabel="Alles endgültig löschen"
+        onExport={() => {
+          void exportAllFresh();
+        }}
+        exportLabel="Alle Sitzungen als Sicherungsdateien herunterladen"
+        onConfirm={() => {
+          void handleConfirmDeleteAll();
+        }}
+      />
     </div>
   );
 }

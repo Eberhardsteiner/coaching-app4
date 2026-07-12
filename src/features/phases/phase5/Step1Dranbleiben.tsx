@@ -1,4 +1,5 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
@@ -7,18 +8,42 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem, Strategy } from "@/features/session/types";
+import { cn } from "@/lib/utils";
+
+/** Beispiel-Anregungen (Methodik-Vorlage; Nr. 6 variiert je Zweig). */
+function buildSuggestions(coached: boolean): string[] {
+  return [
+    "Eine Visualisierung deines Ziels, die du sehr häufig siehst",
+    "Ein vertrauter Mensch, mit dem du deine Absichten teilst",
+    "Eine Eintragung deiner Maßnahmen in deinen Kalender",
+    "Deine Erfolge feiern",
+    "Deine Körpersignale als Rückmeldeinstrument über dein Wohlbefinden",
+    coached
+      ? "Ein Follow-up mit deinem Coach auf der halben Zeitstrecke zu deinem Ziel"
+      : "Ein Follow-up mit einem Coach auf der halben Zeitstrecke zu deinem Ziel",
+  ];
+}
+
+/** The suggestion that gets the somatic-marker extra line (index 4). */
+const BODY_SUGGESTION_INDEX = 4;
 
 /**
  * Phase 5, Step 5.1 — Dranbleiben. Per resource a concrete "stay-on-track"
- * strategy (→ phase5.strategies). The resource field offers the förderliche /
- * Phase-4-used resources as suggestions (datalist) but stores the readable
- * **text** in `Strategy.resource` (good for the later summary/PDF). No AI here.
+ * strategy (→ phase5.strategies, template table "Eingesetzte Ressource |
+ * Konkrete Strategien"). The method's six example suggestions are one click
+ * away: taking one creates a strategy row with prefilled concreteStrategy and
+ * focus in the empty resource field; taken suggestions are marked (duplicate
+ * guard by text). The resource field offers the förderliche / Phase-4-used
+ * resources as suggestions (datalist) but stores the readable **text** in
+ * `Strategy.resource` (good for the later summary/PDF). No AI here.
  */
 export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
   const strategies = useSessionStore((s) => s.session?.phase5.strategies ?? []);
   const plans = useSessionStore((s) => s.session?.phase4.plans ?? []);
   const phase3 = useSessionStore((s) => s.session?.phase3);
+  const coached = useSessionStore((s) => s.session?.meta.branch === "coached");
   const patch = useSessionStore((s) => s.patch);
+  const [focusId, setFocusId] = useState<string | null>(null);
 
   // Suggested resource texts: Phase-4-used first, then remaining förderliche.
   const resById = new Map<string, ResourceItem>(
@@ -43,11 +68,34 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
   }
 
   function addStrategy() {
-    setStrategies([
-      ...strategies,
-      { id: crypto.randomUUID(), resource: "", concreteStrategy: "" },
-    ]);
+    const strategy: Strategy = {
+      id: crypto.randomUUID(),
+      resource: "",
+      concreteStrategy: "",
+    };
+    setFocusId(strategy.id);
+    setStrategies([...strategies, strategy]);
   }
+
+  const suggestions_ = buildSuggestions(coached);
+  const isTakenSuggestion = (text: string) =>
+    strategies.some((s) => s.concreteStrategy === text);
+
+  /** Take a suggestion: new row with prefilled strategy, focus the resource. */
+  function takeSuggestion(text: string) {
+    if (isTakenSuggestion(text)) return;
+    const strategy: Strategy = {
+      id: crypto.randomUUID(),
+      resource: "",
+      concreteStrategy: text,
+    };
+    setFocusId(strategy.id);
+    setStrategies([...strategies, strategy]);
+  }
+
+  const bodyMarkers = (phase3?.somaticMarkers ?? [])
+    .map((m) => m.text.trim())
+    .filter(Boolean);
 
   function updateStrategy(id: string, partial: Partial<Strategy>) {
     setStrategies(
@@ -62,10 +110,54 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-5">
       <p className="text-muted">
-        Wie bleibst du dran? Ab jetzt bist du selbst dein Controller. Leg für
-        deine wichtigsten Ressourcen fest, wie du sie weiter nutzt — und woran
-        du erkennst, ob du auf Kurs bist.
+        Bitte überlege dir einmal: Wer oder was kann dich beim Umsetzen deines
+        Plans unterstützen? Trage die Punkte, die dir einfallen, mit den
+        zugehörigen Ressourcen ein.
       </p>
+
+      {/* Beispiel-Anregungen — ein Klick legt eine Strategien-Zeile an. */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-foreground">
+          Anregungen — tippe an, was zu dir passt:
+        </p>
+        <div
+          role="group"
+          aria-label="Beispiel-Anregungen übernehmen"
+          className="grid gap-2 sm:grid-cols-2"
+        >
+          {suggestions_.map((text, index) => {
+            const taken = isTakenSuggestion(text);
+            return (
+              <button
+                key={text}
+                type="button"
+                disabled={taken}
+                onClick={() => takeSuggestion(text)}
+                className={cn(
+                  "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                  taken
+                    ? "cursor-default border-accent/40 bg-accent/10 text-muted"
+                    : "border-subtle bg-surface text-foreground hover:bg-surface-2",
+                )}
+              >
+                {taken ? (
+                  <Check className="mt-0.5 size-4 shrink-0 text-accent" />
+                ) : (
+                  <Plus className="mt-0.5 size-4 shrink-0 text-accent" />
+                )}
+                <span>
+                  {text}
+                  {index === BODY_SUGGESTION_INDEX && bodyMarkers.length > 0 ? (
+                    <span className="mt-1 block text-xs text-faint">
+                      Deine Signalgeber: {bodyMarkers.join(" · ")}
+                    </span>
+                  ) : null}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {strategies.length === 0 ? (
         <p className="text-xs text-faint">
@@ -91,6 +183,7 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                   id={`strategy-res-${strategy.id}`}
                   type="text"
                   list="phase5-resource-suggestions"
+                  autoFocus={strategy.id === focusId}
                   value={strategy.resource}
                   onChange={(event) =>
                     updateStrategy(strategy.id, {

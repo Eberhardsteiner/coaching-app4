@@ -593,30 +593,45 @@ export function SessionSummary({ session }: { session: Session }) {
         </Section>
       ) : null}
 
-      {/* Dranbleiben */}
+      {/* Dranbleiben — Vorlage-Tabelle „Eingesetzte Ressource | Konkrete Strategien" */}
       {strategies.length > 0 ? (
         <Section title="Dranbleiben">
-          <ul className="space-y-2">
-            {strategies.map((s) => (
-              <li key={s.id}>
-                <p className="text-sm font-medium text-foreground">
-                  {s.resource.trim() || "—"}
-                </p>
-                {s.concreteStrategy.trim() ? (
-                  <p className="text-sm text-muted">
-                    {s.concreteStrategy.trim()}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          <table className="w-full border-collapse text-sm">
+            <caption className="sr-only">
+              Dranbleiben: eingesetzte Ressource und konkrete Strategien
+            </caption>
+            <thead>
+              <tr className="border-b border-subtle text-left">
+                <th className="w-1/3 py-1.5 pr-3 font-medium text-foreground">
+                  Eingesetzte Ressource
+                </th>
+                <th className="py-1.5 font-medium text-foreground">
+                  Konkrete Strategien
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {strategies.map((s) => (
+                <tr key={s.id} className="border-b border-subtle align-top">
+                  <td className="py-1.5 pr-3 text-foreground">
+                    {s.resource.trim() || "—"}
+                  </td>
+                  <td className="py-1.5 text-muted">
+                    {s.concreteStrategy.trim() || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Section>
       ) : null}
 
-      {/* Erkenntnisse */}
+      {/* Erkenntnisse — multi-line (5.2 appends the notebook with "\n\n") */}
       {phase5.insights.trim() ? (
         <Section title="Erkenntnisse">
-          <p className="text-foreground">{phase5.insights.trim()}</p>
+          <p className="whitespace-pre-wrap text-foreground">
+            {phase5.insights.trim()}
+          </p>
         </Section>
       ) : null}
 

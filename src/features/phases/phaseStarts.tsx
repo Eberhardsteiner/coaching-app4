@@ -4,6 +4,7 @@ import { Phase1Motif } from "@/features/phases/motifs/Phase1Motif";
 import { Phase2Motif } from "@/features/phases/motifs/Phase2Motif";
 import { Phase3Motif } from "@/features/phases/motifs/Phase3Motif";
 import { Phase4Motif } from "@/features/phases/motifs/Phase4Motif";
+import { Phase5Motif } from "@/features/phases/motifs/Phase5Motif";
 import type { PhaseAccent } from "@/features/phases/PhaseStart";
 import type { PhaseId } from "@/features/session/types";
 
@@ -23,10 +24,10 @@ export interface PhaseStartContent {
  * Registry of phase start screens. Only phases with an entry here show a start
  * screen on entry; phases without one go straight to their first work step.
  *
- * Phase 1 (accent "ist" — rosa, the IST convention), Phase 2 (Horizont),
- * Phase 3 (Cockpit-Facetten) and Phase 4 (Bausteine-Brücke) are in, 2–4 with
- * accent "accent". Phase 5 follows by adding an entry with its own motif and
- * accent "accent" (Nachhaltigkeit = Wurzeln/Kreislauf).
+ * All five phases have a start screen: Phase 1 (accent "ist" — rosa, the IST
+ * convention), Phase 2 (Horizont), Phase 3 (Cockpit-Facetten), Phase 4
+ * (Bausteine-Brücke) and Phase 5 (Weg mit Wegmarken), 2–5 with accent
+ * "accent".
  */
 const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
   1: {
@@ -73,6 +74,17 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase4Motif />,
+  },
+  5: {
+    phaseNumber: 5,
+    phaseName: "Nachhaltigkeit",
+    eyebrow: "Phase 5 · Dranbleiben",
+    heading: "So sorgst du für Nachhaltigkeit",
+    intro:
+      "Dein Plan steht — jetzt geht es darum, ihn in der Wirklichkeit lebendig zu halten. Diese letzte, kurze Phase hilft dir, Unterstützung zu organisieren: Wer oder was hilft dir beim Umsetzen und Dranbleiben? Auch hier gilt: aus deinen Ressourcen heraus.",
+    accent: "accent",
+    ctaLabel: "Los geht’s",
+    motif: <Phase5Motif />,
   },
 };
 
