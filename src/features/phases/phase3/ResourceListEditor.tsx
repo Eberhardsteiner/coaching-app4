@@ -29,6 +29,11 @@ type ResourceListEditorProps = {
    * entries stay reachable for the counters and the Phase-4/5 pickers.
    */
   withPolarity?: boolean;
+  /**
+   * Hide the add button — edit/delete only. Used for legacy blocks whose
+   * field must not be actively refilled (e.g. phase4.preMortem, MP4).
+   */
+  hideAdd?: boolean;
 };
 
 /**
@@ -46,6 +51,7 @@ export function ResourceListEditor({
   noteLabel,
   notePlaceholder,
   withPolarity = false,
+  hideAdd = false,
 }: ResourceListEditorProps) {
   const [focusId, setFocusId] = useState<string | null>(null);
 
@@ -115,10 +121,12 @@ export function ResourceListEditor({
         </div>
       ))}
 
-      <Button variant="outline" size="sm" onClick={add}>
-        <Plus />
-        {addLabel}
-      </Button>
+      {!hideAdd ? (
+        <Button variant="outline" size="sm" onClick={add}>
+          <Plus />
+          {addLabel}
+        </Button>
+      ) : null}
     </div>
   );
 }

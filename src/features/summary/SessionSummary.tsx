@@ -200,12 +200,37 @@ export function SessionSummary({ session }: { session: Session }) {
   // Erkenntnisboard (persistent cross-phase notes)
   const notebook = (session.notebook ?? "").trim();
 
-  // Handlungsplan
-  const plansByCluster = new Map(phase4.plans.map((p) => [p.clusterId, p]));
-  const planClusters = clustersSorted.filter((cluster) => {
-    const plan = plansByCluster.get(cluster.id);
-    return plan && plan.measures.length > 0;
-  });
+  // Handlungsplan — Maßnahmenplan-Tabelle (MP4): Cluster | Maßnahme |
+  // Bis wann | Hindernisse | Alternativen, plus kompakte Qualitäts-Häkchen.
+  const measureQualityMark = (m: (typeof phase4.plans)[0]["measures"][0]) => {
+    const answers = [
+      m.quality?.zielbeitrag,
+      m.quality?.ressourcenbasiert,
+      m.quality?.ichSatz,
+      m.quality?.neu,
+    ];
+    if (answers.every((a) => a === undefined)) return "";
+    const yes = answers.filter((a) => a === true).length;
+    return `${yes}/4 ✓`;
+  };
+  const planRows = [
+    ...clustersSorted.flatMap((cluster) =>
+      (phase4.plans.find((p) => p.clusterId === cluster.id)?.measures ?? [])
+        .filter((m) => m.text.trim())
+        .map((m) => ({
+          id: m.id,
+          cluster: cluster.name.trim() || "Cluster",
+          measure: m,
+        })),
+    ),
+    ...phase4.plans
+      .filter((p) => !phase1.clusters.some((c) => c.id === p.clusterId))
+      .flatMap((p) =>
+        p.measures
+          .filter((m) => m.text.trim())
+          .map((m) => ({ id: m.id, cluster: "Weitere", measure: m })),
+      ),
+  ];
   const preMortem = (phase4.preMortem ?? [])
     .map((i) => i.text.trim())
     .filter(Boolean);
@@ -494,46 +519,69 @@ export function SessionSummary({ session }: { session: Session }) {
         </Section>
       ) : null}
 
-      {/* Dein Handlungsplan */}
-      {planClusters.length > 0 ? (
+      {/* Dein Handlungsplan — Maßnahmenplan-Tabelle (MP4) */}
+      {planRows.length > 0 ? (
         <Section title="Dein Handlungsplan">
-          <div className="space-y-3">
-            {planClusters.map((cluster) => {
-              const plan = plansByCluster.get(cluster.id);
-              if (!plan) return null;
-              return (
-                <div key={cluster.id}>
-                  <p className="text-sm font-medium text-foreground">
-                    {cluster.name.trim() || "Cluster"}
-                    {cluster.isCore ? " (Kernthema)" : ""}
-                  </p>
-                  <ul className="ml-4 list-disc space-y-1 text-foreground">
-                    {plan.measures.map((m) => (
-                      <li key={m.id}>
-                        {m.text.trim() || "—"}
-                        {m.basedOnResource ? (
-                          <span className="text-muted">
-                            {" "}
-                            — Ressource: {resText(m.basedOnResource)}
-                          </span>
-                        ) : null}
-                        {m.recognitionSignal?.trim() ? (
-                          <span className="text-muted">
-                            {" "}
-                            — Signal: {m.recognitionSignal.trim()}
-                          </span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
+          <table className="w-full border-collapse text-sm">
+            <caption className="sr-only">
+              Maßnahmenplan: Handlungsfeld, Maßnahme, bis wann, mögliche
+              Hindernisse, Ressourcen und Alternativen
+            </caption>
+            <thead>
+              <tr className="border-b border-subtle text-left">
+                <th className="py-1.5 pr-3 font-medium text-foreground">
+                  Handlungsfeld
+                </th>
+                <th className="py-1.5 pr-3 font-medium text-foreground">
+                  Maßnahme
+                </th>
+                <th className="py-1.5 pr-3 font-medium text-foreground">
+                  Bis wann
+                </th>
+                <th className="py-1.5 pr-3 font-medium text-foreground">
+                  Mögliche Hindernisse
+                </th>
+                <th className="py-1.5 font-medium text-foreground">
+                  Ressourcen &amp; Alternativen
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {planRows.map((row) => (
+                <tr key={row.id} className="border-b border-subtle align-top">
+                  <td className="py-1.5 pr-3 text-muted">{row.cluster}</td>
+                  <td className="py-1.5 pr-3 text-foreground">
+                    {row.measure.text.trim()}
+                    {row.measure.basedOnResource ? (
+                      <span className="block text-xs text-muted">
+                        Ressource: {resText(row.measure.basedOnResource)}
+                      </span>
+                    ) : null}
+                    {measureQualityMark(row.measure) ? (
+                      <span className="block text-xs text-muted">
+                        Qualität: {measureQualityMark(row.measure)}
+                      </span>
+                    ) : null}
+                  </td>
+                  <td className="py-1.5 pr-3 text-muted">
+                    {row.measure.dueDate
+                      ? formatDate(row.measure.dueDate)
+                      : "—"}
+                  </td>
+                  <td className="py-1.5 pr-3 text-muted">
+                    {row.measure.obstacles?.trim() || "—"}
+                  </td>
+                  <td className="py-1.5 text-muted">
+                    {row.measure.alternatives?.trim() || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           {preMortem.length > 0 ? (
             <div className="mt-3">
               <p className="text-sm font-medium text-foreground">
-                Mögliche Hindernisse
+                Frühere Hindernis-Notizen
               </p>
               <ul className="ml-4 list-disc text-muted">
                 {preMortem.map((text, i) => (

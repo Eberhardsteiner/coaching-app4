@@ -20,8 +20,9 @@ export interface PhaseDef {
 /**
  * Central phase configuration — all phases are fully built: Phase 0
  * (Vereinbarung, 2 steps), Phase 1 (IST, 5 steps), Phase 2 (Ziel, 5 steps),
- * Phase 3 (Ressourcen, 10 steps — MP3), Phase 4 (Handlungsplan, 3 steps) and
- * Phase 5 (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the process.
+ * Phase 3 (Ressourcen, 10 steps — MP3), Phase 4 (Handlungsplan, 4 steps —
+ * MP4) and Phase 5 (Nachhaltigkeit, 3 steps). Completing Phase 5 finishes the
+ * process.
  * Old sessions saved mid-phase before a step-count change are clamped in
  * usePhaseNavigation (stepIndex never exceeds the current step count).
  */
@@ -174,16 +175,22 @@ export const PHASES: PhaseDef[] = [
     steps: [
       {
         id: "4.1",
-        title: "Maßnahmen",
-        intro: "Aus förderlichen Ressourcen konkrete Ich-Schritte ableiten.",
+        title: "Maßnahmen je Cluster",
+        intro:
+          "Aus deinen förderlichen Ressourcen konkrete Ich-Sätze — Cluster für Cluster.",
       },
       {
         id: "4.2",
-        title: "Mögliche Hindernisse",
-        intro: "Kurz vorausdenken — und jetzt schon gegensteuern.",
+        title: "Qualitätsprüfung",
+        intro: "Vier Kriterien für wirksame Maßnahmen — prüfe jede einzelne.",
       },
       {
         id: "4.3",
+        title: "Maßnahmenplan",
+        intro: "Deine Maßnahmen als Tabelle — mit Terminen und Plan B.",
+      },
+      {
+        id: "4.4",
         title: "Abschluss & Check",
         intro: "Kurz festhalten, was du aus dieser Phase mitnimmst.",
       },

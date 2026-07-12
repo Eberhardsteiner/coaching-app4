@@ -1,12 +1,16 @@
-import { Plus, Trash2 } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  LayoutDashboard,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import {
-  coreThemeLabel,
-  useCoreTheme,
-} from "@/features/phases/phase2/useCoreTheme";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
+import { RessourcenCockpitOverlay } from "@/features/phases/phase3/RessourcenCockpit";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -18,23 +22,64 @@ import type {
 } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
-/** A förderliche resource offered for a plan. */
-type Foerderlich = { id: string; text: string };
+/** Ressourcen-Minimum je Cluster (Gate) und Maßnahmen-Obergrenze (Methodik). */
+export const MIN_RESOURCES = 3;
+export const MAX_MEASURES = 4;
+
+/** Wirkindikator-Rahmung (Methodik-Vorlage, wortgetreu, gekürzt). */
+const WIRKINDIKATOR_TEXT =
+  "Du erinnerst dich: Bei den Folgen deines Ziels hast du beschrieben, was du aus Sicht dieses Clusters beispielhaft tun kannst, sobald du am Ziel angekommen bist. Orientiere dich bei deinen Maßnahmen in erster Linie an deinem übergeordneten Ziel — und stelle sicher, dass sie dazu beitragen, dass du diese Handlung erfolgreich umsetzen kannst. Dein neues Verhalten ist ein ‚Wirkindikator‘ dafür, dass du dein Ziel erreicht hast.";
+
+/** Ressourcen-Anleitung (Methodik-Vorlage, wortgetreu, gekürzt). */
+const RESSOURCEN_TEXT =
+  "Suche aus deinem Ressourcen-Cockpit die hilfreichen Ressourcen heraus, die zu diesem Cluster passen. Achte darauf, dass deine starken förderlichen Motive und Persönlichkeitseigenschaften vorkommen. Nach oben gibt es keine Beschränkung — mindestens 3–5 müssen es sein, damit du die Ressourcen kombinieren kannst.";
+
+/** Die vier Qualitäten wirksamer Maßnahmen (Merkkarte). */
+const QUALITIES_CARD =
+  "Jede Maßnahme: ein ganzer Ich-Satz mit konkreter Handlung · ressourcenbasiert · ins Ziel einzahlend · neu.";
+
+function clusterName(cluster: Cluster, index: number): string {
+  return cluster.name.trim() || `Cluster ${index + 1}`;
+}
+
+/** Cluster-side valuation badge (labels/colours as in Phase 2.4). */
+function valuationBadge(valuation: string): {
+  label: string;
+  className: string;
+} | null {
+  if (valuation === "gut")
+    return { label: "Gut", className: "bg-green-600/10 text-green-600" };
+  if (valuation === "schlecht")
+    return { label: "Schlecht", className: "bg-amber-600/10 text-amber-600" };
+  if (valuation === "neutral")
+    return { label: "Neutral", className: "bg-muted/10 text-muted" };
+  return null;
+}
 
 /**
- * Phase 4, Step 4.1 — Maßnahmen. Per cluster (core theme first + highlighted)
- * the user builds a ClusterPlan: picks förderliche Phase-3 resources
- * (referenced by ResourceItem **id** in `resourcesUsed`) and derives concrete
- * Ich-Satz measures, each optionally based on one of those resources plus a
- * recognition signal. Forward is gated on ≥1 measure in the core plan. No AI.
+ * Phase 4, Step 4.1 — Maßnahmen je Cluster: the guided cluster pass (core
+ * theme first, then by weight; pinning pattern from MP3 — any edit pins its
+ * cluster so the derived active cluster never jumps mid-input). Per cluster:
+ * the Wirkindikator from phase2.consequences (read-only, with valuation badge
+ * and OKR aside; missing → calm fallback linking back to 2.4), the förderliche
+ * resource palette (incl. personalityTraits; min. 3 with counter + cockpit
+ * button) and 1–4 measures as whole Ich-Sätze. The plan of a cluster is
+ * created on first edit (no ghost plans). recognitionSignal is legacy — no
+ * longer collected, existing values shown read-only. Gate: EVERY cluster has
+ * ≥3 resources and ≥1 measure. No AI here.
  */
 export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
+  const branch = useSessionStore((s) => s.session?.meta.branch);
   const clusters = useSessionStore((s) => s.session?.phase1.clusters ?? []);
+  const consequences = useSessionStore(
+    (s) => s.session?.phase2.consequences ?? [],
+  );
+  const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
   const plans = useSessionStore((s) => s.session?.phase4.plans ?? []);
   const phase3 = useSessionStore((s) => s.session?.phase3);
   const patch = useSessionStore((s) => s.patch);
-  const core = useCoreTheme();
-  const label = coreThemeLabel(core);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [cockpitOpen, setCockpitOpen] = useState(false);
 
   // Förderliche Ressourcen (id-referenced) + a text lookup for display.
   const resById = new Map<string, ResourceItem>(
@@ -45,57 +90,72 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         ])
       : [],
   );
-  const foerderliche: Foerderlich[] = phase3
+  const foerderliche = phase3
     ? collectSortableResources(phase3)
         .filter((entry) => entry.item.polarity === "foerderlich")
         .map((entry) => ({ id: entry.item.id, text: entry.item.text }))
     : [];
+  const foerderlichIds = new Set(foerderliche.map((r) => r.id));
   const resourceText = (id: string): string =>
     resById.get(id)?.text || "(entfernt)";
+  /**
+   * Counter/gate only count selections that still resolve to a currently
+   * förderliche resource — stale ids (resource deleted or re-rated in Phase 3)
+   * render no chip and must not satisfy the min-3 gate invisibly.
+   */
+  const validResourceCount = (plan: ClusterPlan | undefined) =>
+    (plan?.resourcesUsed ?? []).filter((id) => foerderlichIds.has(id)).length;
 
-  // Core cluster first, then the rest in original order (stable sort).
-  const sortedClusters = [...clusters].sort(
-    (a, b) => Number(b.isCore ?? false) - Number(a.isCore ?? false),
+  // Core theme first, then descending by weight (guided-pass order).
+  const sorted = [...clusters].sort(
+    (a, b) =>
+      Number(b.isCore ?? false) - Number(a.isCore ?? false) ||
+      (b.weight ?? 0) - (a.weight ?? 0),
   );
 
-  function createPlan(clusterId: string) {
+  const planOf = (clusterId: string) =>
+    plans.find((p) => p.clusterId === clusterId);
+
+  const isComplete = (clusterId: string) => {
+    const plan = planOf(clusterId);
+    return Boolean(
+      plan &&
+      validResourceCount(plan) >= MIN_RESOURCES &&
+      plan.measures.some((m) => m.text.trim()),
+    );
+  };
+
+  /**
+   * Upsert the plan of a cluster (created on first edit — no ghost plans) and
+   * pin the cluster so the derived active cluster doesn't jump mid-input.
+   */
+  function withPlan(
+    clusterId: string,
+    updater: (plan: ClusterPlan) => ClusterPlan,
+  ) {
+    setSelectedId(clusterId);
     patch((s) => {
-      if (s.phase4.plans.some((p) => p.clusterId === clusterId)) return s;
-      const plan: ClusterPlan = { clusterId, resourcesUsed: [], measures: [] };
+      const existing = s.phase4.plans.find((p) => p.clusterId === clusterId);
+      const base: ClusterPlan = existing ?? {
+        clusterId,
+        resourcesUsed: [],
+        measures: [],
+      };
+      const next = updater(base);
       return {
         ...s,
-        phase4: { ...s.phase4, plans: [...s.phase4.plans, plan] },
+        phase4: {
+          ...s.phase4,
+          plans: existing
+            ? s.phase4.plans.map((p) => (p.clusterId === clusterId ? next : p))
+            : [...s.phase4.plans, next],
+        },
       };
     });
   }
 
-  function deletePlan(clusterId: string) {
-    patch((s) => ({
-      ...s,
-      phase4: {
-        ...s.phase4,
-        plans: s.phase4.plans.filter((p) => p.clusterId !== clusterId),
-      },
-    }));
-  }
-
-  function updatePlan(
-    clusterId: string,
-    updater: (p: ClusterPlan) => ClusterPlan,
-  ) {
-    patch((s) => ({
-      ...s,
-      phase4: {
-        ...s.phase4,
-        plans: s.phase4.plans.map((p) =>
-          p.clusterId === clusterId ? updater(p) : p,
-        ),
-      },
-    }));
-  }
-
   function toggleResource(clusterId: string, resId: string) {
-    updatePlan(clusterId, (p) => {
+    withPlan(clusterId, (p) => {
       const has = p.resourcesUsed.includes(resId);
       return {
         ...p,
@@ -115,10 +175,14 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
   }
 
   function addMeasure(clusterId: string) {
-    updatePlan(clusterId, (p) => ({
-      ...p,
-      measures: [...p.measures, { id: crypto.randomUUID(), text: "" }],
-    }));
+    withPlan(clusterId, (p) =>
+      p.measures.length >= MAX_MEASURES
+        ? p
+        : {
+            ...p,
+            measures: [...p.measures, { id: crypto.randomUUID(), text: "" }],
+          },
+    );
   }
 
   function updateMeasure(
@@ -126,7 +190,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
     measureId: string,
     partial: Partial<Measure>,
   ) {
-    updatePlan(clusterId, (p) => ({
+    withPlan(clusterId, (p) => ({
       ...p,
       measures: p.measures.map((m) =>
         m.id === measureId ? { ...m, ...partial } : m,
@@ -135,55 +199,348 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
   }
 
   function deleteMeasure(clusterId: string, measureId: string) {
-    updatePlan(clusterId, (p) => ({
+    withPlan(clusterId, (p) => ({
       ...p,
       measures: p.measures.filter((m) => m.id !== measureId),
     }));
   }
 
-  const coreCluster = clusters.find((c) => c.isCore);
-  const corePlan = coreCluster
-    ? plans.find((p) => p.clusterId === coreCluster.id)
-    : undefined;
-  const canNext = Boolean(corePlan?.measures.some((m) => m.text.trim() !== ""));
+  // Exceptional: no clusters at all.
+  if (sorted.length === 0) {
+    return (
+      <div>
+        <div className="rounded-xl border border-subtle bg-surface-2 p-5">
+          <p className="text-sm text-foreground">
+            Für diesen Schritt fehlen deine Cluster aus Phase 1. Geh kurz zurück
+            und bilde dort deine Cluster.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={() => nav.goToPhase(1)}
+          >
+            Zurück zu Phase 1
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const active =
+    sorted.find((c) => c.id === selectedId) ??
+    sorted.find((c) => !isComplete(c.id)) ??
+    sorted[0];
+  const activeIndex = sorted.findIndex((c) => c.id === active.id);
+  const activeName = clusterName(active, activeIndex);
+  const activePlan = planOf(active.id);
+  const activeConsequence = consequences.find((c) => c.clusterId === active.id);
+  const badge = activeConsequence
+    ? valuationBadge(activeConsequence.valuation)
+    : null;
+  const resourceCount = validResourceCount(activePlan);
+  const measures = activePlan?.measures ?? [];
+  const doneCount = sorted.filter((c) => isComplete(c.id)).length;
+  const canNext = doneCount === sorted.length;
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">
-        Wie kommst du vom Ziel ins Tun? Wähle für dein Kernthema „{label}“
-        förderliche Ressourcen und mach daraus konkrete Schritte — formuliert
-        als Ich-Sätze.
+      {/* Zielsatz — stets vor Augen */}
+      {goalText.trim() ? (
+        <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-faint">
+            Dein Zielsatz
+          </p>
+          <p className="mt-2 font-medium leading-relaxed text-foreground">
+            {goalText.trim()}
+          </p>
+        </div>
+      ) : null}
+
+      {/* Merkkarte: die vier Qualitäten wirksamer Maßnahmen */}
+      <p className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm text-muted">
+        <span className="font-medium text-foreground">Merk dir:</span>{" "}
+        {QUALITIES_CARD}
       </p>
 
-      {sortedClusters.length === 0 ? (
-        <p className="text-sm text-faint">
-          Keine Cluster aus Phase 1 vorhanden.
-        </p>
-      ) : (
-        <div className="space-y-4">
-          {sortedClusters.map((cluster) => (
-            <ClusterPlanCard
+      {/* Cluster-Navigation */}
+      <div
+        role="group"
+        aria-label="Cluster auswählen"
+        className="flex flex-wrap gap-2"
+      >
+        {sorted.map((cluster, index) => {
+          const done = isComplete(cluster.id);
+          const isActive = cluster.id === active.id;
+          return (
+            <button
               key={cluster.id}
-              cluster={cluster}
-              plan={plans.find((p) => p.clusterId === cluster.id)}
-              foerderliche={foerderliche}
-              resourceText={resourceText}
-              onCreate={() => createPlan(cluster.id)}
-              onDelete={() => deletePlan(cluster.id)}
-              onToggleResource={(resId) => toggleResource(cluster.id, resId)}
-              onAddMeasure={() => addMeasure(cluster.id)}
-              onUpdateMeasure={(mId, partial) =>
-                updateMeasure(cluster.id, mId, partial)
-              }
-              onDeleteMeasure={(mId) => deleteMeasure(cluster.id, mId)}
-            />
-          ))}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => setSelectedId(cluster.id)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                isActive
+                  ? "border-accent bg-accent text-white"
+                  : "border-subtle bg-surface text-muted hover:text-foreground",
+              )}
+            >
+              {done ? (
+                <Check className="size-3.5" aria-hidden />
+              ) : (
+                <span
+                  aria-hidden
+                  className={cn(
+                    "size-2 rounded-full border",
+                    isActive ? "border-white/70" : "border-faint",
+                  )}
+                />
+              )}
+              <span>{clusterName(cluster, index)}</span>
+              {cluster.isCore ? (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 text-[0.65rem] font-medium uppercase tracking-wide",
+                    isActive
+                      ? "bg-white/20 text-white"
+                      : "bg-accent/10 text-accent",
+                  )}
+                >
+                  Kernthema
+                </span>
+              ) : null}
+              <span className="sr-only">
+                {done ? " — vollständig" : " — offen"}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-xs text-faint">
+        {doneCount} von {sorted.length} Clustern vollständig.
+      </p>
+
+      {/* Aktives Cluster */}
+      <div className="space-y-5 rounded-xl border border-subtle bg-surface p-4">
+        <h3 className="text-sm font-semibold text-foreground">{activeName}</h3>
+
+        {/* B1 — Wirkindikator aus Phase 2 */}
+        {activeConsequence && activeConsequence.recognition.trim() ? (
+          <div className="space-y-2 rounded-lg border border-accent/30 bg-accent/5 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-faint">
+                Dein Wirkindikator aus Phase 2
+              </p>
+              {badge ? (
+                <span
+                  className={cn(
+                    "rounded-full px-2 py-0.5 text-xs font-medium",
+                    badge.className,
+                  )}
+                >
+                  {badge.label}
+                </span>
+              ) : null}
+            </div>
+            <p className="text-sm font-medium text-foreground">
+              {activeConsequence.recognition.trim()}
+            </p>
+            <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
+            <details className="group">
+              <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                <ChevronDown
+                  className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                  aria-hidden
+                />
+                Für OKR-Kenner
+              </summary>
+              <p className="mt-1.5 text-xs text-muted">
+                Falls du mit OKRs vertraut bist: Dein Verhalten pro Cluster
+                beschreibt einen Key Result, dein Zielsatz ist das Objective.
+              </p>
+            </details>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-subtle bg-surface-2 p-3">
+            <p className="text-sm text-muted">
+              Für dieses Cluster ist noch keine Zielfolge aus Phase 2
+              beschrieben — sie ist dein Wirkindikator für die Maßnahmen.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={() => nav.goTo(2, 3)}
+            >
+              Zu den Folgen deines Ziels
+            </Button>
+          </div>
+        )}
+
+        {/* B2 — Eingesetzte Ressourcen */}
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-medium text-foreground">
+              Eingesetzte Ressourcen
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCockpitOpen(true)}
+            >
+              <LayoutDashboard />
+              Cockpit öffnen
+            </Button>
+          </div>
+          <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
+          {foerderliche.length === 0 ? (
+            <p className="text-xs text-faint">
+              Keine als förderlich markierten Ressourcen. Du kannst trotzdem
+              Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
+              förderlich werten.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {foerderliche.map((res) => {
+                const selected =
+                  activePlan?.resourcesUsed.includes(res.id) ?? false;
+                return (
+                  <button
+                    key={res.id}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => toggleResource(active.id, res.id)}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                      selected
+                        ? "border-accent bg-accent/10 text-accent"
+                        : "border-subtle bg-surface text-muted hover:text-foreground",
+                    )}
+                  >
+                    {res.text || "—"}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <p
+            className={cn(
+              "text-xs",
+              resourceCount >= MIN_RESOURCES ? "text-green-600" : "text-faint",
+            )}
+          >
+            {resourceCount} gewählt (mind. {MIN_RESOURCES})
+          </p>
         </div>
-      )}
+
+        {/* B3 — Maßnahmen (max. 4) */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-foreground">
+            Deine Maßnahmen (max. {MAX_MEASURES})
+          </p>
+          <p className="text-xs text-muted">
+            Lass aus den gewählten Ressourcen konkrete Handlungen entstehen.
+            Drücke sie in einem ganzen ‚Ich‘-Satz aus, der konkret beschreibt,
+            was du tust — ein Verhalten, kein Gefühl. ‚Ich bin fröhlich, wenn
+            ich in die Arbeit gehe‘ ist keine Handlung. ‚Ich begrüße täglich
+            meine Kollegen freundlich und frage sie, wie ich sie unterstützen
+            kann‘ ist ein konkretes, wahrnehmbares Verhalten. Verzichte auf
+            verneinende Aussagen über das, was du nicht mehr tun willst — frage
+            dich: Was tue ich stattdessen? Je konkreter du formulierst, desto
+            wahrscheinlicher setzt du um. Du darfst dich hier auch für deine
+            Mühen im {branch === "coached" ? "Coaching" : "Selbstcoaching"}{" "}
+            belohnen!
+          </p>
+
+          {measures.map((measure, index) => (
+            <div
+              key={measure.id}
+              className="space-y-2 rounded-lg border border-subtle bg-background p-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <label
+                  htmlFor={`measure-${measure.id}`}
+                  className="block text-sm font-medium text-foreground"
+                >
+                  Maßnahme {index + 1} (Ich-Satz)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => deleteMeasure(active.id, measure.id)}
+                  aria-label={`Maßnahme ${index + 1} löschen`}
+                  title="Löschen"
+                  className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+              <textarea
+                id={`measure-${measure.id}`}
+                value={measure.text}
+                rows={2}
+                onChange={(event) =>
+                  updateMeasure(active.id, measure.id, {
+                    text: event.target.value,
+                  })
+                }
+                placeholder="Ich …"
+                className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              />
+              <div className="space-y-1">
+                <label
+                  htmlFor={`measure-res-${measure.id}`}
+                  className="block text-xs text-muted"
+                >
+                  Basiert auf Ressource (optional)
+                </label>
+                <select
+                  id={`measure-res-${measure.id}`}
+                  value={measure.basedOnResource ?? ""}
+                  onChange={(event) =>
+                    updateMeasure(active.id, measure.id, {
+                      basedOnResource: event.target.value || undefined,
+                    })
+                  }
+                  className="w-full max-w-xs rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <option value="">— keine —</option>
+                  {(activePlan?.resourcesUsed ?? []).map((rid) => (
+                    <option key={rid} value={rid}>
+                      {resourceText(rid)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {measure.recognitionSignal?.trim() ? (
+                <p className="text-xs text-faint">
+                  Erkennungssignal (früher erfasst):{" "}
+                  {measure.recognitionSignal.trim()}
+                </p>
+              ) : null}
+            </div>
+          ))}
+
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={measures.length >= MAX_MEASURES}
+            onClick={() => addMeasure(active.id)}
+          >
+            <Plus />
+            Maßnahme
+          </Button>
+          {measures.length >= MAX_MEASURES ? (
+            <p className="text-xs text-faint">
+              Maximal {MAX_MEASURES} Maßnahmen — beschränke dich auf 3–4.
+            </p>
+          ) : null}
+        </div>
+      </div>
 
       {!canNext ? (
         <p className="text-xs text-faint">
-          Lege im Kernthema-Plan mindestens eine Maßnahme an, um fortzufahren.
+          „Weiter“ öffnet sich, wenn jedes Cluster mindestens {MIN_RESOURCES}{" "}
+          gewählte Ressourcen und eine Maßnahme hat.
         </p>
       ) : null}
 
@@ -195,208 +552,11 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         onNext={nav.advance}
         canNext={canNext}
       />
-    </div>
-  );
-}
 
-type ClusterPlanCardProps = {
-  cluster: Cluster;
-  plan: ClusterPlan | undefined;
-  foerderliche: Foerderlich[];
-  resourceText: (id: string) => string;
-  onCreate: () => void;
-  onDelete: () => void;
-  onToggleResource: (resId: string) => void;
-  onAddMeasure: () => void;
-  onUpdateMeasure: (measureId: string, partial: Partial<Measure>) => void;
-  onDeleteMeasure: (measureId: string) => void;
-};
-
-/** One cluster's plan: resource palette + Ich-Satz measure editor. */
-function ClusterPlanCard({
-  cluster,
-  plan,
-  foerderliche,
-  resourceText,
-  onCreate,
-  onDelete,
-  onToggleResource,
-  onAddMeasure,
-  onUpdateMeasure,
-  onDeleteMeasure,
-}: ClusterPlanCardProps) {
-  return (
-    <div
-      className={cn(
-        "rounded-xl border p-4",
-        cluster.isCore
-          ? "border-accent/40 bg-accent/5"
-          : "border-subtle bg-surface",
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <p className="truncate font-medium text-foreground">
-            {cluster.name.trim() || "Cluster"}
-          </p>
-          {cluster.isCore ? (
-            <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-white">
-              Kernthema
-            </span>
-          ) : null}
-        </div>
-        {plan ? (
-          <button
-            type="button"
-            onClick={onDelete}
-            aria-label="Plan entfernen"
-            title="Plan entfernen"
-            className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <Trash2 className="size-4" />
-          </button>
-        ) : null}
-      </div>
-
-      {!plan ? (
-        <Button variant="outline" size="sm" className="mt-3" onClick={onCreate}>
-          <Plus />
-          Maßnahmen planen
-        </Button>
-      ) : (
-        <div className="mt-4 space-y-4">
-          {/* Resource palette */}
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-foreground">
-              Genutzte Ressourcen
-            </p>
-            {foerderliche.length === 0 ? (
-              <p className="text-xs text-faint">
-                Keine als förderlich markierten Ressourcen. Du kannst trotzdem
-                Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
-                förderlich werten.
-              </p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {foerderliche.map((res) => {
-                  const selected = plan.resourcesUsed.includes(res.id);
-                  return (
-                    <button
-                      key={res.id}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => onToggleResource(res.id)}
-                      className={cn(
-                        "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                        selected
-                          ? "border-accent bg-accent/10 text-accent"
-                          : "border-subtle bg-surface text-muted hover:text-foreground",
-                      )}
-                    >
-                      {res.text || "—"}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Measures */}
-          <div className="space-y-3">
-            {plan.measures.map((measure, index) => (
-              <div
-                key={measure.id}
-                className="space-y-2 rounded-lg border border-subtle bg-surface p-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <label
-                    htmlFor={`measure-${measure.id}`}
-                    className="block text-sm font-medium text-foreground"
-                  >
-                    Maßnahme {index + 1} (Ich-Satz)
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => onDeleteMeasure(measure.id)}
-                    aria-label={`Maßnahme ${index + 1} löschen`}
-                    title="Löschen"
-                    className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                </div>
-                <textarea
-                  id={`measure-${measure.id}`}
-                  value={measure.text}
-                  rows={2}
-                  onChange={(event) =>
-                    onUpdateMeasure(measure.id, { text: event.target.value })
-                  }
-                  placeholder="Ich …"
-                  className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                />
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <label
-                      htmlFor={`measure-res-${measure.id}`}
-                      className="block text-xs text-muted"
-                    >
-                      Basiert auf Ressource
-                    </label>
-                    <select
-                      id={`measure-res-${measure.id}`}
-                      value={measure.basedOnResource ?? ""}
-                      onChange={(event) =>
-                        onUpdateMeasure(measure.id, {
-                          basedOnResource: event.target.value || undefined,
-                        })
-                      }
-                      className="w-full rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    >
-                      <option value="">— keine —</option>
-                      {plan.resourcesUsed.map((rid) => (
-                        <option key={rid} value={rid}>
-                          {resourceText(rid)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label
-                      htmlFor={`measure-sig-${measure.id}`}
-                      className="block text-xs text-muted"
-                    >
-                      Erkennungssignal
-                    </label>
-                    <input
-                      id={`measure-sig-${measure.id}`}
-                      type="text"
-                      value={measure.recognitionSignal ?? ""}
-                      onChange={(event) =>
-                        onUpdateMeasure(measure.id, {
-                          recognitionSignal: event.target.value,
-                        })
-                      }
-                      placeholder="Woran erkennst du, dass du den Schritt getan hast?"
-                      className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Button variant="outline" size="sm" onClick={onAddMeasure}>
-              <Plus />
-              Maßnahme
-            </Button>
-          </div>
-
-          {/* Quality help */}
-          <p className="rounded-lg border border-subtle bg-surface-2 p-3 text-xs text-muted">
-            Eine gute Maßnahme ist ein ganzer Ich-Satz, stützt sich auf eine
-            deiner Ressourcen, zahlt auf dein Ziel ein und ist etwas Neues.
-          </p>
-        </div>
-      )}
+      <RessourcenCockpitOverlay
+        open={cockpitOpen}
+        onClose={() => setCockpitOpen(false)}
+      />
     </div>
   );
 }

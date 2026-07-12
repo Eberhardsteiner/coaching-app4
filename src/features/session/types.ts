@@ -195,11 +195,32 @@ export interface Phase3 {
 
 /* Phase 4 — Handlungsplan ------------------------------------------------- */
 
+/**
+ * Quality check of one measure (MP4, 4.2): the four criteria for effective
+ * measures. `undefined` = not yet checked, `false` = deliberately answered no.
+ */
+export interface MeasureQuality {
+  zielbeitrag?: boolean;
+  ressourcenbasiert?: boolean;
+  ichSatz?: boolean;
+  neu?: boolean;
+}
+
 export interface Measure {
   id: string;
   text: string; // Ich-Satz
   basedOnResource?: string;
+  /** Legacy (pre-MP4): no longer collected — the Wirkindikator now comes from
+   *  phase2.consequences. Existing values are tolerated read-only. */
   recognitionSignal?: string;
+  /** MP4 (additive): „Bis wann" — ISO date (yyyy-mm-dd). */
+  dueDate?: string;
+  /** MP4 (additive): „Mögliche Hindernisse". */
+  obstacles?: string;
+  /** MP4 (additive): „Ressourcen & Alternativen" (Plan B). */
+  alternatives?: string;
+  /** MP4 (additive): the four-criteria quality check. */
+  quality?: MeasureQuality;
 }
 
 export interface ClusterPlan {

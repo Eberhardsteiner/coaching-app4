@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Phase1Motif } from "@/features/phases/motifs/Phase1Motif";
 import { Phase2Motif } from "@/features/phases/motifs/Phase2Motif";
 import { Phase3Motif } from "@/features/phases/motifs/Phase3Motif";
+import { Phase4Motif } from "@/features/phases/motifs/Phase4Motif";
 import type { PhaseAccent } from "@/features/phases/PhaseStart";
 import type { PhaseId } from "@/features/session/types";
 
@@ -22,10 +23,10 @@ export interface PhaseStartContent {
  * Registry of phase start screens. Only phases with an entry here show a start
  * screen on entry; phases without one go straight to their first work step.
  *
- * Phase 1 (accent "ist" — rosa, the IST convention), Phase 2 (Horizont) and
- * Phase 3 (Cockpit-Facetten) are in, both with accent "accent". Phases 4–5
- * follow by adding an entry with their own motif and accent "accent":
- * Handlungsplan = Pfad, Nachhaltigkeit = Wurzeln/Kreislauf.
+ * Phase 1 (accent "ist" — rosa, the IST convention), Phase 2 (Horizont),
+ * Phase 3 (Cockpit-Facetten) and Phase 4 (Bausteine-Brücke) are in, 2–4 with
+ * accent "accent". Phase 5 follows by adding an entry with its own motif and
+ * accent "accent" (Nachhaltigkeit = Wurzeln/Kreislauf).
  */
 const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
   1: {
@@ -61,6 +62,17 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase3Motif />,
+  },
+  4: {
+    phaseNumber: 4,
+    phaseName: "Handlungsplan",
+    eyebrow: "Phase 4 · Maßnahmen",
+    heading: "So kommst du zu deinem Handlungsplan",
+    intro:
+      "Bestimmt bist du schon voller Ungeduld, nun endlich die Maßnahmen zu beschreiben, die dich ans Ziel bringen! Damit sie wirklich tragen, ist es essenziell, dass du sie aus deinen Ressourcen heraus entwickelst. Alle stehen dir zur Verfügung: alle zielförderlichen Intelligenzen, Motive, Persönlichkeitseigenschaften und Werte, alle Erkenntnisse aus Modellen, alle Erfahrungen und äußeren Ressourcen. Geh einfach durch alle Cluster — die Reihenfolge spielt keine Rolle.",
+    accent: "accent",
+    ctaLabel: "Los geht’s",
+    motif: <Phase4Motif />,
   },
 };
 
