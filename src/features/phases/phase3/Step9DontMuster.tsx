@@ -59,7 +59,8 @@ const FIELDS: {
   {
     key: "effect",
     label: "Wirkung / Erkenntnis",
-    placeholder: "z. B. andere ziehen sich zurück",
+    placeholder:
+      "Was hat es bewirkt — und welche Erkenntnis gewinnst du daraus?",
   },
 ];
 

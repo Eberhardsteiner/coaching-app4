@@ -114,7 +114,7 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
       <div className="space-y-2 rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
         <p>
           Auch sehr schwache Motive können Einfluss auf die Zielerreichung
-          haben: Hast du z. B. wenige Punkte bei „Status“ und musst mit sehr
+          haben: Hast du z. B. 15 Punkte bei „Status“ und musst mit sehr
           statusorientierten Menschen arbeiten, kann der niedrige Wert
           hinderlich sein.
         </p>
@@ -123,6 +123,11 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
           kannst du weglassen.
         </p>
       </div>
+
+      <p className="text-xs text-faint">
+        Deine übernommenen und gewerteten Einträge erscheinen in deinem
+        Ressourcen-Cockpit (Werkzeuge rechts).
+      </p>
 
       {/* Reflexionsübung */}
       <details className="group rounded-xl border border-subtle bg-surface p-4">

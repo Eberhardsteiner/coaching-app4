@@ -145,7 +145,9 @@ export interface ResourceItem {
    * Generic sub-category (additive, MP3): `values` uses the value column
    * ("mensch" | "funktion" | "ziel"); `othersValues` uses "wer" (the people/
    * groups of a cluster) and "skip" (cluster deliberately skipped);
-   * `experiential` uses "erfahrung" | "aussen". Unused by other lists.
+   * `experiential` uses "erfahrung" | "erfahrung-aussen" | "ableitung"
+   * (the three reflection anchors, MP3-REV) | "aussen" (outer resources).
+   * Unused by other lists.
    */
   category?: string;
   /** Owning Phase-1 cluster (additive, MP3): used by othersValues. */

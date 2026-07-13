@@ -283,6 +283,11 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-semibold text-foreground">
             {activeName}
+            {werOf(active.id)?.text.trim() ? (
+              <span className="ml-1.5 text-xs font-normal text-muted">
+                · {werOf(active.id)?.text.trim()}
+              </span>
+            ) : null}
           </h3>
           <Button
             variant="ghost"

@@ -62,7 +62,11 @@ export function countPolarities(phase3: Phase3): {
   return {
     foerderlich: items.filter((i) => i.polarity === "foerderlich").length,
     hinderlich: items.filter((i) => i.polarity === "hinderlich").length,
-    offen: items.filter((i) => !i.polarity).length,
+    // Ableitungen (3.7, dritter Anker) sind Erkenntnisse ohne Wertung — die
+    // UI bietet für sie bewusst keinen Toggle an, also zählen sie nie als
+    // "noch offen".
+    offen: items.filter((i) => !i.polarity && i.category !== "ableitung")
+      .length,
     total: items.length,
   };
 }

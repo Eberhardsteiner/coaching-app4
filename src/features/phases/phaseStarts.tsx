@@ -59,7 +59,7 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     eyebrow: "Phase 3 · Ressourcen",
     heading: "Identifiziere deine Ressourcen auf dem Weg zum Ziel",
     intro:
-      "Du weißt, wo du stehst und wohin du möchtest. Was fehlt noch? Viele antworten: ‚der Weg dorthin‘. Doch bevor ich den Weg beschreiben kann, muss ich mir einen Überblick über meine Mittel verschaffen. Will ich einen Kuchen backen, ist ein gutes Rezept super — aber finde ich im Vorratsschrank keine geeigneten Zutaten, nützt mir das schönste Rezept nichts. Deshalb bist du eingeladen, dir ein richtiges Ressourcen-Cockpit aufzubauen. Wenn du weißt, worauf du zurückgreifen kannst, ist der anschließende Handlungsplan ganz leicht. Und vor allem: realistisch!",
+      "Du weißt, wo du stehst und wohin du möchtest. Was fehlt noch? Viele antworten: ‚der Weg dorthin‘. Doch eine Maßnahmenliste, die nicht berücksichtigt, welche Ressourcen du hast, bleibt leer und frustrierend — bevor ich den Weg beschreiben kann, muss ich mir einen Überblick über meine Mittel verschaffen. Will ich einen Kuchen backen, ist ein gutes Rezept super — aber finde ich im Vorratsschrank keine geeigneten Zutaten, nützt mir das schönste Rezept nichts. Deshalb bist du eingeladen, dir ein richtiges Ressourcen-Cockpit aufzubauen. Wenn du weißt, worauf du zurückgreifen kannst — und was du vielleicht noch zusätzlich brauchst —, ist der anschließende Handlungsplan ganz leicht. Und vor allem: realistisch!",
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase3Motif />,

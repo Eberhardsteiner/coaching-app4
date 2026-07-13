@@ -43,49 +43,86 @@ const COLUMN_SHORT: Record<ValueCategory, string> = {
   ziel: "Ziel",
 };
 
-/** MVWK-Erklärtext (Methodik-Vorlage, wortgetreu gestrafft). */
+/** MVWK-Erklärtext (Methodik-Vorlage, gestrafft; Sinn vollständig). */
 const MVWK_TEXT =
-  "Das MVWK-Modell (Motiv–Verhalten–Wert–Kontext) zeigt vereinfacht, dass wir mit unseren Motiven (M) und den Werten (W) im Kontext (K) interagieren — und unser Verhalten (V) von beidem beeinflusst wird. Während unsere Motive unsere grundsätzliche emotionale Ausrichtung festlegen, wählen wir unsere Werte aktiv. Werte sind im Handeln beobachtbar: Ich zeige in meinem Verhalten, was ich wichtig nehme. Nicht immer stimmen geäußerte Werte mit den Werten aus unserem Verhalten überein. Motiv: ‚Was treibt mich an?‘ — Werte: ‚Was nehme ich wichtig?‘ / aus dem Kontext: ‚Was ist hier wichtig?‘ Passen Motive und Werte gut zusammen, kann unser Verhalten frei fließen und wir fühlen uns wohl. Deine Werte sind wichtige Ressourcen, denn sie steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten.";
+  "Das MVWK-Modell (Motiv–Verhalten–Wert–Kontext) zeigt vereinfacht, dass wir mit unseren Motiven (M) und den Werten (W) im Kontext (K) interagieren — und unser Verhalten (V) von beidem beeinflusst wird. Während unsere Motive unsere grundsätzliche emotionale Ausrichtung festlegen, wählen wir unsere Werte aktiv. Werte sind im Handeln beobachtbar: Ich zeige in meinem Verhalten, was ich wichtig nehme — wer Genauigkeit wichtig nimmt, verhält sich anders als wer Schnelligkeit wichtig nimmt. Nicht immer stimmen geäußerte Werte mit den Werten aus unserem Verhalten überein. Motiv: ‚Was treibt mich an?‘ — Werte: ‚Was nehme ich wichtig?‘ / aus dem Kontext: ‚Was ist hier wichtig?‘ Passen Motive und Werte gut zusammen, kann unser Verhalten frei fließen und wir fühlen uns wohl. Deine Werte sind wichtige Ressourcen, denn sie steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten. Deshalb identifizierst du jetzt deine wichtigsten Werte.";
 
-/** Decorative MVWK sketch (aria-hidden — the text block carries the content). */
+/**
+ * Decorative MVWK sketch, following the template's figure: the motives (M)
+ * at the core, the values (W) as a ring around them, the context as the
+ * dashed frame — and the behaviour (V) as an arrow pointing outwards.
+ * aria-hidden; the text block carries the content.
+ */
 function MvwkSketch() {
   return (
     <svg
-      viewBox="0 0 280 120"
-      className="mx-auto h-auto w-56"
+      viewBox="0 0 280 160"
+      className="mx-auto h-auto w-64"
       aria-hidden="true"
       focusable="false"
     >
+      {/* Kontext — the dashed frame around everything */}
       <rect
         x={6}
         y={6}
         width={268}
-        height={108}
+        height={148}
         rx={12}
         strokeWidth={1.25}
         strokeDasharray="4 4"
         className="fill-none stroke-subtle"
       />
-      <text x={252} y={24} className="fill-faint text-[11px]">
-        K
+      <text x={16} y={24} className="fill-faint text-[10px]">
+        Kontext
       </text>
-      <circle cx={70} cy={46} r={20} className="fill-accent/15" />
-      <text x={70} y={50} textAnchor="middle" className="fill-accent text-xs">
-        M
+
+      {/* Werte — the ring around the core */}
+      <circle
+        cx={118}
+        cy={84}
+        r={46}
+        strokeWidth={16}
+        className="fill-none stroke-accent/20"
+      />
+      <text
+        x={118}
+        y={34}
+        textAnchor="middle"
+        className="fill-accent text-[10px] font-medium"
+      >
+        Werte
       </text>
-      <circle cx={210} cy={46} r={20} className="fill-accent/15" />
-      <text x={210} y={50} textAnchor="middle" className="fill-accent text-xs">
-        W
+
+      {/* Motive — the core */}
+      <circle cx={118} cy={84} r={24} className="fill-accent/30" />
+      <text
+        x={118}
+        y={88}
+        textAnchor="middle"
+        className="fill-accent text-[10px] font-medium"
+      >
+        Motive
       </text>
-      <circle cx={140} cy={86} r={20} className="fill-accent/30" />
-      <text x={140} y={90} textAnchor="middle" className="fill-accent text-xs">
-        V
+
+      {/* Verhalten — the arrow pointing outwards */}
+      <line
+        x1={172}
+        y1={84}
+        x2={240}
+        y2={84}
+        strokeWidth={2}
+        strokeLinecap="round"
+        className="stroke-accent/60"
+      />
+      <path d="M240 78 L 252 84 L 240 90 Z" className="fill-accent/60" />
+      <text
+        x={208}
+        y={74}
+        textAnchor="middle"
+        className="fill-accent text-[10px] font-medium"
+      >
+        Verhalten
       </text>
-      <g strokeWidth={1.25} strokeLinecap="round" className="stroke-accent/40">
-        <line x1={90} y1={46} x2={190} y2={46} />
-        <line x1={82} y1={62} x2={124} y2={76} />
-        <line x1={198} y1={62} x2={156} y2={76} />
-      </g>
     </svg>
   );
 }

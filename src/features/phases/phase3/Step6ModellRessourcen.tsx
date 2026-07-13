@@ -72,6 +72,12 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
     <div className="space-y-6">
       <p className="text-muted">{INTRO}</p>
 
+      <p className="text-sm text-muted">
+        Es gibt hunderte solcher Modelle — längst nicht alle passen zu deinem
+        Thema. Deshalb bekommst du maximal 5 Vorschläge; unpassende legst du
+        einfach beiseite.
+      </p>
+
       {/* Die vier Leitfragen */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
         <p className="text-sm font-medium text-foreground">

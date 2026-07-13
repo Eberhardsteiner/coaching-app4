@@ -46,12 +46,18 @@ export function Step2Intelligenzen({ nav }: { nav: PhaseNavigation }) {
           polarityQuestion="Hilft oder hindert dich diese Intelligenz auf dem Weg zu deinem Ziel?"
           ownLabel="Eigene Ergänzung"
           ownPlaceholder="z. B. eine weitere Begabung"
+          bulletHints
         />
       ) : null}
 
       <p className="text-sm text-muted">
         Intelligenzen, die mit deinem Ziel nicht in Beziehung stehen, kannst du
         weglassen.
+      </p>
+
+      <p className="text-xs text-faint">
+        Deine übernommenen und gewerteten Einträge erscheinen in deinem
+        Ressourcen-Cockpit (Werkzeuge rechts).
       </p>
 
       <NoPersonalDataHint />

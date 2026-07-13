@@ -85,6 +85,7 @@ export function ResourceHarvest({
   ownLabel,
   ownPlaceholder,
   takenLabel = "Übernommen",
+  bulletHints = false,
 }: {
   terms: ModelTerm[];
   items: ResourceItem[];
@@ -97,6 +98,12 @@ export function ResourceHarvest({
   ownLabel: string;
   ownPlaceholder?: string;
   takenLabel?: string;
+  /**
+   * Render the term description as a bullet list (split at ";") instead of a
+   * paragraph — the template shows the Intelligenz descriptions as a compact
+   * feature list (MP3-REV).
+   */
+  bulletHints?: boolean;
 }) {
   const [own, setOwn] = useState("");
 
@@ -160,7 +167,19 @@ export function ResourceHarvest({
                     />
                     Beschreibung
                   </summary>
-                  <p className="mt-1.5 text-sm text-muted">{term.hint}</p>
+                  {bulletHints ? (
+                    <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-sm text-muted">
+                      {term.hint
+                        .split(/;\s*/)
+                        .map((part) => part.trim().replace(/\.$/, ""))
+                        .filter(Boolean)
+                        .map((part) => (
+                          <li key={part}>{part}</li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1.5 text-sm text-muted">{term.hint}</p>
+                  )}
                 </details>
               ) : null}
             </li>
