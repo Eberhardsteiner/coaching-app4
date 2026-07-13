@@ -325,11 +325,14 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             , also nicht „Ich gehe …“, sondern z. B. „Peter geht …“.
           </p>
 
-          {/* Bewertung aus Cluster-Sicht (Hinweis wortgetreu) */}
+          {/* Bewertung aus Cluster-Sicht: Hinführung + konkrete Frage am Toggle */}
           <div className="space-y-2">
-            <p className="text-sm font-medium text-foreground">
+            <p className="text-sm text-muted">
               Überlege anschließend, wie dein Cluster wohl deine neuen
               Verhaltensweisen bewerten wird: gut – schlecht – neutral?
+            </p>
+            <p className="text-sm font-medium text-foreground">
+              Wie findet das dein „{activeName}“?
             </p>
             <div
               role="group"

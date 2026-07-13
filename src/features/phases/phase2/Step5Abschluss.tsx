@@ -44,8 +44,9 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
         dann notiere sie dir bitte auf deinem{" "}
         <strong className="font-semibold text-foreground">
           Erkenntnisboard
-        </strong>
-        . Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
+        </strong>{" "}
+        <span className="text-sm text-faint">(Notizbuch rechts)</span>.
+        Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
         Ergebnis gekommen bist, bevor du mit Phase 3 weitermachst – der
         Identifikation deiner{" "}
         <strong className="font-semibold text-foreground">Ressourcen</strong>,
