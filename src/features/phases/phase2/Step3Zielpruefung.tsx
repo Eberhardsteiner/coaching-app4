@@ -39,11 +39,12 @@ const BOOL_CRITERIA: {
     label: "Bezug zum Kernthema",
     explanation: (
       <>
-        Worauf bezieht sich dein Gefühl — auf welchen Kontext? Prüfe, ob dein
-        Ziel sich auf dein Kernthema (dein Hauptproblem aus Phase 1) bezieht.
-        Ist das nicht der Fall, solltest du vielleicht deine Bewertung aus Phase
-        1 revidieren — oder dein Ziel stimmt noch nicht, weil dein Hauptproblem
-        damit nicht gelöst ist.
+        Worauf bezieht sich dein Gefühl? Auf welchen Kontext richtet sich dein
+        Gefühl? Bitte überprüfe einmal, ob dein Ziel sich auf dein „Cluster 10“,
+        also dein Hauptproblem, bezieht. Ist das nicht der Fall, so kann es
+        sein, dass du vielleicht deine Bewertung aus Phase 1 revidieren
+        solltest. Oder dein Ziel stimmt noch nicht so richtig, weil dein
+        Hauptproblem damit nicht gelöst ist.
       </>
     ),
   },
@@ -53,10 +54,11 @@ const BOOL_CRITERIA: {
     label: "Terminiert",
     explanation: (
       <>
-        Der Zeitpunkt ist der Moment, zu dem du dein Ziel erreicht haben willst.
-        Fällt dir die Festlegung schwer, prüfe, ob es feststehende Termine gibt,
-        die auf dein Ziel einwirken. Gib dir nicht zu wenig Zeit — aber auch
-        nicht zu viel. Du kannst den Zeitpunkt später anpassen, nachdem du deine
+        Der Zeitpunkt soll der Zeitpunkt sein, zu dem du dein Ziel erreicht
+        haben willst. Falls dir schwer fällt, das festzulegen, so überprüfe
+        einmal, ob es bereits feststehende Termine gibt, die auf dein Ziel
+        einwirken. Gib dir nicht zu wenig Zeit, aber auch nicht zu viel. Du
+        kannst den Zeitpunkt auch später nochmal anpassen, nachdem du deine
         Maßnahmen entwickelt hast.
       </>
     ),
@@ -69,8 +71,9 @@ const BOOL_CRITERIA: {
       <>
         Der Adressat deines Ziels bist{" "}
         <strong className="font-semibold text-foreground">du selbst</strong>.
-        Oft ist es sinnvoll, die eigene Rolle oder Funktion zu benennen: „Ich
-        als Führungskraft“ ist etwas anderes als „Ich als Partner*in“.
+        Oft ist es sinnvoll, die eigene Rolle oder Funktion im Ziel zu
+        beschreiben. Z. B. „Ich als Führungskraft“ ist etwas anderes als „Ich
+        als Partner*in“.
       </>
     ),
   },
@@ -80,12 +83,12 @@ const BOOL_CRITERIA: {
     label: "Futur II",
     explanation: (
       <>
-        Wenn du die Satzstruktur übernommen hast, steckt das Futur II schon
-        drin. Man verwendet es, um einen in der Zukunft{" "}
+        Wenn du die Satzstruktur übernommen hast, dann steckt das „Futur II“
+        schon drin. Das Futur II verwendet man, um einen in der Zukunft{" "}
         <strong className="font-semibold text-foreground">
           abgeschlossenen Zustand
         </strong>{" "}
-        zu beschreiben — eine besonders wirkungsvolle Form für einen Zielsatz.
+        zu beschreiben – eine besonders wirkungsvolle Form für einen Zielsatz.
       </>
     ),
   },
@@ -105,6 +108,7 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
   const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
   const datum = useSessionStore((s) => s.session?.phase2.datum ?? "");
   const clusterRef = useSessionStore((s) => s.session?.phase2.clusterRef ?? "");
+  const coached = useSessionStore((s) => s.session?.meta.branch === "coached");
   const patch = useSessionStore((s) => s.patch);
 
   function setComponents(partial: Partial<GoalComponents>) {
@@ -177,10 +181,17 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
             </Impulse>
           ) : null}
           <Explanation>
-            Ist dein Ziel für dich attraktiv, dann bekommt es 10 von 10 Punkten.
-            Ist das nicht der Fall, überprüfe, ob du andere Worte verwenden
-            möchtest — ohne die Struktur des Satzes zu verändern.
+            Ist dein Ziel für dich attraktiv – dann bekommt es 10 von 10
+            Punkten. Ist das nicht der Fall, dann überprüfe einmal, ob du andere
+            Worte verwenden möchtest, ohne dabei die Struktur des Satzes zu
+            verändern.
           </Explanation>
+          {/* Rahmen-Satz der Vorlage — nahe der Attraktivitäts-Skala. */}
+          <p className="text-sm text-muted">
+            Ist dein Ziel nicht attraktiv für dich, wird es keine Motivation,
+            keine Bewegung auslösen. Auch wenn es „nur“ um einen Satz geht, lass
+            dir Zeit und spüre vor allem, ob er sich richtig für dich anfühlt.
+          </p>
         </Criterion>
 
         <Criterion number={2} title="Selbst erreichbar">
@@ -205,16 +216,17 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
             </Impulse>
           ) : null}
           <Explanation>
-            Ist der Satz so formuliert, dass du dein Ziel aus eigener Initiative
-            erreichen kannst — oder hast du eine Abhängigkeit hineinformuliert?
-            Das bedeutet nicht, dass du dein Ziel allein erreichen musst. Doch
-            ein Satz wie „Ab dem … werde ich Zufriedenheit mit meiner
-            erfolgreichen Bewerbung auf einen neuen Arbeitsplatz erreicht haben“
-            ist so formuliert, dass{" "}
+            Ist der Satz so formuliert, dass du dein Ziel selbst aus deiner
+            Initiative heraus erreichen kannst. Oder hast du eine Abhängigkeit
+            hineinformuliert? Das bedeutet nicht, du musst dein Ziel alleine
+            erreichen. Doch ein Satz wie „Ab dem … werde ich Zufriedenheit mit
+            meiner erfolgreichen Bewerbung auf einen neuen Arbeitsplatz erreicht
+            haben“ ist so formuliert, dass{" "}
             <strong className="font-semibold text-foreground">andere</strong>{" "}
-            darüber entscheiden. Dieses Ziel ist nicht selbst erreichbar.
-            Formuliere dein Ziel so, dass der Satz unabhängig von Entscheidungen
-            anderer gilt.
+            darüber entscheiden, ob ich eingestellt werde. Dieses Ziel ist nicht
+            selbst erreichbar. Falls das der Fall ist, überprüfe einmal, wie du
+            dein Ziel so formulieren kannst, dass der Satz unabhängig von
+            Entscheidungen anderer gilt.
           </Explanation>
         </Criterion>
 
@@ -267,8 +279,9 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
 
         <div className="rounded-xl border border-subtle bg-surface-2 p-4">
           <p className="text-sm text-muted">
-            Wenn du mit deinem Ziel einverstanden bist, sorge dafür, dass dir
-            der Satz im weiteren Verlauf stets vor Augen ist.
+            Wenn du mit deinem Ziel einverstanden bist, sorge bitte dafür, dass
+            der Satz dir im weiteren Verlauf deines{" "}
+            {coached ? "Coachings" : "Selbstcoachings"} stets vor Augen ist.
           </p>
         </div>
       </div>

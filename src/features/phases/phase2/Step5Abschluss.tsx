@@ -30,21 +30,26 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-5">
       <p className="text-muted">
-        Du hast die wichtigen{" "}
+        Du hast nun die wichtigen{" "}
         <strong className="font-semibold text-foreground">
-          Koordinaten deiner Veränderungsreise
+          Koordinaten für deine Veränderungsreise
         </strong>{" "}
-        bestimmt: Du weißt, wo du stehst — und wo du hin möchtest. Du bist dir
-        über dein Ziel sicher, denn du hast dir seine Folgen klar gemacht und
-        ihnen zugestimmt. Wenn du Erkenntnisse aus deiner bisherigen Reflexion
-        hast, notiere sie auf deinem{" "}
+        bestimmt. Du weißt, wo du stehst, und du weißt, wo du hin möchtest. Du
+        bist dir über dein{" "}
+        <strong className="font-semibold text-foreground">
+          Veränderungsziel
+        </strong>{" "}
+        sicher, denn du hast dir seine Folgen klar gemacht und ihnen zugestimmt.
+        Wenn du Erkenntnisse aus deiner bisherigen Reflexion haben solltest,
+        dann notiere sie dir bitte auf deinem{" "}
         <strong className="font-semibold text-foreground">
           Erkenntnisboard
-        </strong>{" "}
-        (Notizbuch rechts). Vergegenwärtige dir noch einmal die Schritte, wie du
-        zu deinem Ergebnis gekommen bist — dann geht es weiter mit Phase 3: der
+        </strong>
+        . Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
+        Ergebnis gekommen bist, bevor du mit Phase 3 weitermachst – der
         Identifikation deiner{" "}
-        <strong className="font-semibold text-foreground">Ressourcen</strong>.
+        <strong className="font-semibold text-foreground">Ressourcen</strong>,
+        die du auf dem Weg zu deinem Ziel brauchen wirst.
       </p>
 
       {goalText.trim() ? (

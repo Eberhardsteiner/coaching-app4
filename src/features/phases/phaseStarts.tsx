@@ -48,7 +48,7 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     heading:
       "Entscheide dich für dein attraktives Ziel — und mache dir seine Folgen bewusst",
     intro:
-      "Jede erfolgreiche Veränderung braucht eine ‚Hin-zu‘-Orientierung. Wie soll deine Situation in Zukunft aussehen? Bitte beachte: Auch jetzt geht es noch nicht um Lösungen, sondern um den Zustand, den du anstrebst — um dein ‚Wohin‘. Zum ‚Wie‘ kommst du in Phase 4, hab ein bisschen Geduld!",
+      "Jede erfolgreiche Veränderung braucht eine „Hin-zu“-Orientierung. Wie soll deine Situation in Zukunft aussehen? Bitte beachte: Auch jetzt geht es noch nicht um Lösungen, sondern um den Zustand, den du anstrebst. Um dein „Wohin“. Zum „Wie“ kommst du schon noch in Phase 4 – hab ein bisschen Geduld!",
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase2Motif />,

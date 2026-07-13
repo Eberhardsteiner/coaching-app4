@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -16,9 +15,9 @@ import { cn } from "@/lib/utils";
 const INTRO =
   "Stell dir einmal vor, es würde dir mit deinem Thema und Anliegen, das du in Phase 1 beschrieben hast, richtig gut gehen — wie geht es dir dann? Wie fühlst du dich? Was ist dann anders? Was erlebst du? Welche Veränderungen nehmen andere an dir wahr? Beginne mit dem Gefühl, das du dann hast …";
 
-/** Ergänzender Perspektivwechsel-Hinweis (Methodik-Vorlage, wortgetreu). */
-const PERSPEKTIV_HINT =
-  "Nimm bitte bewusst eine neue Perspektive ein. Such dir einen Platz, an dem du dich wohlfühlst. Und stell dir vor — du weißt zwar nicht wie — aber deine Probleme aus der Ist-Situation wären verschwunden. Die Dinge haben sich zum Guten gewendet. Welches Gefühl stellt sich bei dir ein? Du kannst zunächst einfach frei assoziieren und dir in einer Art Brainstorming vorstellen, wie sich deine Situation geändert hat. Verschwende erst einmal gar keinen Gedanken an das Wie — beschreibe einfach den neuen, positiven Zustand.";
+/** Perspektivwechsel-Text (Methodik-Vorlage, wortgetreu — Teil der Anmoderation). */
+const PERSPEKTIV_TEXT =
+  "Nimm bitte bewusst eine neue Perspektive ein. Such dir einen Platz, an dem du dich wohlfühlst. Und stell dir vor – du weißt zwar nicht wie – aber deine Probleme aus der Ist-Situation wären verschwunden. Die Dinge haben sich zum Guten gewendet. Welches Gefühl stellt sich bei dir ein? Du kannst zunächst einfach frei assoziieren und dir in einer Art Brainstorming vorstellen, wie sich deine Situation geändert hat. Verschwende erst einmal gar keinen Gedanken an das Wie, beschreibe einfach den neuen, positiven Zustand.";
 
 /** Liste positiver Gefühle (Methodik-Vorlage) — ohne Anspruch auf Vollständigkeit. */
 const FEELINGS = [
@@ -133,16 +132,8 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
 
         <p className="text-muted">{INTRO}</p>
 
-        <details className="group rounded-xl border border-subtle bg-surface p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
-            Tipp: So gelingt der Perspektivwechsel
-            <ChevronDown
-              className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
-              aria-hidden
-            />
-          </summary>
-          <p className="mt-3 text-sm text-muted">{PERSPEKTIV_HINT}</p>
-        </details>
+        {/* Perspektivwechsel — sichtbarer Teil der durchgehenden Anmoderation. */}
+        <p className="text-muted">{PERSPEKTIV_TEXT}</p>
 
         <div className="space-y-2">
           <label
@@ -165,18 +156,22 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
         {/* C2 — Gefühlswörter herausziehen (Auswahl → phase2.gefuehl) */}
         <div className="space-y-4 border-t border-subtle pt-6">
           <p className="text-muted">
-            Unterstreiche nun gedanklich die{" "}
+            Unterstreiche dann die{" "}
             <strong className="font-semibold text-foreground">
               Gefühlswörter
-            </strong>{" "}
-            in deiner Beschreibung: Welches positive Gefühl stellt sich ein,
-            wenn dein neuer Zustand erreicht ist? Wähle das{" "}
-            <strong className="font-semibold text-foreground">stärkste</strong>{" "}
-            —{" "}
-            <strong className="font-semibold text-foreground">
-              zwei Gefühle sind auch ok
             </strong>
-            .
+            . Denn zunächst geht es um das neue, positive Gefühl, das sich
+            einstellt, wenn dein neuer Zustand eingetreten ist.
+          </p>
+          <p className="text-muted">
+            Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
+            Ausdruck bringt, dann kannst du dir durch die Liste helfen lassen.
+            Sie hat keinen Anspruch auf Vollständigkeit. Wenn du mehrere Gefühle
+            in dir spürst, dann nimm das{" "}
+            <strong className="font-semibold text-foreground">stärkste</strong>.{" "}
+            <strong className="font-semibold text-foreground">
+              2 Gefühle sind auch ok.
+            </strong>
           </p>
 
           <div
@@ -207,10 +202,6 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
               );
             })}
           </div>
-          <p className="text-xs text-faint">
-            Die Liste hat keinen Anspruch auf Vollständigkeit.
-          </p>
-
           <div className="max-w-sm space-y-1.5">
             <label
               htmlFor="phase2-custom-gefuehl"

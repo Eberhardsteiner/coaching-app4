@@ -182,21 +182,38 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-6">
-        {/* F1 — Anmoderation (Methodik, wortgetreu gekürzt) */}
+        {/* Anmoderation (Methodik-Vorlage, wortgetreu — zwei Absätze) */}
         <p className="text-muted">
           Hast du schon einmal bemerkt, dass Veränderungen, die wir persönlich
           großartig finden, in unserem Umfeld manchmal nicht auf Gegenliebe
           stoßen? Andererseits wünschen sich vielleicht unsere Nächsten, dass
-          wir uns verändern — und würden uns liebend gern unterstützen. Für
-          deinen Weg zum Ziel kann es entscheidend sein zu wissen, woher du{" "}
+          wir uns verändern und würden uns dabei liebend gern unterstützen. Für
+          deinen Weg zum Ziel kann es entscheidend sein zu berücksichtigen,
+          woher du{" "}
           <strong className="font-semibold text-foreground">Rückenwind</strong>{" "}
           und woher{" "}
           <strong className="font-semibold text-foreground">Gegenwind</strong>{" "}
-          zu erwarten hast. Finde jetzt heraus, welche Auswirkungen dein Ziel
-          auf dein Umfeld hat und wie die Beteiligten dazu stehen.{" "}
+          zu erwarten hast. Nun geht es darum, dass du herausfindest, welche
+          Auswirkungen dein Ziel auf dein Umfeld hat und wie die Beteiligten
+          dazu stehen. Dann kannst du für dich überprüfen, ob du zu deinem Ziel
+          stehen kannst. Und später kannst du bei deinen Maßnahmen die
+          Einstellungen deines Umfelds gezielt berücksichtigen.{" "}
           <strong className="font-semibold text-foreground">
             Bitte gehe dabei durch alle deine Cluster.
           </strong>
+        </p>
+        <p className="text-muted">
+          Stelle dir bitte vor, du hast dein Ziel erreicht. Ganz gleich, wie du
+          es geschafft hast, dein Ziel ist Realität. Du kannst dich nun anders
+          verhalten als Stand heute. Dass du dein Ziel erreicht hast, ist nicht
+          nur ein Gefühl, sondern zeigt sich an deinem{" "}
+          <strong className="font-semibold text-foreground">
+            veränderten Verhalten
+          </strong>{" "}
+          in deinem Kontext. Betrachte dich nun aus der Perspektive, mit den
+          Augen deiner Cluster. „An welchem konkreten Verhalten von dir erkennt
+          dein Cluster (z. B. die Personen darin), dass du dein Ziel erreicht
+          hast?“ Was kannst du dann tun, was du heute noch nicht machen kannst?
         </p>
 
         {/* F2 — Cluster-Navigation (Kernthema zuerst, dann nach Gewicht) */}
@@ -268,6 +285,15 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
 
         {/* The active cluster's consequence */}
         <div className="space-y-4 rounded-xl border border-subtle bg-surface p-4">
+          {/* Kopfzeile wie im Vorlage-Arbeitsblatt: „Cluster ___ Wert (___)“ */}
+          <h3 className="flex flex-wrap items-baseline gap-2 text-sm font-semibold text-foreground">
+            Cluster: {activeName}
+            {active.weight != null ? (
+              <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                Wert ({active.weight})
+              </span>
+            ) : null}
+          </h3>
           <div className="space-y-1.5">
             <label
               htmlFor="zielfolge-recognition"
@@ -291,36 +317,19 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             />
           </div>
 
-          {/* Formulierungs-Hinweise (kompakt) */}
-          <ul className="space-y-1.5 rounded-lg border border-subtle bg-surface-2 p-3 text-xs text-muted">
-            <li>
-              Sprich von dir in der{" "}
-              <strong className="font-semibold text-foreground">
-                3. Person
-              </strong>{" "}
-              — nicht „Ich gehe …“, sondern z. B. „Peter geht …“. So wird der
-              Perspektivwechsel deutlich.
-            </li>
-            <li>
-              <strong className="font-semibold text-foreground">
-                Keine Verneinungen.
-              </strong>{" "}
-              Statt „Peter geht nicht mehr als Letzter aus dem Büro“ → „Peter
-              geht nach 8 Stunden Arbeitszeit nach Hause.“
-            </li>
-            <li>
-              Beschreibe{" "}
-              <strong className="font-semibold text-foreground">
-                beobachtbares Verhalten
-              </strong>{" "}
-              — etwas, das du dann tun kannst, was heute noch nicht geht.
-            </li>
-          </ul>
+          {/* Formulierungs-Hinweis (Methodik-Vorlage, wortgetreu) */}
+          <p className="rounded-lg border border-subtle bg-surface-2 p-3 text-xs text-muted">
+            Damit der Perspektivwechsel deutlich wird, sprich bitte von dir in
+            der{" "}
+            <strong className="font-semibold text-foreground">3. Person</strong>
+            , also nicht „Ich gehe …“, sondern z. B. „Peter geht …“.
+          </p>
 
-          {/* Bewertung aus Cluster-Sicht */}
+          {/* Bewertung aus Cluster-Sicht (Hinweis wortgetreu) */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-foreground">
-              Wie findet das dein „{activeName}“?
+              Überlege anschließend, wie dein Cluster wohl deine neuen
+              Verhaltensweisen bewerten wird: gut – schlecht – neutral?
             </p>
             <div
               role="group"
@@ -354,15 +363,18 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
           </div>
 
           <p className="text-xs text-faint">
-            Prüfe zuletzt: Gibt das wirklich die{" "}
+            Zuletzt überprüfe nochmal, ob das, was du beschrieben hast, a)
+            wirklich die{" "}
             <strong className="font-medium text-muted">
-              Sichtweise deines Clusters
+              Sichtweise deiner Cluster
             </strong>{" "}
-            wieder — und ist es wirklich{" "}
+            wiedergibt und b) wirklich ein{" "}
             <strong className="font-medium text-muted">
               beobachtbares Verhalten
-            </strong>
-            ?
+            </strong>{" "}
+            ist. Bitte verwende keine Verneinungen. Beispiel: Anstelle von
+            „Peter geht nicht mehr als Letzter aus dem Büro nach Hause“ → „Peter
+            geht nach 8 Stunden Arbeitszeit nach Hause.“
           </p>
         </div>
 

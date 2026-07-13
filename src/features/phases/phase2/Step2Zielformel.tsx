@@ -96,13 +96,26 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
     <div>
       <div className="space-y-5">
         <p className="text-muted">
-          Du hast nun eine Vorstellung deiner positiven neuen Situation. Die
-          Stichworte aus deinem Brainstorming wirst du dir nicht alle merken
-          können. Deshalb legst du dir jetzt{" "}
-          <strong className="font-semibold text-foreground">einen Satz</strong>{" "}
-          zurecht, der wie ein{" "}
+          Du hast nun eine Vorstellung deiner positiven neuen Situation.
+          Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht
+          alle einfach so merken können. Deshalb geht es nun darum, dass du dir
+          einen Satz zurechtlegst, der für dich wie eine Art{" "}
           <strong className="font-semibold text-foreground">Mantra</strong>{" "}
-          dienen kann — der in einem Satz beschreibt, wonach du strebst.
+          dienen kann. Der in einem Satz beschreibt, wonach du strebst. Damit
+          der Satz für dich gut funktioniert, sollen Qualitätsmerkmale
+          unterstützen, die du leicht selbst überprüfen kannst. Bitte beginne
+          damit, dass du dein erstrebenswertes Gefühl (als Substantiv, also z.
+          B. „Gelassenheit“ statt „gelassen“) identifizierst. Formuliere dann
+          bitte einen Satz, der dem obigen Muster entspricht.
+        </p>
+
+        {/* Das Satzmuster der Vorlage — Platzhalter-Schreibweise. */}
+        <p className="text-sm text-muted">
+          Muster:{" "}
+          <strong className="font-semibold text-foreground">
+            Ab dem DATUM werde ich (in meiner Funktion als …) das POSITIVE
+            GEFÜHL in Bezug auf „mein Hauptproblem“ erreicht haben.
+          </strong>
         </p>
 
         {/* Live mantra preview — the feeling is the core of the sentence. */}
@@ -183,11 +196,9 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
 
         <div className="rounded-xl border border-subtle bg-surface-2 p-4">
           <p className="text-sm text-muted">
-            Lies dir deinen Satz{" "}
+            Lies ihn dir{" "}
             <strong className="font-semibold text-foreground">laut</strong> vor
-            und spüre, ob er in dir ein gutes Gefühl auslöst. Auch wenn es „nur“
-            um einen Satz geht: Lass dir Zeit — ist dein Ziel nicht attraktiv
-            für dich, wird es keine Motivation und keine Bewegung auslösen.
+            und spüre, ob er in dir ein gutes Gefühl auslöst.
           </p>
         </div>
 
