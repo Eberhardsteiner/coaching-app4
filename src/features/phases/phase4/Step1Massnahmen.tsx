@@ -59,11 +59,14 @@ function valuationBadge(valuation: string): {
 /**
  * Phase 4, Step 4.1 — Maßnahmen je Cluster: the guided cluster pass (core
  * theme first, then by weight; pinning pattern from MP3 — any edit pins its
- * cluster so the derived active cluster never jumps mid-input). Per cluster:
- * the Wirkindikator from phase2.consequences (read-only, with valuation badge
- * and OKR aside; missing → calm fallback linking back to 2.4), the förderliche
- * resource palette (incl. personalityTraits; min. 3 with counter + cockpit
- * button) and 1–4 measures as whole Ich-Sätze. The plan of a cluster is
+ * cluster so the derived active cluster never jumps mid-input). The active
+ * cluster follows the method's Cluster-Arbeitsblatt (MP4-REV): header with
+ * name + Wert (weight, consistent with 2.4); two columns on wide screens —
+ * LEFT the context mirrored read-only from phase2.consequences (the two 2.4
+ * questions with recognition + valuation badge, OKR aside; missing → calm
+ * fallback linking back to 2.4), RIGHT the capture: förderliche resource
+ * palette (incl. personalityTraits; min. 3 with counter + cockpit button)
+ * and 1–4 measures as whole Ich-Sätze. The plan of a cluster is
  * created on first edit (no ghost plans). recognitionSignal is legacy — no
  * longer collected, existing values shown read-only. Gate: EVERY cluster has
  * ≥3 resources and ≥1 measure. No AI here.
@@ -297,6 +300,16 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                 />
               )}
               <span>{clusterName(cluster, index)}</span>
+              {cluster.weight != null ? (
+                <span
+                  className={cn(
+                    "text-xs",
+                    isActive ? "text-white/70" : "text-faint",
+                  )}
+                >
+                  ({cluster.weight})
+                </span>
+              ) : null}
               {cluster.isCore ? (
                 <span
                   className={cn(
@@ -320,220 +333,247 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         {doneCount} von {sorted.length} Clustern vollständig.
       </p>
 
-      {/* Aktives Cluster */}
+      {/* Aktives Cluster — Arbeitsblatt-Kopf: Name · Wert (konsistent zu 2.4) */}
       <div className="space-y-5 rounded-xl border border-subtle bg-surface p-4">
-        <h3 className="text-sm font-semibold text-foreground">{activeName}</h3>
+        <h3 className="text-sm font-semibold text-foreground">
+          {activeName}
+          {active.weight != null ? (
+            <span className="ml-1.5 text-xs font-normal text-muted">
+              · Wert ({active.weight})
+            </span>
+          ) : null}
+        </h3>
 
-        {/* B1 — Wirkindikator aus Phase 2 */}
-        {activeConsequence && activeConsequence.recognition.trim() ? (
-          <div className="space-y-2 rounded-lg border border-accent/30 bg-accent/5 p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs font-medium uppercase tracking-wide text-faint">
-                Dein Wirkindikator aus Phase 2
-              </p>
-              {badge ? (
-                <span
-                  className={cn(
-                    "rounded-full px-2 py-0.5 text-xs font-medium",
-                    badge.className,
-                  )}
+        {/* Arbeitsblatt-Layout: Kontext aus Phase 2 links, Erfassung rechts. */}
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+          {/* Links — die zwei Fragen aus 2.4, read-only gespiegelt */}
+          <div>
+            {activeConsequence && activeConsequence.recognition.trim() ? (
+              <div className="space-y-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-faint">
+                  Dein Wirkindikator aus Phase 2
+                </p>
+                <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted">
+                    An welcher konkreten Handlung von dir erkennt „{activeName}
+                    “, dass du dein Ziel erreicht hast?
+                  </p>
+                  <p className="text-sm font-medium text-foreground">
+                    {activeConsequence.recognition.trim()}
+                  </p>
+                </div>
+                {badge ? (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted">
+                      Wie findet das dein „{activeName}“?
+                    </p>
+                    <span
+                      className={cn(
+                        "inline-block rounded-full px-2 py-0.5 text-xs font-medium",
+                        badge.className,
+                      )}
+                    >
+                      {badge.label}
+                    </span>
+                  </div>
+                ) : null}
+                <details className="group">
+                  <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                    <ChevronDown
+                      className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                      aria-hidden
+                    />
+                    Für OKR-Kenner
+                  </summary>
+                  <p className="mt-1.5 text-xs text-muted">
+                    Falls du mit OKRs vertraut bist: Dein Verhalten pro Cluster
+                    beschreibt einen Key Result, dein Zielsatz ist das
+                    Objective.
+                  </p>
+                </details>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-subtle bg-surface-2 p-3">
+                <p className="text-sm text-muted">
+                  Für dieses Cluster ist noch keine Zielfolge aus Phase 2
+                  beschrieben — sie ist dein Wirkindikator für die Maßnahmen.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => nav.goTo(2, 3)}
                 >
-                  {badge.label}
-                </span>
-              ) : null}
-            </div>
-            <p className="text-sm font-medium text-foreground">
-              {activeConsequence.recognition.trim()}
-            </p>
-            <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
-            <details className="group">
-              <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-                <ChevronDown
-                  className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                  aria-hidden
-                />
-                Für OKR-Kenner
-              </summary>
-              <p className="mt-1.5 text-xs text-muted">
-                Falls du mit OKRs vertraut bist: Dein Verhalten pro Cluster
-                beschreibt einen Key Result, dein Zielsatz ist das Objective.
-              </p>
-            </details>
-          </div>
-        ) : (
-          <div className="rounded-lg border border-subtle bg-surface-2 p-3">
-            <p className="text-sm text-muted">
-              Für dieses Cluster ist noch keine Zielfolge aus Phase 2
-              beschrieben — sie ist dein Wirkindikator für die Maßnahmen.
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              onClick={() => nav.goTo(2, 3)}
-            >
-              Zu den Folgen deines Ziels
-            </Button>
-          </div>
-        )}
-
-        {/* B2 — Eingesetzte Ressourcen */}
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-medium text-foreground">
-              Eingesetzte Ressourcen
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCockpitOpen(true)}
-            >
-              <LayoutDashboard />
-              Cockpit öffnen
-            </Button>
-          </div>
-          <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
-          {foerderliche.length === 0 ? (
-            <p className="text-xs text-faint">
-              Keine als förderlich markierten Ressourcen. Du kannst trotzdem
-              Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
-              förderlich werten.
-            </p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {foerderliche.map((res) => {
-                const selected =
-                  activePlan?.resourcesUsed.includes(res.id) ?? false;
-                return (
-                  <button
-                    key={res.id}
-                    type="button"
-                    aria-pressed={selected}
-                    onClick={() => toggleResource(active.id, res.id)}
-                    className={cn(
-                      "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                      selected
-                        ? "border-accent bg-accent/10 text-accent"
-                        : "border-subtle bg-surface text-muted hover:text-foreground",
-                    )}
-                  >
-                    {res.text || "—"}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          <p
-            className={cn(
-              "text-xs",
-              resourceCount >= MIN_RESOURCES ? "text-green-600" : "text-faint",
+                  Zu den Folgen deines Ziels
+                </Button>
+              </div>
             )}
-          >
-            {resourceCount} gewählt (mind. {MIN_RESOURCES})
-          </p>
-        </div>
+          </div>
 
-        {/* B3 — Maßnahmen (max. 4) */}
-        <div className="space-y-3">
-          <p className="text-sm font-medium text-foreground">
-            Deine Maßnahmen (max. {MAX_MEASURES})
-          </p>
-          <p className="text-xs text-muted">
-            Lass aus den gewählten Ressourcen konkrete Handlungen entstehen.
-            Drücke sie in einem ganzen ‚Ich‘-Satz aus, der konkret beschreibt,
-            was du tust — ein Verhalten, kein Gefühl. ‚Ich bin fröhlich, wenn
-            ich in die Arbeit gehe‘ ist keine Handlung. ‚Ich begrüße täglich
-            meine Kollegen freundlich und frage sie, wie ich sie unterstützen
-            kann‘ ist ein konkretes, wahrnehmbares Verhalten. Verzichte auf
-            verneinende Aussagen über das, was du nicht mehr tun willst — frage
-            dich: Was tue ich stattdessen? Je konkreter du formulierst, desto
-            wahrscheinlicher setzt du um. Du darfst dich hier auch für deine
-            Mühen im {branch === "coached" ? "Coaching" : "Selbstcoaching"}{" "}
-            belohnen!
-          </p>
-
-          {measures.map((measure, index) => (
-            <div
-              key={measure.id}
-              className="space-y-2 rounded-lg border border-subtle bg-background p-3"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <label
-                  htmlFor={`measure-${measure.id}`}
-                  className="block text-sm font-medium text-foreground"
+          {/* Rechts — Erfassung: Eingesetzte Ressourcen + Maßnahmen */}
+          <div className="space-y-5">
+            {/* Eingesetzte Ressourcen */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-medium text-foreground">
+                  Eingesetzte Ressourcen
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCockpitOpen(true)}
                 >
-                  Maßnahme {index + 1} (Ich-Satz)
-                </label>
-                <button
-                  type="button"
-                  onClick={() => deleteMeasure(active.id, measure.id)}
-                  aria-label={`Maßnahme ${index + 1} löschen`}
-                  title="Löschen"
-                  className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  <Trash2 className="size-4" />
-                </button>
+                  <LayoutDashboard />
+                  Cockpit öffnen
+                </Button>
               </div>
-              <textarea
-                id={`measure-${measure.id}`}
-                value={measure.text}
-                rows={2}
-                onChange={(event) =>
-                  updateMeasure(active.id, measure.id, {
-                    text: event.target.value,
-                  })
-                }
-                placeholder="Ich …"
-                className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              />
-              <div className="space-y-1">
-                <label
-                  htmlFor={`measure-res-${measure.id}`}
-                  className="block text-xs text-muted"
-                >
-                  Basiert auf Ressource (optional)
-                </label>
-                <select
-                  id={`measure-res-${measure.id}`}
-                  value={measure.basedOnResource ?? ""}
-                  onChange={(event) =>
-                    updateMeasure(active.id, measure.id, {
-                      basedOnResource: event.target.value || undefined,
-                    })
-                  }
-                  className="w-full max-w-xs rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  <option value="">— keine —</option>
-                  {(activePlan?.resourcesUsed ?? []).map((rid) => (
-                    <option key={rid} value={rid}>
-                      {resourceText(rid)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {measure.recognitionSignal?.trim() ? (
+              <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
+              {foerderliche.length === 0 ? (
                 <p className="text-xs text-faint">
-                  Erkennungssignal (früher erfasst):{" "}
-                  {measure.recognitionSignal.trim()}
+                  Keine als förderlich markierten Ressourcen. Du kannst trotzdem
+                  Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
+                  förderlich werten.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {foerderliche.map((res) => {
+                    const selected =
+                      activePlan?.resourcesUsed.includes(res.id) ?? false;
+                    return (
+                      <button
+                        key={res.id}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => toggleResource(active.id, res.id)}
+                        className={cn(
+                          "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                          selected
+                            ? "border-accent bg-accent/10 text-accent"
+                            : "border-subtle bg-surface text-muted hover:text-foreground",
+                        )}
+                      >
+                        {res.text || "—"}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p
+                className={cn(
+                  "text-xs",
+                  resourceCount >= MIN_RESOURCES
+                    ? "text-green-600"
+                    : "text-faint",
+                )}
+              >
+                {resourceCount} gewählt (mind. {MIN_RESOURCES})
+              </p>
+            </div>
+
+            {/* Maßnahmen (max. 4) */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-foreground">
+                Deine Maßnahmen (max. {MAX_MEASURES})
+              </p>
+              <p className="text-xs text-muted">
+                Lass aus den gewählten Ressourcen konkrete Handlungen entstehen.
+                Drücke sie in einem ganzen ‚Ich‘-Satz aus, der konkret
+                beschreibt, was du tust — ein Verhalten, kein Gefühl. ‚Ich bin
+                fröhlich, wenn ich in die Arbeit gehe‘ ist keine Handlung. ‚Ich
+                begrüße täglich meine Kollegen freundlich und frage sie, wie ich
+                sie unterstützen kann‘ ist ein konkretes, wahrnehmbares
+                Verhalten. Verzichte auf verneinende Aussagen über das, was du
+                nicht mehr tun willst — frage dich: Was tue ich stattdessen? Je
+                konkreter du formulierst, desto wahrscheinlicher setzt du um. Du
+                darfst dich hier auch für deine Mühen im{" "}
+                {branch === "coached" ? "Coaching" : "Selbstcoaching"} belohnen!
+              </p>
+
+              {measures.map((measure, index) => (
+                <div
+                  key={measure.id}
+                  className="space-y-2 rounded-lg border border-subtle bg-background p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <label
+                      htmlFor={`measure-${measure.id}`}
+                      className="block text-sm font-medium text-foreground"
+                    >
+                      Maßnahme {index + 1} (Ich-Satz)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => deleteMeasure(active.id, measure.id)}
+                      aria-label={`Maßnahme ${index + 1} löschen`}
+                      title="Löschen"
+                      className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+                  <textarea
+                    id={`measure-${measure.id}`}
+                    value={measure.text}
+                    rows={2}
+                    onChange={(event) =>
+                      updateMeasure(active.id, measure.id, {
+                        text: event.target.value,
+                      })
+                    }
+                    placeholder="Ich …"
+                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  />
+                  <div className="space-y-1">
+                    <label
+                      htmlFor={`measure-res-${measure.id}`}
+                      className="block text-xs text-muted"
+                    >
+                      Basiert auf Ressource (optional)
+                    </label>
+                    <select
+                      id={`measure-res-${measure.id}`}
+                      value={measure.basedOnResource ?? ""}
+                      onChange={(event) =>
+                        updateMeasure(active.id, measure.id, {
+                          basedOnResource: event.target.value || undefined,
+                        })
+                      }
+                      className="w-full max-w-xs rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      <option value="">— keine —</option>
+                      {(activePlan?.resourcesUsed ?? []).map((rid) => (
+                        <option key={rid} value={rid}>
+                          {resourceText(rid)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {measure.recognitionSignal?.trim() ? (
+                    <p className="text-xs text-faint">
+                      Erkennungssignal (früher erfasst):{" "}
+                      {measure.recognitionSignal.trim()}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={measures.length >= MAX_MEASURES}
+                onClick={() => addMeasure(active.id)}
+              >
+                <Plus />
+                Maßnahme
+              </Button>
+              {measures.length >= MAX_MEASURES ? (
+                <p className="text-xs text-faint">
+                  Maximal {MAX_MEASURES} Maßnahmen — beschränke dich auf 3–4.
                 </p>
               ) : null}
             </div>
-          ))}
-
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={measures.length >= MAX_MEASURES}
-            onClick={() => addMeasure(active.id)}
-          >
-            <Plus />
-            Maßnahme
-          </Button>
-          {measures.length >= MAX_MEASURES ? (
-            <p className="text-xs text-faint">
-              Maximal {MAX_MEASURES} Maßnahmen — beschränke dich auf 3–4.
-            </p>
-          ) : null}
+          </div>
         </div>
       </div>
 

@@ -70,7 +70,7 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     eyebrow: "Phase 4 · Maßnahmen",
     heading: "So kommst du zu deinem Handlungsplan",
     intro:
-      "Bestimmt bist du schon voller Ungeduld, nun endlich die Maßnahmen zu beschreiben, die dich ans Ziel bringen! Damit sie wirklich tragen, ist es essenziell, dass du sie aus deinen Ressourcen heraus entwickelst. Alle stehen dir zur Verfügung: alle zielförderlichen Intelligenzen, Motive, Persönlichkeitseigenschaften und Werte, alle Erkenntnisse aus Modellen, alle Erfahrungen und äußeren Ressourcen. Geh einfach durch alle Cluster — die Reihenfolge spielt keine Rolle.",
+      "Bestimmt bist du schon voller Ungeduld, nun endlich die Maßnahmen zu beschreiben, die dich ans Ziel bringen! Damit sie wirklich tragen, ist es essenziell, dass du sie aus deinen Ressourcen heraus entwickelst. Alle stehen dir zur Verfügung: alle zielförderlichen Intelligenzen, Motive, Persönlichkeitseigenschaften und Werte, alle Erkenntnisse aus Modellen, alle Erfahrungen und äußeren Ressourcen. Geh einfach durch alle Cluster — die Reihenfolge spielt keine Rolle. Und sorge nun wieder dafür, dass dir dein Ziel stets vor Augen steht — dein Zielsatz begleitet dich deshalb durch den ganzen Schritt.",
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase4Motif />,
