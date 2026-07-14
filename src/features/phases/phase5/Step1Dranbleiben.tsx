@@ -29,12 +29,16 @@ const BODY_SUGGESTION_INDEX = 4;
 
 /**
  * Phase 5, Step 5.1 — Dranbleiben. Per resource a concrete "stay-on-track"
- * strategy (→ phase5.strategies, template table "Eingesetzte Ressource |
- * Konkrete Strategien"). The method's six example suggestions are one click
- * away: taking one creates a strategy row with prefilled concreteStrategy and
- * focus in the empty resource field; taken suggestions are marked (duplicate
- * guard by text). The resource field offers the förderliche / Phase-4-used
- * resources as suggestions (datalist) but stores the readable **text** in
+ * strategy (→ phase5.strategies), rendered as the template's two-column table
+ * "Eingesetzte Ressource | Konkrete Strategien" (MP5-REV): visible column
+ * headers on md+, one row per strategy with resource left / strategy right;
+ * on narrow screens the row stacks with per-field mini labels (headers
+ * hidden, labels md:sr-only — screen readers always get the field labels).
+ * The method's six example suggestions are one click away: taking one creates
+ * a strategy row with prefilled concreteStrategy and focus in the empty
+ * resource field; taken suggestions are marked (duplicate guard by text). The
+ * resource field offers the förderliche / Phase-4-used resources as
+ * suggestions (datalist) but stores the readable **text** in
  * `Strategy.resource` (good for the later summary/PDF). No AI here.
  */
 export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
@@ -166,67 +170,85 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
       ) : null}
 
       <div className="space-y-4">
-        {strategies.map((strategy, index) => (
-          <div
-            key={strategy.id}
-            className="space-y-3 rounded-xl border border-subtle bg-surface p-4"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0 flex-1 space-y-1.5">
-                <label
-                  htmlFor={`strategy-res-${strategy.id}`}
-                  className="block text-sm font-medium text-foreground"
-                >
-                  Ressource
-                </label>
-                <input
-                  id={`strategy-res-${strategy.id}`}
-                  type="text"
-                  list="phase5-resource-suggestions"
-                  autoFocus={strategy.id === focusId}
-                  value={strategy.resource}
-                  onChange={(event) =>
-                    updateStrategy(strategy.id, {
-                      resource: event.target.value,
-                    })
-                  }
-                  placeholder="z. B. Freiheit"
-                  className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => deleteStrategy(strategy.id)}
-                aria-label={`Strategie ${index + 1} löschen`}
-                title="Löschen"
-                className="mt-7 flex size-8 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                <Trash2 className="size-4" />
-              </button>
+        {strategies.length > 0 ? (
+          <div className="overflow-hidden rounded-xl border border-subtle bg-surface">
+            {/* Spaltenüberschriften des Arbeitsblatts — nur breite Screens;
+                Screenreader bekommen die Labels je Feld. */}
+            <div
+              aria-hidden
+              className="hidden gap-3 border-b border-subtle bg-surface-2 px-3 py-2 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2rem]"
+            >
+              <p className="text-sm font-medium text-foreground">
+                Eingesetzte Ressource
+              </p>
+              <p className="text-sm font-medium text-foreground">
+                Konkrete Strategien
+              </p>
+              <span />
             </div>
 
-            <div className="space-y-1.5">
-              <label
-                htmlFor={`strategy-how-${strategy.id}`}
-                className="block text-sm font-medium text-foreground"
+            {strategies.map((strategy, index) => (
+              <div
+                key={strategy.id}
+                className="gap-3 border-b border-subtle p-3 last:border-b-0 max-md:space-y-3 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2rem] md:items-start"
               >
-                Strategie
-              </label>
-              <textarea
-                id={`strategy-how-${strategy.id}`}
-                value={strategy.concreteStrategy}
-                rows={2}
-                onChange={(event) =>
-                  updateStrategy(strategy.id, {
-                    concreteStrategy: event.target.value,
-                  })
-                }
-                placeholder="Wie nutzt du diese Ressource konkret weiter, und woran prüfst du, ob es wirkt?"
-                className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              />
-            </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor={`strategy-res-${strategy.id}`}
+                    className="block text-sm font-medium text-foreground md:sr-only"
+                  >
+                    Ressource
+                  </label>
+                  <input
+                    id={`strategy-res-${strategy.id}`}
+                    type="text"
+                    list="phase5-resource-suggestions"
+                    autoFocus={strategy.id === focusId}
+                    value={strategy.resource}
+                    onChange={(event) =>
+                      updateStrategy(strategy.id, {
+                        resource: event.target.value,
+                      })
+                    }
+                    placeholder="z. B. Freiheit"
+                    className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor={`strategy-how-${strategy.id}`}
+                    className="block text-sm font-medium text-foreground md:sr-only"
+                  >
+                    Strategie
+                  </label>
+                  <textarea
+                    id={`strategy-how-${strategy.id}`}
+                    value={strategy.concreteStrategy}
+                    rows={2}
+                    onChange={(event) =>
+                      updateStrategy(strategy.id, {
+                        concreteStrategy: event.target.value,
+                      })
+                    }
+                    placeholder="Wie nutzt du diese Ressource konkret weiter, und woran prüfst du, ob es wirkt?"
+                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => deleteStrategy(strategy.id)}
+                  aria-label={`Strategie ${index + 1} löschen`}
+                  title="Löschen"
+                  className="flex size-8 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent max-md:ml-auto"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : null}
 
         <datalist id="phase5-resource-suggestions">
           {suggestions.map((text) => (
