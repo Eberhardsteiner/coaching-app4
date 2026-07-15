@@ -220,16 +220,17 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
             </Impulse>
           ) : null}
           <Explanation>
-            <>
-              Ist dein Ziel für dich attraktiv – dann bekommt es 10 von 10
-              Punkten. Ist das nicht der Fall, dann überprüfe einmal, ob du
-              andere Worte verwenden möchtest, ohne dabei die Struktur des
-              Satzes zu verändern. Ist dein Ziel nicht attraktiv für dich, wird
-              es keine Motivation, keine Bewegung auslösen. Auch wenn es „nur“
-              um einen Satz geht, lass dir Zeit und spüre vor allem, ob er sich
-              richtig für dich anfühlt.
-            </>
+            Ist dein Ziel für dich attraktiv – dann bekommt es 10 von 10
+            Punkten. Ist das nicht der Fall, dann überprüfe einmal, ob du andere
+            Worte verwenden möchtest, ohne dabei die Struktur des Satzes zu
+            verändern.
           </Explanation>
+          {/* Rahmensatz der Vorlage — sichtbar (VOICE-1). */}
+          <p className="text-sm text-muted">
+            Ist dein Ziel nicht attraktiv für dich, wird es keine Motivation,
+            keine Bewegung auslösen. Auch wenn es „nur“ um einen Satz geht, lass
+            dir Zeit und spüre vor allem, ob er sich richtig für dich anfühlt.
+          </p>
         </Criterion>
 
         <Criterion

@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Trash2 } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { SunSymbol } from "@/components/icons/PhaseSymbols";
@@ -185,63 +185,40 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-6">
-        {/* Anmoderation: Kernsatz sichtbar, Wortlaut aufklappbar (MP2-REV bleibt). */}
+        {/* Anmoderation — vollständig sichtbar (VOICE-1, MP2-REV-Wortlaut). */}
         <p className="text-muted">
-          Für deinen Weg zum Ziel kann es entscheidend sein zu berücksichtigen,
+          Hast du schon einmal bemerkt, dass Veränderungen, die wir persönlich
+          großartig finden, in unserem Umfeld manchmal nicht auf Gegenliebe
+          stoßen? Andererseits wünschen sich vielleicht unsere Nächsten, dass
+          wir uns verändern und würden uns dabei liebend gern unterstützen. Für
+          deinen Weg zum Ziel kann es entscheidend sein zu berücksichtigen,
           woher du{" "}
           <strong className="font-semibold text-foreground">Rückenwind</strong>{" "}
           und woher{" "}
           <strong className="font-semibold text-foreground">Gegenwind</strong>{" "}
-          zu erwarten hast. Finde heraus, welche Auswirkungen dein Ziel auf dein
-          Umfeld hat —{" "}
+          zu erwarten hast. Nun geht es darum, dass du herausfindest, welche
+          Auswirkungen dein Ziel auf dein Umfeld hat und wie die Beteiligten
+          dazu stehen. Dann kannst du für dich überprüfen, ob du zu deinem Ziel
+          stehen kannst. Und später kannst du bei deinen Maßnahmen die
+          Einstellungen deines Umfelds gezielt berücksichtigen.{" "}
           <strong className="font-semibold text-foreground">
-            bitte gehe dabei durch alle deine Cluster.
+            Bitte gehe dabei durch alle deine Cluster.
           </strong>
         </p>
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-            <ChevronDown
-              className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-              aria-hidden
-            />
-            Warum das wichtig ist
-          </summary>
-          <p className="mt-1.5 text-sm text-muted">
-            Hast du schon einmal bemerkt, dass Veränderungen, die wir persönlich
-            großartig finden, in unserem Umfeld manchmal nicht auf Gegenliebe
-            stoßen? Andererseits wünschen sich vielleicht unsere Nächsten, dass
-            wir uns verändern und würden uns dabei liebend gern unterstützen.
-            Nun geht es darum, dass du herausfindest, welche Auswirkungen dein
-            Ziel auf dein Umfeld hat und wie die Beteiligten dazu stehen. Dann
-            kannst du für dich überprüfen, ob du zu deinem Ziel stehen kannst.
-            Und später kannst du bei deinen Maßnahmen die Einstellungen deines
-            Umfelds gezielt berücksichtigen.
-          </p>
-        </details>
 
-        {/* Perspektiv-Übung als Callout (Sonnen-Symbol), Wortlaut aufklappbar. */}
+        {/* Perspektiv-Übung als Callout — die ganze Übung SICHTBAR (VOICE-1). */}
         <InfoCallout
           icon={<SunSymbol className="size-5" />}
           title="Stell dir vor, dein Ziel ist Realität"
-          detail={
-            <p>
-              Stelle dir bitte vor, du hast dein Ziel erreicht. Ganz gleich, wie
-              du es geschafft hast, dein Ziel ist Realität. Du kannst dich nun
-              anders verhalten als Stand heute. Dass du dein Ziel erreicht hast,
-              ist nicht nur ein Gefühl, sondern zeigt sich an deinem veränderten
-              Verhalten in deinem Kontext. Betrachte dich nun aus der
-              Perspektive, mit den Augen deiner Cluster. „An welchem konkreten
-              Verhalten von dir erkennt dein Cluster (z. B. die Personen darin),
-              dass du dein Ziel erreicht hast?“ Was kannst du dann tun, was du
-              heute noch nicht machen kannst?
-            </p>
-          }
-          detailLabel="Die ganze Übung lesen"
         >
-          Betrachte dich mit den Augen deiner Cluster: „An welchem konkreten
-          Verhalten von dir erkennt dein Cluster, dass du dein Ziel erreicht
-          hast?“ — dein Ziel zeigt sich an verändertem Verhalten, nicht nur an
-          einem Gefühl.
+          Stelle dir bitte vor, du hast dein Ziel erreicht. Ganz gleich, wie du
+          es geschafft hast, dein Ziel ist Realität. Du kannst dich nun anders
+          verhalten als Stand heute. Dass du dein Ziel erreicht hast, ist nicht
+          nur ein Gefühl, sondern zeigt sich an deinem veränderten Verhalten in
+          deinem Kontext. Betrachte dich nun aus der Perspektive, mit den Augen
+          deiner Cluster. „An welchem konkreten Verhalten von dir erkennt dein
+          Cluster (z. B. die Personen darin), dass du dein Ziel erreicht hast?“
+          Was kannst du dann tun, was du heute noch nicht machen kannst?
         </InfoCallout>
 
         {/* F2 — Cluster-Navigation (Kernthema zuerst, dann nach Gewicht) */}
@@ -400,27 +377,19 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             good="„Peter geht nach 8 Stunden Arbeitszeit nach Hause.“"
             goodWhy="beobachtbares Verhalten"
           />
-          <details className="group">
-            <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-              <ChevronDown
-                className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                aria-hidden
-              />
-              Zuletzt prüfen
-            </summary>
-            <p className="mt-1.5 text-sm text-muted">
-              Zuletzt überprüfe nochmal, ob das, was du beschrieben hast, a)
-              wirklich die{" "}
-              <strong className="font-medium text-foreground">
-                Sichtweise deiner Cluster
-              </strong>{" "}
-              wiedergibt und b) wirklich ein{" "}
-              <strong className="font-medium text-foreground">
-                beobachtbares Verhalten
-              </strong>{" "}
-              ist. Bitte verwende keine Verneinungen.
-            </p>
-          </details>
+          {/* Prüf-Hinweis — sichtbar beim Abschluss des Cluster-Blocks (VOICE-1). */}
+          <p className="text-sm text-muted">
+            Zuletzt überprüfe nochmal, ob das, was du beschrieben hast, a)
+            wirklich die{" "}
+            <strong className="font-medium text-foreground">
+              Sichtweise deiner Cluster
+            </strong>{" "}
+            wiedergibt und b) wirklich ein{" "}
+            <strong className="font-medium text-foreground">
+              beobachtbares Verhalten
+            </strong>{" "}
+            ist. Bitte verwende keine Verneinungen.
+          </p>
         </div>
 
         <NoPersonalDataHint />

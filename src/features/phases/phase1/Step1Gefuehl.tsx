@@ -27,8 +27,8 @@ function Em({ children }: { children: ReactNode }) {
 }
 
 /**
- * The visible intro, condensed to three sentences (MP1-REV) — the rest of the
- * original explanation moves into the collapsible "Warum zuerst das Gefühl?".
+ * Der sichtbare coachende Einstieg (VOICE-1): die führenden Sätze bleiben
+ * sichtbar — nur die Hintergrund-Vertiefung ist aufklappbar.
  */
 const INTRO_SHORT: ReactNode = (
   <>
@@ -39,20 +39,24 @@ const INTRO_SHORT: ReactNode = (
   </>
 );
 
-/** The condensed background, collapsible (nothing lost — off the surface). */
-const INTRO_DETAILS: ReactNode[] = [
-  <>
-    Treten unangenehme Gefühle regelmäßig in bestimmten Situationen auf, kann
-    das der <Em>Auslöser für einen Veränderungswunsch</Em> — für ein Coaching —
-    sein.
-  </>,
+/** Kern-Anleitung — sichtbar (VOICE-1): so gehst du an die Frage heran. */
+const INTRO_ANLEITUNG: ReactNode = (
   <>
     Setze dich innerlich mit deiner aktuellen Situation in Bezug: Welches Gefühl
     spürst du vor allem, wenn du an das denkst, was du verändern möchtest? Dein{" "}
     <Em>Ausgangsgefühl</Em> steht anschließend{" "}
     <Em>im Mittelpunkt deiner weiteren Reflexion</Em>.
-  </>,
-];
+  </>
+);
+
+/** Vertiefung (aufklappbar): warum Gefühle der Auslöser sein können. */
+const INTRO_VERTIEFUNG: ReactNode = (
+  <>
+    Treten unangenehme Gefühle regelmäßig in bestimmten Situationen auf, kann
+    das der <Em>Auslöser für einen Veränderungswunsch</Em> — für ein Coaching —
+    sein.
+  </>
+);
 
 /**
  * The selectable feelings (verbatim, in this order). This list is already
@@ -162,9 +166,11 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-8">
-        {/* Intro — kurz sichtbar, Hintergrund aufklappbar (MP1-REV). */}
+        {/* Coaching-Einstieg + Kern-Anleitung sichtbar (VOICE-1);
+            aufklappbar bleibt nur die Vertiefung. */}
         <div className="space-y-3">
           <p className="text-muted">{INTRO_SHORT}</p>
+          <p className="text-muted">{INTRO_ANLEITUNG}</p>
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-accent">
               <ChevronDown
@@ -173,11 +179,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
               />
               Warum zuerst das Gefühl?
             </summary>
-            <div className="mt-2 space-y-2 text-sm text-muted">
-              {INTRO_DETAILS.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
+            <p className="mt-2 text-sm text-muted">{INTRO_VERTIEFUNG}</p>
           </details>
         </div>
 

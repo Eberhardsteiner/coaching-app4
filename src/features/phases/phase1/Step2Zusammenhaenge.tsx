@@ -155,109 +155,98 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
           </Button>
         </div>
 
-        {/* Compact, collapsible instructions so the board gets the most space. */}
-        <details className="group/anleitung">
-          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-foreground">
+        {/* Anmoderation — die führende Coaching-Stimme, sichtbar (VOICE-1).
+            Kein Sammel-Kasten mehr; aufklappbar bleibt nur das Beispiel. */}
+        <div className="space-y-3 text-muted">
+          {INTRO_PARAGRAPHS.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+
+        {/* Die vier Leitfragen + "keine Lösungen!" — Kern-Anleitung, sichtbar. */}
+        <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+          <ol className="list-none space-y-1.5 text-sm text-foreground">
+            {GUIDE_POINTS.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ol>
+          <div className="mt-3 flex items-start gap-2 rounded-lg border border-ist/30 bg-ist/5 p-3">
+            <Info className="mt-0.5 size-4 shrink-0 text-ist" aria-hidden />
+            <div>
+              <p className="text-sm font-semibold text-ist">
+                ACHTUNG: keine Lösungen!
+              </p>
+              <p className="mt-0.5 text-sm text-muted">
+                Wenn dir eine Lösung einfällt, frage dich: ‚Wie ist es aktuell
+                wirklich?‘
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Beispiel — Vertiefung, darf aufklappbar bleiben. */}
+        <details className="group rounded-xl border border-subtle bg-surface p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
+            Beispiel ansehen
             <ChevronDown
-              className="size-4 text-muted motion-safe:transition-transform group-open/anleitung:rotate-180"
+              className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
               aria-hidden
             />
-            Anleitung
           </summary>
-          <div className="mt-3 space-y-6">
-            {/* Intro (verbatim) */}
-            <div className="space-y-3 text-muted">
-              {INTRO_PARAGRAPHS.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+          <div className="mt-3 space-y-2 text-sm text-muted">
+            <p>Nimm an, mein Gefühl wäre ‚Genervt‘.</p>
+            <ul className="space-y-2">
+              {EXAMPLE_LINES.map((line) => (
+                <li key={line.question} className="flex items-start gap-2">
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "mt-1.5 size-2 shrink-0 rounded-full",
+                      line.swatch,
+                    )}
+                  />
+                  <span>
+                    <span className="text-foreground">{line.question}</span> →{" "}
+                    {line.answer}
+                  </span>
+                </li>
               ))}
-            </div>
-
-            {/* Compact question guide + "keine Lösungen!" */}
-            <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-              <ol className="list-none space-y-1.5 text-sm text-foreground">
-                {GUIDE_POINTS.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ol>
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-ist/30 bg-ist/5 p-3">
-                <Info className="mt-0.5 size-4 shrink-0 text-ist" aria-hidden />
-                <div>
-                  <p className="text-sm font-semibold text-ist">
-                    ACHTUNG: keine Lösungen!
-                  </p>
-                  <p className="mt-0.5 text-sm text-muted">
-                    Wenn dir eine Lösung einfällt, frage dich: ‚Wie ist es
-                    aktuell wirklich?‘
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Example (collapsed by default, generic) */}
-            <details className="group rounded-xl border border-subtle bg-surface p-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
-                Beispiel ansehen
-                <ChevronDown
-                  className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
-                  aria-hidden
-                />
-              </summary>
-              <div className="mt-3 space-y-2 text-sm text-muted">
-                <p>Nimm an, mein Gefühl wäre ‚Genervt‘.</p>
-                <ul className="space-y-2">
-                  {EXAMPLE_LINES.map((line) => (
-                    <li key={line.question} className="flex items-start gap-2">
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "mt-1.5 size-2 shrink-0 rounded-full",
-                          line.swatch,
-                        )}
-                      />
-                      <span>
-                        <span className="text-foreground">{line.question}</span>{" "}
-                        → {line.answer}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </details>
-
-            {/* Colour key — "Farbe = Bedeutung" */}
-            <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-faint">
-                Farbe = Bedeutung
-              </p>
-              <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
-                {STAGES.map((stage) => (
-                  <li key={stage.num} className="flex items-start gap-2.5">
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "mt-1 size-3 shrink-0 rounded-full",
-                        stage.swatch,
-                      )}
-                    />
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {stage.label}
-                      </p>
-                      <p className="text-xs text-faint">{stage.question}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Calm working hint */}
-            <p className="text-sm text-muted">
-              Mache so lange weiter, bis dir nichts mehr einfällt. Falls du
-              wenig Zeit hast, beschränke dich auf die 3–4 wichtigsten Aspekte —
-              beantworte dennoch konsequent die nachfolgenden Fragen.
-            </p>
+            </ul>
           </div>
         </details>
+
+        {/* Colour key — "Farbe = Bedeutung" */}
+        <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-faint">
+            Farbe = Bedeutung
+          </p>
+          <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
+            {STAGES.map((stage) => (
+              <li key={stage.num} className="flex items-start gap-2.5">
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-1 size-3 shrink-0 rounded-full",
+                    stage.swatch,
+                  )}
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground">
+                    {stage.label}
+                  </p>
+                  <p className="text-xs text-faint">{stage.question}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Calm working hint */}
+        <p className="text-sm text-muted">
+          Mache so lange weiter, bis dir nichts mehr einfällt. Falls du wenig
+          Zeit hast, beschränke dich auf die 3–4 wichtigsten Aspekte —
+          beantworte dennoch konsequent die nachfolgenden Fragen.
+        </p>
 
         {/* The board: IST-rosa anchor from istWord + per-stage colour cards. */}
         <CoachCardBoard

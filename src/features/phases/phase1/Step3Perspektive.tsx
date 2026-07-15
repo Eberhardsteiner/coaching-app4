@@ -28,11 +28,13 @@ import { cn } from "@/lib/utils";
 const INTRO_SHORT =
   "Du hast aufgeschrieben, was dir aus deiner eigenen Perspektive einfällt. Prüfe nun aus der ‚Vogelperspektive‘, ob weitere Aspekte zu deinem Gefühl beitragen — die vier Modelle folgen den häufigsten Veränderungsanliegen, und du kannst bei der Auswahl nichts falsch machen.";
 
-/** Condensed background, collapsible (nothing lost — off the surface). */
-const INTRO_DETAILS = [
-  "Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Ein Blick durch die Brille eines Modells kann Aspekte sichtbar machen, die dir aus der eigenen Perspektive nicht eingefallen sind.",
-  "Gehe die Begriffe des gewählten Modells durch und entscheide, ob du etwas ergänzen möchtest. Wenn ja, gehe genauso vor wie im ersten Teil: Schreibe auf extra Karten, was du genau mit den Begriffen meinst und wie sie zu deinem Gefühl beitragen.",
-];
+/** Sichtbare Kern-Anleitung (VOICE-1): das Vorgehen mit dem Modell. */
+const INTRO_VORGEHEN =
+  "Such dir eins der Modelle aus (nur eins!), gehe die Begriffe durch und entscheide, ob du etwas ergänzen möchtest. Wenn ja, gehe genauso vor wie im ersten Teil: Schreibe auf extra Karten, was du genau mit den Begriffen meinst und wie sie zu deinem Gefühl beitragen.";
+
+/** Vertiefung (aufklappbar): die Perspektiv-Zusage des Prozesses. */
+const INTRO_VERTIEFUNG =
+  "Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Ein Blick durch die Brille eines Modells kann Aspekte sichtbar machen, die dir aus der eigenen Perspektive nicht eingefallen sind.";
 
 const INTRO_TERMS_CORE =
   "Suche nach Ergänzungen deines Ist-Bildes: Was genau meinst du mit dem Begriff, und wie trägt das zu deinem Gefühl bei?";
@@ -430,23 +432,21 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
       {/* Gefühls-Anker aus 1.1 */}
       <GefuehlsAnker />
 
-      {/* Intro — kurz sichtbar, Hintergrund aufklappbar (MP1-REV). Die vier
-          Anliegen stehen als Badges direkt auf den Modell-Karten. */}
+      {/* Anmoderation sichtbar (VOICE-1): Vogelperspektive + Vorgehen führen;
+          die vier Anliegen stehen als Badges direkt auf den Modell-Karten.
+          Aufklappbar bleibt nur die Perspektiv-Zusage (Vertiefung). */}
       <div className="space-y-3">
         <p className="text-muted">{INTRO_SHORT}</p>
+        <p className="text-muted">{INTRO_VORGEHEN}</p>
         <details className="group">
           <summary className="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-accent">
             <ChevronDown
               className="size-4 motion-safe:transition-transform group-open:rotate-180"
               aria-hidden
             />
-            Wie funktioniert das?
+            Was dir der Modell-Blick bringt
           </summary>
-          <div className="mt-2 space-y-2 text-sm text-muted">
-            {INTRO_DETAILS.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+          <p className="mt-2 text-sm text-muted">{INTRO_VERTIEFUNG}</p>
         </details>
       </div>
 

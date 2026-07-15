@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
@@ -165,27 +164,10 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-5">
-        {/* Kernsatz sichtbar — Volltext + Muster aufklappbar (MP2-REV bleibt). */}
-        <p className="text-muted">
-          Lege dir einen Satz zurecht, der dir wie ein{" "}
-          <strong className="font-semibold text-foreground">Mantra</strong>{" "}
-          dient und in einem Satz beschreibt, wonach du strebst. Baue ihn aus
-          den farbigen Bausteinen unten zusammen — beginne mit deinem
-          erstrebenswerten Gefühl (als Substantiv).
-        </p>
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-            <ChevronDown
-              className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-              aria-hidden
-            />
-            Warum ein Mantra? (die ganze Anleitung)
-          </summary>
-          <div className="mt-1.5 space-y-2 text-sm text-muted">
-            <p>{INTRO_VOLLTEXT}</p>
-            <p className="font-medium text-foreground">{MUSTER}</p>
-          </div>
-        </details>
+        {/* Die vollständige Mantra-Anmoderation + Muster-Zeile — SICHTBAR
+            (VOICE-1: MP2-REV-Anmoderationen sind nie zugeklappt). */}
+        <p className="text-muted">{INTRO_VOLLTEXT}</p>
+        <p className="text-sm font-medium text-foreground">{MUSTER}</p>
 
         {/* Der Zielsatz aus farbigen Bausteinen (VIS-2) — Fokus im Feld lässt
             den zugehörigen Baustein aufleuchten. */}
