@@ -1,7 +1,9 @@
-import { ChevronDown, Info, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { CloudSymbol } from "@/components/icons/PhaseSymbols";
 import { BeispielPaar } from "@/components/method/BeispielPaar";
+import { MiniFlow } from "@/components/method/MiniFlow";
 import { SkalaBar } from "@/components/method/SkalaBar";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { normalizeClusters } from "@/features/cards/clusters";
@@ -13,25 +15,89 @@ import type { Card, Cluster } from "@/features/session/types";
 
 const NO_CLUSTERS: Cluster[] = [];
 
-/** Short hint chips for clustering (`why` = kleine Begründungs-Zweitzeile). */
-const CHIPS: { text: string; why?: string }[] = [
-  {
-    text: "Höchstens 5 Cluster",
-    why: "Du entwickelst später deinen Handlungsplan entlang der Cluster — mehr als 5 wird dort zu viel.",
-  },
-  { text: "Überschrift: 1 Begriff, konkret — keine Lösungen" },
-  { text: "Nicht zu Verschiedenes in ein Cluster mischen" },
+/**
+ * Kompakte Merkzeile (FIX 1.4): nur die Regeln — die Begründungen stehen
+ * hörbar in den Coaching-Absätzen der Abschnitte, nicht hier gedoppelt.
+ */
+const CHIPS = [
+  "Höchstens 5 Cluster",
+  "Überschrift: 1 Begriff, konkret — keine Lösungen",
+  "Nicht zu Verschiedenes in ein Cluster mischen",
 ];
 
 /** Beispiele für gute Cluster-Überschriften (MP1-REV, Paket G). */
 const HEADING_EXAMPLES = ["Team", "Chefin", "Ich", "Prozesse"];
 
-/** Kernsatz der Bewertung — der Rest wandert aufklappbar in den Callout. */
-const EVAL_CORE =
-  "Wo drückt der Schuh am meisten? Dieses Cluster bekommt die 10 — die übrigen 1–9, jeder Wert nur einmal.";
+/*
+ * Die führenden Coaching-Absätze (FIX 1.4 — verbindliche Wortlaute): die
+ * Methodik lebt von der Coaching-Stimme; die Visuals darunter ERGÄNZEN sie.
+ */
+const EINSTIEG =
+  "Du hast deine Ist-Situation ausführlich erfasst und beschrieben — eine hervorragende Voraussetzung dafür, deinem Thema jetzt eine bearbeitbare Struktur zu geben.";
 
-const EVAL_DETAIL =
-  "Vergib die 10 auch dann, wenn du glaubst, du könntest daran nichts ändern: Es geht nicht ums Lösen, sondern darum, welches Cluster am meisten zu deinem Gefühl beiträgt. Die Abstände zwischen den Werten sind Schmerz-Abstände.";
+const PRUEFEN =
+  "Bevor du loslegst, überprüfe bitte noch einmal, ob in deiner Ist-Darstellung keine „Lösungen“ oder „Maßnahmen“ stecken, sondern wirklich nur die Ist-Situation beschrieben ist. Falls du etwas entdeckst, ersetze es durch die Beschreibung des aktuellen Zustands.";
+
+const ORDNEN: ReactNode = (
+  <>
+    Nun zum Ordnen: Löse deine Karten aus der ursprünglichen Fragelogik und
+    gruppiere sie in Themenfelder — deine Cluster. Bilde bitte{" "}
+    <strong className="font-semibold text-foreground">nicht mehr als 5</strong>:
+    Du wirst deinen Handlungsplan später entlang der Cluster entwickeln, und
+    mehr als 5 entpuppt sich oft als zu viel des Guten. Differenziere trotzdem —
+    zu unterschiedliche Dinge in einem Cluster machen den späteren Handlungsplan
+    ebenso schwer. Gib jedem Cluster eine passende Überschrift: idealerweise{" "}
+    <strong className="font-semibold text-foreground">ein Begriff</strong>,
+    konkret,{" "}
+    <strong className="font-semibold text-foreground">keine Lösungen</strong>.
+    Je konkreter deine Überschrift, desto leichter geht dir die Arbeit später
+    von der Hand.
+  </>
+);
+
+const BEWERTEN: ReactNode = (
+  <>
+    Wenn alle Karten zugeordnet sind und jedes Cluster eine Überschrift hat,
+    folgt die Bewertung: Du suchst dein{" "}
+    <strong className="font-semibold text-foreground">Kernproblem</strong>. Da,
+    wo der Schuh am meisten drückt, vergib bitte die{" "}
+    <strong className="font-semibold text-foreground">10</strong> — auch dann,
+    wenn du glaubst, daran gar nichts ändern zu können. Es geht nicht um „Was
+    muss ich zuerst lösen?“, sondern nur darum, welches Cluster{" "}
+    <strong className="font-semibold text-foreground">
+      am meisten zu deinem Gefühl beiträgt
+    </strong>
+    . Danach vergib den anderen Clustern Werte zwischen 1 und 9. Die Abstände
+    sind wie eine Schmerzskala: Den niedrigsten Wert bekommt das Cluster, das am
+    wenigsten schmerzt. Jeder Wert nur einmal.
+  </>
+);
+
+/** Sichtbarer Abschnitts-Kopf: Nummern-Kreis (wie im MiniFlow) + Titel. */
+function Abschnitt({
+  n,
+  title,
+  children,
+}: {
+  n: number;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section aria-label={`${n}. ${title}`} className="space-y-3">
+      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <span
+          aria-hidden
+          className="flex size-7 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-sm font-semibold text-accent"
+        >
+          {n}
+        </span>
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
+}
 
 /**
  * Die Schmerzskala als BEDIENELEMENT (VIS-2): jede benannte Cluster-Zeile ist
@@ -164,106 +230,90 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
   const canNext = namedClusters.length >= 1;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Gefühls-Anker aus 1.1 — der Bezugspunkt der Bewertung. */}
       <GefuehlsAnker />
 
-      {/* Compact, collapsible instructions so the whiteboard gets the most space. */}
-      <details className="group" open>
-        <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-foreground">
-          <ChevronDown
-            className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Anleitung
-        </summary>
-        <div className="mt-3 space-y-4">
-          {/* Einleitung */}
-          <p className="text-muted">
-            Du hast deine Ist-Situation ausführlich erfasst — eine starke
-            Grundlage. Jetzt gibst du ihr eine bearbeitbare Struktur.
-          </p>
+      {/* Einstieg — die führende Coaching-Stimme (FIX 1.4). */}
+      <p className="text-muted">{EINSTIEG}</p>
 
-          {/* Callout: Zuerst prüfen */}
-          <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-            <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
-              <Search
-                className="mt-0.5 size-4 shrink-0 text-accent"
-                aria-hidden
-              />
-              Zuerst prüfen: Beschreibt jede Karte wirklich die Ist-Situation?
-            </p>
-            <p className="mt-1.5 text-sm text-muted">
-              Manchmal schleicht sich eine Lösung oder Maßnahme ein. Geh kurz
-              über deine Karten — und wenn eine nicht beschreibt, wie es gerade
-              ist, formuliere den tatsächlichen Zustand.
-            </p>
+      {/* Der Ablauf des Schritts, sichtbar gegliedert. */}
+      <MiniFlow
+        ariaLabel="Ablauf dieses Schritts"
+        steps={[
+          { label: "Prüfen", detail: "keine Lösungen im Ist" },
+          { label: "Ordnen", detail: "Karten zu Clustern" },
+          { label: "Bewerten", detail: "Kernproblem finden" },
+        ]}
+      />
 
-            {/* Vorher / Nachher (Baukasten) */}
-            <div className="mt-3">
-              <BeispielPaar
-                bad="„Zeitmanagement“"
-                badWhy="ein Schlagwort, keine Beschreibung"
-                good="„Ich nehme mir mehr vor, als ich schaffe“"
-                goodWhy="oder: „Ich versinke im operativen Geschäft“ — so ist es gerade wirklich"
-              />
-            </div>
-          </div>
-
-          {/* Hinweis-Chips + Beispiele für gute Überschriften */}
-          <ul className="flex flex-wrap gap-2">
-            {CHIPS.map((chip) => (
-              <li
-                key={chip.text}
-                title={chip.why}
-                className="max-w-72 rounded-2xl border border-subtle bg-surface px-3 py-1 text-xs text-muted"
-              >
-                {chip.text}
-                {chip.why ? (
-                  <span className="block text-[0.65rem] leading-snug text-faint">
-                    {chip.why}
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-          <p className="flex flex-wrap items-center gap-1.5 text-xs text-faint">
-            Gute Überschriften — konkrete Personen oder Gruppen, ein
-            „Ich“-Cluster, Abstraktes:
-            {HEADING_EXAMPLES.map((example) => (
-              <span
-                key={example}
-                className="rounded-full border border-dashed border-subtle bg-surface px-2 py-0.5 text-xs text-muted"
-              >
-                {example}
-              </span>
-            ))}
-          </p>
-        </div>
-      </details>
-
-      {/* Bewerten direkt auf der Schmerzskala — sichtbar, sobald es Cluster gibt. */}
-      {clusters.length >= 1 ? (
+      {/* 1 — Prüfen */}
+      <Abschnitt n={1} title="Prüfen">
+        <p className="text-muted">{PRUEFEN}</p>
         <div className="rounded-xl border border-subtle bg-surface-2 p-4">
           <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
-            <Info
-              className="mt-0.5 size-4 shrink-0 text-blue-600"
+            <Search
+              className="mt-0.5 size-4 shrink-0 text-accent"
               aria-hidden
             />
-            Cluster bewerten — klick den Wert direkt auf der Skala an
+            Zuerst prüfen: Beschreibt jede Karte wirklich die Ist-Situation?
           </p>
-          <p className="mt-1 text-sm text-muted">{EVAL_CORE}</p>
-          <details className="group mt-1">
-            <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-              <ChevronDown
-                className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                aria-hidden
-              />
-              Worauf es bei der 10 ankommt
-            </summary>
-            <p className="mt-1 text-sm text-muted">{EVAL_DETAIL}</p>
-          </details>
           <div className="mt-3">
+            <BeispielPaar
+              bad="„Zeitmanagement“"
+              badWhy="ein Schlagwort, keine Beschreibung"
+              good="„Ich nehme mir mehr vor, als ich schaffe“"
+              goodWhy="oder: „Ich versinke im operativen Geschäft“ — so ist es gerade wirklich"
+            />
+          </div>
+        </div>
+      </Abschnitt>
+
+      {/* 2 — Ordnen */}
+      <Abschnitt n={2} title="Ordnen">
+        <p className="text-muted">{ORDNEN}</p>
+
+        {/* Kompakte Merkzeile — Begründungen stehen im Absatz, nicht hier. */}
+        <ul aria-label="Merkzeile" className="flex flex-wrap gap-2">
+          {CHIPS.map((chip) => (
+            <li
+              key={chip}
+              className="rounded-full border border-subtle bg-surface px-3 py-1 text-xs text-muted"
+            >
+              {chip}
+            </li>
+          ))}
+        </ul>
+        <p className="flex flex-wrap items-center gap-1.5 text-xs text-faint">
+          Gute Überschriften — konkrete Personen oder Gruppen, ein
+          „Ich“-Cluster, Abstraktes:
+          {HEADING_EXAMPLES.map((example) => (
+            <span
+              key={example}
+              className="rounded-full border border-dashed border-subtle bg-surface px-2 py-0.5 text-xs text-muted"
+            >
+              {example}
+            </span>
+          ))}
+        </p>
+        <p className="text-xs text-faint">
+          {clusters.length} von 5 Clustern angelegt.
+        </p>
+
+        <CoachCardBoard
+          cards={cards}
+          onCardsChange={setCards}
+          clusters={clusters}
+          onClustersChange={setClusters}
+          anchorCard={{ text: istWord, onTextChange: setIstWord }}
+        />
+      </Abschnitt>
+
+      {/* 3 — Bewerten */}
+      <Abschnitt n={3} title="Bewerten">
+        <p className="text-muted">{BEWERTEN}</p>
+        {clusters.length >= 1 ? (
+          <div className="rounded-xl border border-subtle bg-surface-2 p-4">
             <Schmerzskala
               clusters={clusters}
               onWeightChange={(clusterId, weight) =>
@@ -275,16 +325,13 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
               }
             />
           </div>
-        </div>
-      ) : null}
-
-      <CoachCardBoard
-        cards={cards}
-        onCardsChange={setCards}
-        clusters={clusters}
-        onClustersChange={setClusters}
-        anchorCard={{ text: istWord, onTextChange: setIstWord }}
-      />
+        ) : (
+          <p className="text-xs text-faint">
+            Die Schmerzskala erscheint, sobald du dein erstes Cluster angelegt
+            hast.
+          </p>
+        )}
+      </Abschnitt>
 
       {!canNext ? (
         <p className="text-xs text-faint">
