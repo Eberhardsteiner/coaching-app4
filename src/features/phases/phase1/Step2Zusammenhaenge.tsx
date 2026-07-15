@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { AddStage } from "@/features/cards/CardBoard";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
+import { GefuehlsAnker } from "@/features/phases/phase1/GefuehlsAnker";
 import { StepNav } from "@/features/phases/StepNav";
 import { Step2Guide } from "@/features/phases/phase1/Step2Guide";
 import { Step2Intro } from "@/features/phases/phase1/Step2Intro";
@@ -48,7 +49,7 @@ const STAGES: Stage[] = [
   },
   {
     num: 2,
-    swatch: "bg-amber-200",
+    swatch: "bg-orange-200",
     label: "Das hängt zusammen mit …",
     question: "Wer oder was hängt mit meinem Gefühl zusammen?",
     colorId: "zusammenhang",
@@ -82,7 +83,7 @@ const ADD_STAGES: AddStage[] = STAGES.flatMap((stage) =>
 /** One example line (verbatim) — colour-coded to its stage. */
 const EXAMPLE_LINES = [
   {
-    swatch: "bg-amber-200",
+    swatch: "bg-orange-200",
     question: "‚Wer oder was hängt mit meinem Gefühl zusammen?‘",
     answer: "Familie.",
   },
@@ -140,11 +141,13 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-6">
-        {/* Schritt-für-Schritt-Coach öffnen (auch bei zugeklappter Anleitung). */}
-        <div className="flex justify-end">
+        {/* Gefühls-Anker aus 1.1 + Schritt-für-Schritt-Coach. */}
+        <div className="flex items-center justify-between gap-2">
+          <GefuehlsAnker />
           <Button
             variant="outline"
             size="sm"
+            className="ml-auto"
             onClick={() => setGuideOpen(true)}
           >
             <Sparkles aria-hidden />

@@ -58,7 +58,7 @@ export const CARD_STAGES: CardColor[] = [
     id: "zusammenhang",
     label: "Zusammenhang",
     surface: "bg-card-zusammenhang text-card-zusammenhang-ink",
-    swatch: "bg-amber-200",
+    swatch: "bg-orange-200",
   },
   {
     id: "konkretisierung",

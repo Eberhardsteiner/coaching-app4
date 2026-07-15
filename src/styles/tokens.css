@@ -63,6 +63,12 @@
   --color-amber-600: #854f0b;
   --color-amber-900: #633806;
 
+  /* Orange — Kartentyp „Zusammenhang" (MP1-REV: Vorlagen-Farbe, statt Amber) */
+  --color-orange-50: #fdecdd;
+  --color-orange-200: #f0812f;
+  --color-orange-600: #a34a10;
+  --color-orange-900: #6e3008;
+
   /* ---- Neutral & semantic (Light) ----------------------------------- */
   --color-bg: #ffffff;
   --color-surface: #f7f6f2;
@@ -80,8 +86,8 @@
   /* IST moderation-card stages (Phase 1, Schritt 2) — „Farbe = Bedeutung“.
      Heller Füllton + dunkle, lesbare Schrift je Stufe. Stufe 1 (Anker) nutzt
      --color-ist (Rosa); Stufen 2–4 hier. */
-  --color-card-zusammenhang: #faeeda; /* Stufe 2 — Amber-Tint */
-  --color-card-zusammenhang-ink: #633806;
+  --color-card-zusammenhang: #fdecdd; /* Stufe 2 — Orange-Tint (MP1-REV) */
+  --color-card-zusammenhang-ink: #6e3008;
   --color-card-konkretisierung: #eaf3de; /* Stufe 3 — Grün-Tint */
   --color-card-konkretisierung-ink: #173404;
   --color-card-beitrag: #ebe9e2; /* Stufe 4 — Grau-Tint */

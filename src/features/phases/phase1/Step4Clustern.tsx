@@ -1,11 +1,14 @@
 import { ArrowRight, Check, ChevronDown, Info, Search, X } from "lucide-react";
 
+import { CloudSymbol } from "@/components/icons/PhaseSymbols";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { normalizeClusters } from "@/features/cards/clusters";
+import { GefuehlsAnker } from "@/features/phases/phase1/GefuehlsAnker";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { Card, Cluster } from "@/features/session/types";
+import { cn } from "@/lib/utils";
 
 const NO_CLUSTERS: Cluster[] = [];
 
@@ -16,8 +19,89 @@ const CHIPS = [
   "Nicht zu Verschiedenes in ein Cluster mischen",
 ];
 
+/** Beispiele für gute Cluster-Überschriften (MP1-REV, Paket G). */
+const HEADING_EXAMPLES = ["Team", "Chefin", "Ich", "Prozesse"];
+
 const EVAL_HINT =
-  "Wo drückt der Schuh am meisten? Dieses Cluster bekommt die 10 — auch wenn du glaubst, du könntest daran nichts ändern. Es geht nicht ums Lösen, sondern darum, was am meisten zu deinem Gefühl beiträgt. Die übrigen bekommen Werte 1–9, jeder nur einmal.";
+  "Wo drückt der Schuh am meisten? Dieses Cluster bekommt die 10 — auch wenn du glaubst, du könntest daran nichts ändern. Es geht nicht ums Lösen, sondern darum, was am meisten zu deinem Gefühl beiträgt. Die übrigen bekommen Werte 1–9, jeder nur einmal — die Abstände sind Schmerz-Abstände.";
+
+/**
+ * Die Schmerzskala (MP1-REV, Paket G): jedes benannte Cluster als Balken —
+ * Wert = Länge, sortiert nach Wert; das 10er-Cluster ist als Kernthema
+ * markiert (Wolken-Symbol, ist-Ton). Doppelt vergebene Werte werden sofort
+ * sichtbar markiert (defensiv — die Gewichts-Auswahl sperrt vergebene Werte
+ * bereits, Alt-Daten könnten sie dennoch enthalten). Rein lesend.
+ */
+function Schmerzskala({ clusters }: { clusters: Cluster[] }) {
+  const named = clusters.filter((c) => c.name.trim());
+  if (named.length === 0) return null;
+
+  const sorted = [...named].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
+  const weightCounts = new Map<number, number>();
+  for (const cluster of named) {
+    if (cluster.weight != null) {
+      weightCounts.set(
+        cluster.weight,
+        (weightCounts.get(cluster.weight) ?? 0) + 1,
+      );
+    }
+  }
+
+  return (
+    <ul aria-label="Schmerzskala deiner Cluster" className="space-y-2">
+      {sorted.map((cluster) => {
+        const weight = cluster.weight;
+        const duplicate = weight != null && (weightCounts.get(weight) ?? 0) > 1;
+        const isCore = Boolean(cluster.isCore) && weight != null;
+        return (
+          <li key={cluster.id} className="flex items-center gap-2.5">
+            <span className="w-28 shrink-0 truncate text-sm text-foreground sm:w-36">
+              {cluster.name.trim()}
+            </span>
+            <span
+              aria-hidden
+              className="relative h-5 min-w-0 flex-1 overflow-hidden rounded-full bg-surface-2"
+            >
+              {weight != null ? (
+                <span
+                  style={{ width: `${weight * 10}%` }}
+                  className={cn(
+                    "absolute inset-y-0 left-0 rounded-full",
+                    isCore ? "bg-ist/80" : "bg-blue-400/55",
+                  )}
+                />
+              ) : null}
+            </span>
+            <span
+              className={cn(
+                "w-7 shrink-0 text-center text-sm font-semibold tabular-nums",
+                isCore ? "text-ist" : "text-foreground",
+              )}
+            >
+              {weight ?? "—"}
+            </span>
+            <span className="flex w-24 shrink-0 items-center gap-1 sm:w-28">
+              {isCore ? (
+                <>
+                  <CloudSymbol className="size-4 shrink-0 text-ist" />
+                  <span className="text-xs font-medium text-ist">
+                    Kernthema
+                  </span>
+                </>
+              ) : duplicate ? (
+                <span className="text-xs font-medium text-red-700">
+                  Wert doppelt!
+                </span>
+              ) : weight == null ? (
+                <span className="text-xs text-faint">noch ohne Wert</span>
+              ) : null}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 /**
  * Phase 1, Step 1.4 — Clustern & gewichten. The Schritt-3 cards stay on the same
@@ -65,6 +149,9 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-5">
+      {/* Gefühls-Anker aus 1.1 — der Bezugspunkt der Bewertung. */}
+      <GefuehlsAnker />
+
       {/* Compact, collapsible instructions so the whiteboard gets the most space. */}
       <details className="group" open>
         <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-foreground">
@@ -117,13 +204,14 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
                   „Ich nehme mir mehr vor, als ich schaffe“
                 </p>
                 <p className="mt-0.5 pl-5 text-xs text-green-800/80">
-                  so ist es gerade wirklich
+                  oder: „Ich versinke im operativen Geschäft“ — so ist es gerade
+                  wirklich
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Hinweis-Chips */}
+          {/* Hinweis-Chips + Beispiele für gute Überschriften */}
           <ul className="flex flex-wrap gap-2">
             {CHIPS.map((chip) => (
               <li
@@ -134,18 +222,34 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
               </li>
             ))}
           </ul>
+          <p className="flex flex-wrap items-center gap-1.5 text-xs text-faint">
+            Gute Überschriften — konkrete Personen oder Gruppen, ein
+            „Ich“-Cluster, Abstraktes:
+            {HEADING_EXAMPLES.map((example) => (
+              <span
+                key={example}
+                className="rounded-full border border-dashed border-subtle bg-surface px-2 py-0.5 text-xs text-muted"
+              >
+                {example}
+              </span>
+            ))}
+          </p>
         </div>
       </details>
 
-      {/* Bewertungs-Hinweis — erst beim Bewerten (sobald es Cluster gibt). */}
+      {/* Bewertung als Schmerzskala — sichtbar, sobald es Cluster gibt. */}
       {clusters.length >= 1 ? (
-        <div className="flex items-start gap-2 rounded-xl border border-subtle bg-surface-2 p-4">
-          <Info className="mt-0.5 size-4 shrink-0 text-blue-600" aria-hidden />
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              Cluster bewerten
-            </p>
-            <p className="mt-1 text-sm text-muted">{EVAL_HINT}</p>
+        <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+          <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
+            <Info
+              className="mt-0.5 size-4 shrink-0 text-blue-600"
+              aria-hidden
+            />
+            Cluster bewerten — deine Schmerzskala
+          </p>
+          <p className="mt-1 text-sm text-muted">{EVAL_HINT}</p>
+          <div className="mt-3">
+            <Schmerzskala clusters={clusters} />
           </div>
         </div>
       ) : null}

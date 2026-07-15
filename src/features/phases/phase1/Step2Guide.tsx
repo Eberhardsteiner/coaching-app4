@@ -29,10 +29,10 @@ const SLIDES: GuideSlide[] = [
   },
   {
     title: "2. Zusammenhänge",
-    swatch: "bg-amber-200",
+    swatch: "bg-orange-200",
     swatchLabel: "Das hängt zusammen mit …",
     text: "Schreibe alles, was damit zusammenhängt, auf einzelne Karten auf!",
-    howto: "Klick auf „Zusammenhang“ (gelb), um eine Karte hinzuzufügen.",
+    howto: "Klick auf „Zusammenhang“ (orange), um eine Karte hinzuzufügen.",
   },
   {
     title: "3. Konkretisierung",

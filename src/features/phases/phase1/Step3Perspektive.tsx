@@ -1,9 +1,17 @@
-import { Building2, HeartPulse, Info, LayoutGrid, Swords } from "lucide-react";
+import {
+  Building2,
+  ChevronDown,
+  HeartPulse,
+  Info,
+  LayoutGrid,
+  Swords,
+} from "lucide-react";
 
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import type { ModelTerm } from "@/features/content/contentTypes";
 import { useModel, useModelList } from "@/features/content/useModel";
+import { GefuehlsAnker } from "@/features/phases/phase1/GefuehlsAnker";
 import { ModelCard, type ModelMeta } from "@/features/phases/phase1/ModelCard";
 import { ModelImage } from "@/features/phases/phase1/ModelImage";
 import { StepNav } from "@/features/phases/StepNav";
@@ -13,24 +21,18 @@ import type { Card } from "@/features/session/types";
 import { publicAsset } from "@/lib/asset";
 import { cn } from "@/lib/utils";
 
-/** Intro before the model choice (verbatim). */
-const INTRO_TOP = [
-  "Wenn du alles aufgeschrieben hast, was dir zu deiner Ist-Situation einfällt, dann überprüfe doch bitte einmal aus der ‚Vogelperspektive‘, ob es weitere Aspekte gibt, die auch noch zu deinem Gefühl beitragen.",
-  "Suche dir dazu eins der folgenden Modelle aus (nur eins!), gehe die Begriffe durch und entscheide, ob du noch etwas ergänzen möchtest. Wenn ja, gehe genauso vor, wie im ersten Teil und schreibe auf extra Karten auf, was du genau mit den gewählten Begriffen meinst und wie sie zu deinem Gefühl beitragen.",
-  "Nun kennst du bereits die Vorgehensweise und hast alles aufgeschrieben, was dir aus deiner eigenen Perspektive zu deinem Thema eingefallen ist. Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Vielleicht fällt dir ja noch etwas ein, was zusätzlich zu deinem Thema dazugehört, wenn du einmal durch die Brille eines Modells blickst. Das funktioniert, indem du dich durch einen Blick aus der Vogelperspektive inspirieren lassen kannst.",
-  "Dafür sind 4 Modelle vorgesehen und du kannst bei der Auswahl nichts falsch machen. Die 4 Modelle folgen den häufigsten Veränderungsanliegen, die beim Coaching vorkommen:",
-];
+/**
+ * Visible intro, condensed (MP1-REV) — the four Anliegen live as badges on
+ * the model cards, the background explanation is collapsible below.
+ */
+const INTRO_SHORT =
+  "Du hast aufgeschrieben, was dir aus deiner eigenen Perspektive einfällt. Prüfe nun aus der ‚Vogelperspektive‘, ob weitere Aspekte zu deinem Gefühl beitragen: Wähle dazu eins der vier Modelle (nur eins!) — sie folgen den häufigsten Veränderungsanliegen, und du kannst bei der Auswahl nichts falsch machen.";
 
-/** The four change concerns (verbatim). */
-const ANLIEGEN = [
-  "Beeinträchtigungen im persönlichen Wohlbefinden",
-  "Konflikte",
-  "(Betriebs-)wirtschaftliche Herausforderungen",
-  "Gesundheitliche Probleme",
+/** Condensed background, collapsible (nothing lost — off the surface). */
+const INTRO_DETAILS = [
+  "Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Ein Blick durch die Brille eines Modells kann Aspekte sichtbar machen, die dir aus der eigenen Perspektive nicht eingefallen sind.",
+  "Gehe die Begriffe des gewählten Modells durch und entscheide, ob du etwas ergänzen möchtest. Wenn ja, gehe genauso vor wie im ersten Teil: Schreibe auf extra Karten, was du genau mit den Begriffen meinst und wie sie zu deinem Gefühl beitragen.",
 ];
-
-const INTRO_CHOOSE =
-  "Wirf einen Blick auf alle 4 und suche dir das Modell aus, das zu deinem Thema am besten passt.";
 
 const INTRO_TERMS =
   "Wenn du ein Modell gewählt hast, dann suche nach möglichen Ergänzungen deines aktuellen Bildes der Ist-Situation. Wenn du welche gefunden hast, gehe wieder genauso vor, wie du es bereits praktiziert hast: Was genau meinst du mit dem Begriff und wie trägt das zu deinem Gefühl bei?";
@@ -319,15 +321,29 @@ const DEFAULT_META: ModelMeta = {
   summary: "",
 };
 
-/** Per-term card-add affordances (same colour stages as Schritt 2). */
+/**
+ * Per-term card-add affordances (same colour stages as Schritt 2). `swatch`
+ * fills the circle (captured state), `outline` draws the empty circle (open).
+ */
 const STAGE_ADDS = [
-  { colorId: "zusammenhang", label: "Zusammenhang", swatch: "bg-amber-200" },
+  {
+    colorId: "zusammenhang",
+    label: "Zusammenhang",
+    swatch: "bg-orange-200",
+    outline: "border-orange-200",
+  },
   {
     colorId: "konkretisierung",
     label: "Konkretisierung",
     swatch: "bg-green-400",
+    outline: "border-green-400",
   },
-  { colorId: "beitrag", label: "Beitrag", swatch: "bg-faint" },
+  {
+    colorId: "beitrag",
+    label: "Beitrag",
+    swatch: "bg-faint",
+    outline: "border-faint",
+  },
 ];
 
 const ADD_STAGES = STAGE_ADDS.map((s) => ({
@@ -408,23 +424,27 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      {/* B1 — intro + the four change concerns */}
-      <div className="space-y-3 text-muted">
-        {INTRO_TOP.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-        <ul className="ml-1 space-y-1">
-          {ANLIEGEN.map((anliegen) => (
-            <li key={anliegen} className="flex items-start gap-2">
-              <span
-                aria-hidden
-                className="mt-2 size-1.5 shrink-0 rounded-full bg-accent"
-              />
-              <span className="text-foreground">{anliegen}</span>
-            </li>
-          ))}
-        </ul>
-        <p>{INTRO_CHOOSE}</p>
+      {/* Gefühls-Anker aus 1.1 */}
+      <GefuehlsAnker />
+
+      {/* Intro — kurz sichtbar, Hintergrund aufklappbar (MP1-REV). Die vier
+          Anliegen stehen als Badges direkt auf den Modell-Karten. */}
+      <div className="space-y-3">
+        <p className="text-muted">{INTRO_SHORT}</p>
+        <details className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-accent">
+            <ChevronDown
+              className="size-4 motion-safe:transition-transform group-open:rotate-180"
+              aria-hidden
+            />
+            Wie funktioniert das?
+          </summary>
+          <div className="mt-2 space-y-2 text-sm text-muted">
+            {INTRO_DETAILS.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+        </details>
       </div>
 
       {/* B2 — model buttons with explain-flyover */}
@@ -442,14 +462,22 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           className="grid gap-3 sm:grid-cols-2"
         >
           {list.models.map((model) => (
-            <ModelCard
+            <div
               key={model.id}
-              id={model.id}
-              name={model.name}
-              meta={MODEL_META[model.id] ?? DEFAULT_META}
-              selected={model.id === selectedModel}
-              onSelect={() => selectModel(model.id)}
-            />
+              className={cn(
+                "h-full transition-opacity",
+                // Exklusive Wahl sichtbar: die nicht gewählten treten zurück.
+                selectedModel && model.id !== selectedModel && "opacity-55",
+              )}
+            >
+              <ModelCard
+                id={model.id}
+                name={model.name}
+                meta={MODEL_META[model.id] ?? DEFAULT_META}
+                selected={model.id === selectedModel}
+                onSelect={() => selectModel(model.id)}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -465,7 +493,7 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           />
         ) : loaded.model ? (
           <div className="space-y-4">
-            {/* Ausführliche Modellbeschreibung — sobald hinterlegt (Selected-State). */}
+            {/* Modellbeschreibung — Kernsatz sichtbar, Langtext aufklappbar. */}
             {MODEL_META[selectedModel]?.description ? (
               <div className="rounded-xl border border-subtle bg-surface-2 p-4">
                 {MODEL_META[selectedModel]?.subtitle ? (
@@ -473,9 +501,21 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                     {MODEL_META[selectedModel]?.subtitle}
                   </p>
                 ) : null}
-                <div className="mt-1 text-sm leading-relaxed text-muted">
-                  {MODEL_META[selectedModel]?.description}
-                </div>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  {MODEL_META[selectedModel]?.summary}
+                </p>
+                <details className="group mt-2">
+                  <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                    <ChevronDown
+                      className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                      aria-hidden
+                    />
+                    Mehr zum Modell
+                  </summary>
+                  <div className="mt-2 text-sm leading-relaxed text-muted">
+                    {MODEL_META[selectedModel]?.description}
+                  </div>
+                </details>
               </div>
             ) : null}
 
@@ -540,9 +580,29 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                 Begriffe durchgehen
               </h3>
               <p className="mt-1 text-sm text-muted">{INTRO_TERMS}</p>
-              <p className="mt-2 text-xs text-faint">
-                Ergänze je Begriff Karten: Zusammenhang (Amber), Konkretisierung
-                (Grün), Beitrag (Grau).
+              {/* Legende: die Farbe zeigt sich selbst — keine Farbnamen. */}
+              <div
+                role="list"
+                aria-label="Legende der Kartentypen"
+                className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5"
+              >
+                {STAGE_ADDS.map((stage) => (
+                  <span
+                    key={stage.colorId}
+                    role="listitem"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted"
+                  >
+                    <span
+                      aria-hidden
+                      className={cn("size-3 rounded-full", stage.swatch)}
+                    />
+                    {stage.label}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-1.5 text-xs text-faint">
+                Ergänze je Begriff passende Karten — gefüllte Kreise am Begriff
+                zeigen, was du dort schon erfasst hast.
               </p>
 
               {loaded.model.terms.length > 0 ? (
@@ -567,24 +627,38 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                         ) : null}
                       </div>
                       <div className="flex shrink-0 flex-wrap gap-1.5">
-                        {STAGE_ADDS.map((stage) => (
-                          <button
-                            key={stage.colorId}
-                            type="button"
-                            onClick={() => addTermCard(term, stage.colorId)}
-                            aria-label={`„${term.label}“ als ${stage.label} ergänzen`}
-                            title={`Als ${stage.label} ergänzen`}
-                            className="flex size-7 items-center justify-center rounded-md border border-subtle bg-surface transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                          >
-                            <span
-                              aria-hidden
-                              className={cn(
-                                "size-3 rounded-full",
-                                stage.swatch,
-                              )}
-                            />
-                          </button>
-                        ))}
+                        {STAGE_ADDS.map((stage) => {
+                          // Erfassungsstand: gibt es zu diesem Begriff schon
+                          // eine Karte dieses Typs? Gefüllt = erfasst.
+                          const captured = cards.some(
+                            (card) =>
+                              card.modelTerm === term.id &&
+                              card.color === stage.colorId,
+                          );
+                          return (
+                            <button
+                              key={stage.colorId}
+                              type="button"
+                              onClick={() => addTermCard(term, stage.colorId)}
+                              aria-label={`„${term.label}“ als ${stage.label} ergänzen${captured ? " (bereits erfasst)" : ""}`}
+                              title={`Als ${stage.label} ergänzen${captured ? " — bereits erfasst" : ""}`}
+                              className="flex size-7 items-center justify-center rounded-md border border-subtle bg-surface transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                            >
+                              <span
+                                aria-hidden
+                                className={cn(
+                                  "size-3 rounded-full",
+                                  captured
+                                    ? stage.swatch
+                                    : cn(
+                                        "border-2 bg-transparent",
+                                        stage.outline,
+                                      ),
+                                )}
+                              />
+                            </button>
+                          );
+                        })}
                       </div>
                     </li>
                   ))}

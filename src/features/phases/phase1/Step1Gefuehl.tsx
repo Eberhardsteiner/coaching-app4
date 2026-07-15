@@ -1,5 +1,7 @@
-import { Check } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
+
+import { CloudSymbol } from "@/components/icons/PhaseSymbols";
 
 import {
   AlertDialog,
@@ -23,31 +25,31 @@ function Em({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-foreground">{children}</strong>;
 }
 
-/** The feeling-question intro (verbatim, three paragraphs) with key points bold. */
-const INTRO_PARAGRAPHS: ReactNode[] = [
+/**
+ * The visible intro, condensed to three sentences (MP1-REV) — the rest of the
+ * original explanation moves into the collapsible "Warum zuerst das Gefühl?".
+ */
+const INTRO_SHORT: ReactNode = (
   <>
-    Noch bevor unser Verstand weiß: ‚Da ist etwas faul‘, wissen unsere{" "}
-    <Em>Gefühle</Em>, dass wir uns nicht wohlfühlen. Treten unangenehme Gefühle
-    regelmäßig in bestimmten Situationen auf, kann das der{" "}
-    <Em>Auslöser für einen Veränderungswunsch — für ein Coaching</Em> — sein.
-    Also wundere dich bitte nicht, wenn die erste Frage lautet:{" "}
-    <Em>‚Wie fühlst du dich in Bezug auf dein Thema?‘</Em>
+    Noch bevor dein Verstand weiß: ‚Da ist etwas faul‘, wissen es deine{" "}
+    <Em>Gefühle</Em>. Deshalb lautet die erste Frage:{" "}
+    <Em>‚Wie fühlst du dich in Bezug auf dein Thema?‘</Em> Spürst du mehrere
+    Gefühle, nimm das <Em>stärkste und häufigste</Em>.
+  </>
+);
+
+/** The condensed background, collapsible (nothing lost — off the surface). */
+const INTRO_DETAILS: ReactNode[] = [
+  <>
+    Treten unangenehme Gefühle regelmäßig in bestimmten Situationen auf, kann
+    das der <Em>Auslöser für einen Veränderungswunsch</Em> — für ein Coaching —
+    sein.
   </>,
   <>
-    Bitte beginne damit, dass du dich innerlich mit deiner aktuellen Situation
-    in Bezug setzt. <Em>Welches Gefühl spürst du vor allem</Em>, wenn du an das
-    denkst, was du verändern möchtest? Wenn du mehrere Gefühle spürst, dann nimm
-    dasjenige, das <Em>am stärksten und häufigsten</Em> auftritt. Die Liste der
-    Gefühle kann dir helfen — sie ist jedoch erweiterbar. Wenn du dein Gefühl
-    darauf nicht findest, dann fühl dich frei, ein eigenes zu benennen. Stelle
-    dabei bitte sicher, dass du <Em>wirklich ein Gefühl</Em> aufschreibst und{" "}
-    <Em>keinen gedanklichen Zustand</Em> (z. B. ‚Unentschlossen‘ ist ein{" "}
-    <Em>gedanklicher Zustand</Em>, kein Gefühl. ‚Zerrissenheit‘ dagegen ist{" "}
-    <Em>ein Gefühl</Em>).
-  </>,
-  <>
-    Wenn du dein <Em>Ausgangsgefühl</Em> gefunden hast, steht dieses{" "}
-    <Em>im Mittelpunkt deiner weiteren Reflexion</Em> zu deiner Ist-Situation.
+    Setze dich innerlich mit deiner aktuellen Situation in Bezug: Welches Gefühl
+    spürst du vor allem, wenn du an das denkst, was du verändern möchtest? Dein{" "}
+    <Em>Ausgangsgefühl</Em> steht anschließend{" "}
+    <Em>im Mittelpunkt deiner weiteren Reflexion</Em>.
   </>,
 ];
 
@@ -159,27 +161,49 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-8">
-        {/* Intro (verbatim) */}
-        <div className="space-y-3 text-muted">
-          {INTRO_PARAGRAPHS.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+        {/* Intro — kurz sichtbar, Hintergrund aufklappbar (MP1-REV). */}
+        <div className="space-y-3">
+          <p className="text-muted">{INTRO_SHORT}</p>
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-accent">
+              <ChevronDown
+                className="size-4 motion-safe:transition-transform group-open:rotate-180"
+                aria-hidden
+              />
+              Warum zuerst das Gefühl?
+            </summary>
+            <div className="mt-2 space-y-2 text-sm text-muted">
+              {INTRO_DETAILS.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+          </details>
         </div>
 
-        {/* The chosen starting feeling — centre of the further reflection. */}
-        {hasIst ? (
-          <div
-            aria-live="polite"
-            className="rounded-xl border border-ist/30 bg-ist/5 px-5 py-4"
-          >
-            <p className="text-xs font-medium uppercase tracking-wider text-ist">
-              Dein Ausgangsgefühl
-            </p>
-            <p className="mt-1 font-serif text-2xl text-foreground">
+        {/* Das eine Wort im Mittelpunkt — die zentrale Gefühls-Karte. */}
+        <div
+          aria-live="polite"
+          className={cn(
+            "rounded-2xl border px-6 py-8 text-center",
+            hasIst
+              ? "border-ist/30 bg-ist/5"
+              : "border-dashed border-ist/30 bg-surface",
+          )}
+        >
+          <CloudSymbol className="mx-auto size-10 text-ist" />
+          <p className="mt-2 text-xs font-medium uppercase tracking-wider text-ist">
+            Dein Ausgangsgefühl
+          </p>
+          {hasIst ? (
+            <p className="mt-2 font-serif text-4xl text-foreground">
               {trimmedIst}
             </p>
-          </div>
-        ) : null}
+          ) : (
+            <p className="mt-2 font-serif text-2xl text-faint">
+              Dein Wort kommt hierher
+            </p>
+          )}
+        </div>
 
         {/* Feeling list */}
         <div className="space-y-3">
@@ -255,6 +279,28 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
           <p className="text-xs text-faint">
             Wenn dein Gefühl nicht in der Liste steht, benenne hier ein eigenes.
           </p>
+
+          {/* Gefühl vs. gedanklicher Zustand — kompaktes Beispiel-Paar. */}
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="flex-1 rounded-lg border border-subtle bg-surface-2 p-3">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
+                <X className="size-4 shrink-0 text-faint" aria-hidden />
+                „Unentschlossen“
+              </p>
+              <p className="mt-0.5 pl-5 text-xs text-faint">
+                gedanklicher Zustand — kein Gefühl
+              </p>
+            </div>
+            <div className="flex-1 rounded-lg border border-green-200 bg-green-50 p-3">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-green-800">
+                <Check className="size-4 shrink-0" aria-hidden />
+                „Zerrissenheit“
+              </p>
+              <p className="mt-0.5 pl-5 text-xs text-green-800/80">
+                ein Gefühl
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Leidensdruck + "Thema anpassen" (kept from before) */}
