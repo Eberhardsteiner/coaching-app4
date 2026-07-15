@@ -13,11 +13,14 @@ import type { Card, Cluster } from "@/features/session/types";
 
 const NO_CLUSTERS: Cluster[] = [];
 
-/** Short hint chips for clustering. */
-const CHIPS = [
-  "Höchstens 5 Cluster",
-  "Überschrift: 1 Begriff, konkret — keine Lösungen",
-  "Nicht zu Verschiedenes in ein Cluster mischen",
+/** Short hint chips for clustering (`why` = kleine Begründungs-Zweitzeile). */
+const CHIPS: { text: string; why?: string }[] = [
+  {
+    text: "Höchstens 5 Cluster",
+    why: "Du entwickelst später deinen Handlungsplan entlang der Cluster — mehr als 5 wird dort zu viel.",
+  },
+  { text: "Überschrift: 1 Begriff, konkret — keine Lösungen" },
+  { text: "Nicht zu Verschiedenes in ein Cluster mischen" },
 ];
 
 /** Beispiele für gute Cluster-Überschriften (MP1-REV, Paket G). */
@@ -211,10 +214,16 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
           <ul className="flex flex-wrap gap-2">
             {CHIPS.map((chip) => (
               <li
-                key={chip}
-                className="rounded-full border border-subtle bg-surface px-3 py-1 text-xs text-muted"
+                key={chip.text}
+                title={chip.why}
+                className="max-w-72 rounded-2xl border border-subtle bg-surface px-3 py-1 text-xs text-muted"
               >
-                {chip}
+                {chip.text}
+                {chip.why ? (
+                  <span className="block text-[0.65rem] leading-snug text-faint">
+                    {chip.why}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ul>
