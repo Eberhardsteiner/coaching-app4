@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
   Clock,
   Compass,
   Heart,
@@ -17,49 +18,53 @@ import { INTRO_SEEN_KEY } from "@/config/constants";
 import { METHOD_LABELS } from "@/config/method";
 import { setKvFlag } from "@/features/session/sessionRepository";
 
-/**
- * Intro paragraph (verbatim). The method label is bundled in METHOD_LABELS; the
- * app self-reference stays name-free ("…-Coaching-App" / "…-App" descriptors).
- */
-const INTRO = `Unsere ${METHOD_LABELS.standardShort}-Coaching-App hat sich zur Aufgabe gemacht, dir dein Selbstcoaching so leicht und so erfolgreich wie nur möglich zu machen. Und dennoch: Ein erfolgreiches Selbstcoaching mit unserer ${METHOD_LABELS.standardShort}-App stellt an dich einige Anforderungen. Hier ein paar Hinweise und Tipps, wie du dich am besten darauf vorbereiten kannst:`;
-
-/** A preparation tip: a scannable keyword label + the verbatim text. */
-type Tip = { icon: LucideIcon; label: string; text: string };
+/** Intro, condensed to two sentences (MP1-REV). */
+const INTRO = `Unsere ${METHOD_LABELS.standardShort}-Coaching-App macht dir dein Selbstcoaching so leicht und erfolgreich wie möglich. Ein paar Dinge braucht es dennoch von dir — so bereitest du dich am besten vor:`;
 
 /**
- * The six preparation tips. `text` is verbatim; `label` is a purely presentational
- * keyword (a scannable heading over the unchanged original text).
+ * A preparation tip: keyword label + one core sentence visible; further
+ * detail collapsible (MP1-REV — nothing lost, just off the surface).
  */
+type Tip = { icon: LucideIcon; label: string; core: string; details?: string };
+
+/** The six preparation tips, condensed (meaning complete). */
 const TIPS: Tip[] = [
   {
     icon: Compass,
     label: "Veränderungswille",
-    text: "Beantworte dir ehrlich: Willst du dich wirklich verändern? Du hast einen Veränderungswunsch, aber bezieht er dich mit ein? Nur wer sich selbst ändert, kann an der eigenen Situation etwas verändern.",
+    core: "Willst du dich wirklich verändern — und bezieht dein Wunsch dich selbst mit ein?",
+    details:
+      "Nur wer sich selbst ändert, kann an der eigenen Situation etwas verändern.",
   },
   {
     icon: Clock,
     label: "Ruhe & Zeit",
-    text: "Sorge für Ruhe, ungestörtes Arbeiten und nimm dir Zeit.",
+    core: "Sorge für Ruhe, ungestörtes Arbeiten und nimm dir Zeit.",
   },
   {
     icon: PenLine,
     label: "Aufschreiben",
-    text: "Die Methode beruht darauf, dass du sehr viel aufschreibst. Bitte lass dich darauf ein, denn was du nicht aufschreibst, kannst du innerhalb der Methode nicht bearbeiten. Kümmere dich nicht um Rechtschreibung oder den perfekten Ausdruck — du musst verstehen, was du aufschreibst.",
+    core: "Die Methode lebt vom Aufschreiben — was du nicht aufschreibst, kannst du nicht bearbeiten.",
+    details:
+      "Kümmere dich nicht um Rechtschreibung oder den perfekten Ausdruck — du musst nur selbst verstehen, was du aufschreibst.",
   },
   {
     icon: Heart,
     label: "Ehrlichkeit",
-    text: "Sei bitte ehrlich zu dir selbst. Was du dir nicht eingestehst, kannst du auch nicht reflektieren.",
+    core: "Sei ehrlich zu dir selbst — was du dir nicht eingestehst, kannst du nicht reflektieren.",
   },
   {
     icon: ShieldCheck,
     label: "Vertraue dem Prozess",
-    text: "Vertraue der Vorgehensweise. Sie ist tausendfach erprobt und steht für qualitativ hochwertige Ergebnisse, die nur eintreten können, wenn der Prozess eingehalten wird.",
+    core: "Die Vorgehensweise ist tausendfach erprobt — halte den Prozess ein.",
+    details:
+      "Sie steht für qualitativ hochwertige Ergebnisse, die nur eintreten können, wenn der Prozess eingehalten wird.",
   },
   {
     icon: HeartHandshake,
     label: "Hilfe annehmen",
-    text: `Zögere nicht, dich von einem menschlichen Coach unterstützen zu lassen, wenn du merkst, du kommst nicht weiter. Wir arbeiten mit einem Netzwerk aus nach ${METHOD_LABELS.standardShort}-Standard ausgebildeten Coaches zusammen, die dir analog oder digital weiterhelfen können. Einen Coach deiner Wahl gibt es sicher auch in deiner Nähe.`,
+    core: "Kommst du nicht weiter, lass dich von einem menschlichen Coach unterstützen.",
+    details: `Wir arbeiten mit einem Netzwerk aus nach ${METHOD_LABELS.standardShort}-Standard ausgebildeten Coaches zusammen, die dir analog oder digital weiterhelfen. Einen Coach deiner Wahl gibt es sicher auch in deiner Nähe.`,
   },
 ];
 
@@ -102,15 +107,33 @@ export function AnforderungenView() {
               key={tip.label}
               className="rounded-xl border border-subtle bg-surface p-5"
             >
-              <span className="flex size-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <tip.icon className="size-4" aria-hidden />
-              </span>
-              <h2 className="mt-3 text-sm font-semibold text-foreground">
-                {tip.label}
-              </h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                {tip.text}
-              </p>
+              <div className="flex items-start gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                  <tip.icon className="size-4" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-foreground">
+                    {tip.label}
+                  </h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted">
+                    {tip.core}
+                  </p>
+                  {tip.details ? (
+                    <details className="group mt-1.5">
+                      <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                        <ChevronDown
+                          className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                          aria-hidden
+                        />
+                        Mehr dazu
+                      </summary>
+                      <p className="mt-1 text-xs leading-relaxed text-muted">
+                        {tip.details}
+                      </p>
+                    </details>
+                  ) : null}
+                </div>
+              </div>
             </li>
           ))}
         </ul>

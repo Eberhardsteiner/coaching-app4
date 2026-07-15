@@ -1,72 +1,155 @@
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
+  Compass,
   Feather,
+  KeyRound,
   Lock,
-  SlidersHorizontal,
-  Sprout,
+  Signpost,
+  Telescope,
   type LucideIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import type { ReactNode } from "react";
 
+import { SuitcaseSymbol } from "@/components/icons/PhaseSymbols";
 import { Button } from "@/components/ui/button";
 import { BRANDING } from "@/config/branding";
 import { METHOD_LABELS } from "@/config/method";
 
-/** Intro paragraph (verbatim; method label bundled in METHOD_LABELS). */
-const INTRO = `Auch ein Selbstcoaching mit einer App gehorcht bestimmten Prämissen und folgt den in ${METHOD_LABELS.standardShort}-Coaching festgelegten Grundwerten, an denen sich die App orientiert.`;
+/** Intro sentence (method label bundled in METHOD_LABELS). */
+const INTRO = `Auch ein Selbstcoaching mit einer App gehorcht bestimmten Prämissen und folgt den im ${METHOD_LABELS.standardShort}-Coaching festgelegten Grundwerten.`;
 
-type Value = { icon: LucideIcon; title: string; text: string };
+type Value = {
+  /** Lucide icon — or null for the shared suitcase symbol (Phase-3 imagery). */
+  icon: LucideIcon | null;
+  title: string;
+  /** One condensed core sentence, always visible. */
+  core: string;
+  /** Details, collapsible (nothing lost — just off the surface). */
+  details?: string[];
+};
 
-/** The four values (verbatim text). */
+/** The four values — core sentence visible, details collapsible (MP1-REV). */
 const VALUES: Value[] = [
   {
     icon: Lock,
     title: "Vertraulichkeit",
-    text: "Wichtig ist zunächst die Vertraulichkeit. Wir haben sehr auf die DSGVO-Konformität geachtet und sichern damit innerhalb des Systems Vertraulichkeit zu. Wenn du dich an den Coach wenden möchtest, hat dieser über die App die Möglichkeit, in deine bisherigen Ergebnisse Einblick zu erhalten — und ist seinerseits bzw. ihrerseits wiederum der Vertraulichkeit verpflichtet. Sofern du aus der App heraus einen Ausflug in die KI-Welt unternimmst, wirst du ausdrücklich aufgefordert, der KI-Nutzung zuzustimmen. Dies geschieht nie ohne deine Einwilligung.",
+    core: "Deine Inhalte bleiben vertraulich — DSGVO-konform gesichert.",
+    details: [
+      "Wenn du dich an einen Coach wendest, kann er oder sie über die App Einblick in deine bisherigen Ergebnisse erhalten — und ist seinerseits bzw. ihrerseits der Vertraulichkeit verpflichtet.",
+      "Ein Ausflug in die KI-Welt geschieht nie ohne deine ausdrückliche Einwilligung — du wirst vorher gefragt.",
+    ],
   },
   {
     icon: Feather,
     title: "Freiheit",
-    text: "Du unternimmst dein Selbstcoaching freiwillig. Du hast die Freiheit, deine Themen zu wählen und Entscheidungen zu treffen. Die Coaching-App beeinflusst dich in deinen Entscheidungen nicht, sondern verhält sich als dein neutraler Begleiter durch den Prozess.",
+    core: "Du wählst deine Themen und triffst deine Entscheidungen — freiwillig.",
+    details: [
+      "Die App beeinflusst dich in deinen Entscheidungen nicht, sondern verhält sich als dein neutraler Begleiter durch den Prozess.",
+    ],
   },
   {
-    icon: Sprout,
+    icon: null, // Koffer — gleiche Bildsprache wie Phase 3 (Ressourcen).
     title: "Ressourcenverfügbarkeit",
-    text: "Du kannst dich selbst coachen, weil du über alle inneren Ressourcen verfügst, um dein Thema so zu lösen, wie es zu dir und deiner Persönlichkeit passt. Das kann niemand besser als du selbst.",
+    core: "Du verfügst über alle inneren Ressourcen, um dein Thema passend zu dir zu lösen.",
+    details: ["Das kann niemand besser als du selbst."],
   },
   {
-    icon: SlidersHorizontal,
+    icon: Compass,
     title: "Selbststeuerung",
-    text: "Dein Coaching beruht darauf, dass du dich in Bezug auf dein Anliegen selbst steuern kannst.",
+    core: "Dein Coaching beruht darauf, dass du dich in Bezug auf dein Anliegen selbst steuern kannst.",
   },
 ];
 
-/** Effects intro sentence (verbatim; method label bundled). */
-const EFFECTS_SENTENCE = `Von einem Selbstcoaching nach ${METHOD_LABELS.standardShort}-Standard darfst du dir erwarten, dass du neue Perspektiven gewinnst (obwohl kein Coach dabei ist!), dass du immer wieder Entscheidungen treffen wirst und damit Klarheit gewinnst, und dass du dir Maßnahmen erschließt, die neu sind und doch weiterbringen.`;
-
-/** The three expectable effects (verbatim). */
-const EFFECTS = [
-  "Neue Perspektiven",
-  "Entscheidungsfähigkeit",
-  "Neue Handlungsoptionen",
-];
+type Effect = { icon: LucideIcon; title: string; text: string };
 
 /**
- * /grundwerte — shell-free, persona "Ruhig". Second orientation page (after the
- * Rubikon page): the self-coaching premises / values and the expectable effects.
- * Self-coaching specific; the coached branch never reaches it. "Weiter" continues
- * the chain to the requirements page (/anforderungen, where introSeen is set at
- * the end of the chain); "Zurück" goes back to /einfuehrung. No pink (no IST
- * reference here).
+ * The three expectable effects — the former intro sentence, split into the
+ * column heading plus one card per effect (not repeated as running text).
+ */
+const EFFECTS: Effect[] = [
+  {
+    icon: Telescope,
+    title: "Neue Perspektiven",
+    text: "Du gewinnst neue Blickwinkel — obwohl kein Coach dabei ist!",
+  },
+  {
+    icon: Signpost,
+    title: "Entscheidungsfähigkeit",
+    text: "Du triffst immer wieder Entscheidungen und gewinnst damit Klarheit.",
+  },
+  {
+    icon: KeyRound,
+    title: "Neue Handlungsoptionen",
+    text: "Du erschließt dir Maßnahmen, die neu sind und doch weiterbringen.",
+  },
+];
+
+/** Icon chip: lucide icon or the shared suitcase symbol (accent). */
+function ValueIcon({ value }: { value: Value }) {
+  return (
+    <span className="flex size-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
+      {value.icon ? (
+        <value.icon className="size-4" aria-hidden />
+      ) : (
+        <SuitcaseSymbol className="size-5" />
+      )}
+    </span>
+  );
+}
+
+/** Collapsible details under a value's core sentence. */
+function ValueDetails({ details }: { details: string[] }) {
+  return (
+    <details className="group mt-2">
+      <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+        <ChevronDown
+          className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+          aria-hidden
+        />
+        Mehr dazu
+      </summary>
+      <div className="mt-1.5 space-y-1.5">
+        {details.map((detail) => (
+          <p key={detail} className="text-xs leading-relaxed text-muted">
+            {detail}
+          </p>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+/** Shared two-column section shell. */
+function Column({
+  heading,
+  children,
+}: {
+  heading: string;
+  children: ReactNode;
+}) {
+  return (
+    <section>
+      <h2 className="font-serif text-xl text-foreground">{heading}</h2>
+      {children}
+    </section>
+  );
+}
+
+/**
+ * /grundwerte — shell-free, persona "Ruhig". Second orientation page (after
+ * the Rubikon page), following the method's "Werte | Wirkung" slide (MP1-REV):
+ * two columns side by side (stacked on mobile) — left the four values you can
+ * rely on (lock, feather, the SHARED suitcase symbol of Phase 3, compass),
+ * each with one core sentence and collapsible details; right the three
+ * expectable effects as symbol cards (telescope, signpost, key). Self-coaching
+ * specific; "Weiter" continues to /anforderungen, "Zurück" to /einfuehrung.
+ * No pink (no IST reference here).
  */
 export function GrundwerteView() {
   const navigate = useNavigate();
-
-  /** Continue the chain to the third orientation page (the requirements page). */
-  function next() {
-    navigate("/anforderungen");
-  }
 
   return (
     <div
@@ -84,54 +167,58 @@ export function GrundwerteView() {
           <p className="mt-4 max-w-2xl text-muted">{INTRO}</p>
         </header>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-3">
-          {/* Values */}
-          <section className="lg:col-span-2">
-            <h2 className="font-serif text-xl text-foreground">
-              Auf diese Werte kannst du dich verlassen
-            </h2>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {/* Werte | Wirkung — zwei Spalten (Mobil untereinander). */}
+        <div className="mt-10 grid gap-8 lg:grid-cols-2">
+          <Column heading="Auf diese Werte kannst du dich verlassen:">
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               {VALUES.map((value) => (
                 <li
                   key={value.title}
                   className="rounded-xl border border-subtle bg-surface p-4"
                 >
-                  <span className="flex size-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                    <value.icon className="size-4" aria-hidden />
-                  </span>
-                  <h3 className="mt-3 text-sm font-medium text-foreground">
-                    {value.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted">
-                    {value.text}
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <ValueIcon value={value} />
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-foreground">
+                        {value.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted">
+                        {value.core}
+                      </p>
+                      {value.details ? (
+                        <ValueDetails details={value.details} />
+                      ) : null}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
-          </section>
+          </Column>
 
-          {/* Effects */}
-          <section className="lg:col-span-1">
-            <h2 className="font-serif text-xl text-foreground">
-              Diese Wirkungen darfst du erwarten
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted">
-              {EFFECTS_SENTENCE}
-            </p>
-            <ul className="mt-4 space-y-2">
+          <Column heading="Diese Wirkungen darfst du erwarten:">
+            <ul className="mt-4 space-y-3">
               {EFFECTS.map((effect) => (
-                <li key={effect} className="flex items-center gap-3">
-                  <span
-                    aria-hidden
-                    className="size-2 shrink-0 rounded-full bg-accent"
-                  />
-                  <span className="text-sm font-medium text-foreground">
-                    {effect}
-                  </span>
+                <li
+                  key={effect.title}
+                  className="rounded-xl border border-accent/25 bg-accent/5 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex size-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                      <effect.icon className="size-4" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-foreground">
+                        {effect.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted">
+                        {effect.text}
+                      </p>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
-          </section>
+          </Column>
         </div>
 
         <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-subtle pt-6">
@@ -139,7 +226,10 @@ export function GrundwerteView() {
             <ArrowLeft />
             Zurück
           </Button>
-          <Button onClick={next} aria-label="Weiter zu den Anforderungen">
+          <Button
+            onClick={() => navigate("/anforderungen")}
+            aria-label="Weiter zu den Anforderungen"
+          >
             Weiter
             <ArrowRight />
           </Button>

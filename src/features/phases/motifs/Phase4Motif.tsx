@@ -1,37 +1,22 @@
-/** One building block of the bridge (measures built from resources). */
-type Block = {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  tone: "strong" | "soft" | "faint";
-};
-
-/** Two piers and a stepped arch of blocks bridging the gap between them. */
-const BLOCKS: Block[] = [
-  // left pier (the IST side — built from resource blocks)
-  { x: 30, y: 196, w: 46, h: 22, tone: "soft" },
-  { x: 34, y: 170, w: 38, h: 22, tone: "soft" },
-  { x: 38, y: 144, w: 30, h: 22, tone: "strong" },
-  // right pier (the goal side)
-  { x: 284, y: 196, w: 46, h: 22, tone: "soft" },
-  { x: 288, y: 170, w: 38, h: 22, tone: "soft" },
-  { x: 292, y: 144, w: 30, h: 22, tone: "strong" },
-  // arch — the measures spanning the gap, block by block
-  { x: 78, y: 132, w: 40, h: 18, tone: "strong" },
-  { x: 124, y: 122, w: 40, h: 18, tone: "strong" },
-  { x: 170, y: 118, w: 40, h: 18, tone: "strong" },
-  { x: 216, y: 122, w: 40, h: 18, tone: "strong" },
-  { x: 262, y: 132, w: 24, h: 18, tone: "strong" },
+/** Calm water lines of the river (the Rubikon being crossed). */
+const WAVES: { d: string; soft?: boolean }[] = [
+  { d: "M56 208 q 10 -5 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0" },
+  {
+    d: "M88 226 q 10 -5 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0",
+    soft: true,
+  },
+  { d: "M120 244 q 10 -5 20 0 t 20 0 t 20 0 t 20 0", soft: true },
 ];
 
 /**
- * Phase 4 motif — a bridge built from blocks: the measures (blocks) are made
- * of one's resources and span the gap between IST and goal. One block still
- * "floats in" with the shared, reduced-motion-safe `animate-pulse-calm` halo.
- * Purely decorative (aria-hidden) — the PhaseStart screen is fully
- * understandable from its heading and text. Colours come only from tokens:
- * accent (Phase 4 is a non-IST phase) plus subtle/faint neutrals.
+ * Phase 4 motif — the paper boat crossing the river (MP1-REV: the shared
+ * Rubikon symbol language — Phase 4 sets over with the Maßnahmen): a calm
+ * paper boat in the persona accent on the water between the near and the far
+ * bank; the far bank is already in sight. The boat's halo breathes via the
+ * shared, reduced-motion-safe `animate-pulse-calm`. Purely decorative
+ * (aria-hidden) — the PhaseStart screen is fully understandable from its
+ * heading and text. Colours come only from tokens: accent (Phase 4 is a
+ * non-IST phase), blue for the water, subtle/faint neutrals.
  */
 export function Phase4Motif() {
   return (
@@ -42,56 +27,56 @@ export function Phase4Motif() {
         aria-hidden="true"
         focusable="false"
       >
-        {/* ground line */}
-        <line
-          x1={16}
-          y1={218}
-          x2={344}
-          y2={218}
-          strokeWidth={1.25}
-          strokeLinecap="round"
-          className="stroke-subtle"
-        />
-
-        {/* the gap beneath the bridge */}
+        {/* near bank (left) and far bank (right) */}
         <path
-          d="M92 218 Q 180 252 268 218"
-          strokeWidth={1.25}
-          strokeDasharray="4 4"
-          className="fill-none stroke-faint/40"
+          d="M0 214 Q 40 200 72 210 L 72 280 L 0 280 Z"
+          className="fill-faint/25"
+        />
+        <path
+          d="M288 208 Q 322 196 360 206 L 360 280 L 288 280 Z"
+          className="fill-faint/25"
         />
 
-        {/* breathing halo behind the keystone block being placed */}
-        <rect
-          x={162}
-          y={110}
-          width={56}
-          height={34}
-          rx={8}
+        {/* water lines */}
+        <g strokeWidth={2} strokeLinecap="round" fill="none">
+          {WAVES.map((wave, index) => (
+            <path
+              key={index}
+              d={wave.d}
+              className={
+                wave.soft ? "stroke-blue-200/60" : "stroke-blue-400/50"
+              }
+            />
+          ))}
+        </g>
+
+        {/* breathing halo behind the boat */}
+        <circle
+          cx={180}
+          cy={144}
+          r={64}
           className="animate-pulse-calm fill-accent/10 [transform-box:fill-box]"
         />
 
-        {BLOCKS.map((block, index) => (
-          <rect
-            key={index}
-            x={block.x}
-            y={block.y}
-            width={block.w}
-            height={block.h}
-            rx={5}
-            strokeWidth={1.25}
-            className={
-              block.tone === "strong"
-                ? "fill-accent/15 stroke-accent/50"
-                : block.tone === "soft"
-                  ? "fill-faint/15 stroke-subtle"
-                  : "fill-none stroke-subtle"
-            }
-          />
-        ))}
+        {/* the paper boat — sails + hull */}
+        <path d="M180 74 L180 152 L132 152 Z" className="fill-accent/40" />
+        <path d="M180 90 L180 152 L220 152 Z" className="fill-accent/85" />
+        <path
+          d="M116 162 L244 162 L212 196 L148 196 Z"
+          className="fill-accent"
+        />
 
-        {/* small figure of direction: dot travelling the bridge */}
-        <circle cx={98} cy={124} r={5} className="fill-accent/85" />
+        {/* small flag on the far bank — the goal side is in sight */}
+        <line
+          x1={318}
+          y1={196}
+          x2={318}
+          y2={166}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          className="stroke-accent/70"
+        />
+        <path d="M318 167 L336 172 L318 177 Z" className="fill-accent/70" />
       </svg>
     </div>
   );
