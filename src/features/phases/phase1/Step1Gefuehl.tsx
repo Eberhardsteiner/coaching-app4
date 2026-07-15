@@ -1,7 +1,8 @@
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { CloudSymbol } from "@/components/icons/PhaseSymbols";
+import { BeispielPaar } from "@/components/method/BeispielPaar";
 
 import {
   AlertDialog,
@@ -280,27 +281,13 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
             Wenn dein Gefühl nicht in der Liste steht, benenne hier ein eigenes.
           </p>
 
-          {/* Gefühl vs. gedanklicher Zustand — kompaktes Beispiel-Paar. */}
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <div className="flex-1 rounded-lg border border-subtle bg-surface-2 p-3">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
-                <X className="size-4 shrink-0 text-faint" aria-hidden />
-                „Unentschlossen“
-              </p>
-              <p className="mt-0.5 pl-5 text-xs text-faint">
-                gedanklicher Zustand — kein Gefühl
-              </p>
-            </div>
-            <div className="flex-1 rounded-lg border border-green-200 bg-green-50 p-3">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-green-800">
-                <Check className="size-4 shrink-0" aria-hidden />
-                „Zerrissenheit“
-              </p>
-              <p className="mt-0.5 pl-5 text-xs text-green-800/80">
-                ein Gefühl
-              </p>
-            </div>
-          </div>
+          {/* Gefühl vs. gedanklicher Zustand — Beispiel-Paar (Baukasten). */}
+          <BeispielPaar
+            bad="„Unentschlossen“"
+            badWhy="gedanklicher Zustand — kein Gefühl"
+            good="„Zerrissenheit“"
+            goodWhy="ein Gefühl"
+          />
         </div>
 
         {/* Leidensdruck + "Thema anpassen" (kept from before) */}

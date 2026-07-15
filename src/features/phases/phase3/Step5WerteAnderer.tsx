@@ -1,6 +1,15 @@
-import { Check, ChevronDown, Plus, SkipForward, Trash2 } from "lucide-react";
+import {
+  Boxes,
+  Check,
+  ChevronDown,
+  HelpCircle,
+  Plus,
+  SkipForward,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
@@ -180,38 +189,53 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_1}</p>
       <p className="text-muted">{INTRO_2}</p>
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+          <ChevronDown
+            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+          Woher deine Klassifikation kommt
+        </summary>
+        <p className="mt-1.5 text-sm text-muted">{INTRO_1}</p>
+      </details>
 
-      <div className="space-y-2 rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
-        <p>
-          Wenn du ein „Ich“-Cluster hast, kannst du es hier weglassen — deine
-          Werte hast du bereits identifiziert.
-        </p>
-        <details className="group">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-            <ChevronDown
-              className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-              aria-hidden
-            />
-            Hilfe: hypothetisch & abstrakt
-          </summary>
-          <div className="mt-2 space-y-2">
+      <p className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm text-muted">
+        Wenn du ein „Ich“-Cluster hast, kannst du es hier weglassen — deine
+        Werte hast du bereits identifiziert.
+      </p>
+
+      {/* Zwei Hilfe-Callouts (VIS-2) — Beispiele aufklappbar. */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <InfoCallout
+          icon={<HelpCircle className="size-4" />}
+          title="Es bleibt hypothetisch"
+          tone="neutral"
+        >
+          Dieser Schritt ist naturgemäß hypothetisch und fehleranfällig — du
+          kannst nur beschreiben, was du im Alltag wahrnimmst: was deine
+          Mitspieler in Verhalten und Entscheidungen wichtig nehmen.
+        </InfoCallout>
+        <InfoCallout
+          icon={<Boxes className="size-4" />}
+          title="Abstrakte Cluster"
+          tone="neutral"
+          detail={
             <p>
-              Dieser Schritt ist naturgemäß hypothetisch und fehleranfällig — du
-              kannst nur beschreiben, was du im Alltag wahrnimmst: was deine
-              Mitspieler in Verhalten und Entscheidungen wichtig nehmen.
+              Stecken Personen darin (z. B. „Arbeit“ → deine Chefin)? Geh in
+              deren Perspektive. Ist das Cluster in Gänze abstrakt (z. B.
+              „Prozesse“), frag dich, was diesem Cluster wichtig ist — was ist
+              einem gut funktionierenden Prozess wichtig, und wie gut passt das
+              zu deinem Wert „Flexibilität“? Ein Blick in deine Ist-Analyse aus
+              Phase 1 hilft.
             </p>
-            <p>
-              Bei abstrakten Clustern: Stecken Personen darin (z. B. „Arbeit“ →
-              deine Chefin)? Geh in deren Perspektive. Ist das Cluster in Gänze
-              abstrakt (z. B. „Prozesse“), frag dich, was diesem Cluster wichtig
-              ist — was ist einem gut funktionierenden Prozess wichtig, und wie
-              gut passt das zu deinem Wert „Flexibilität“? Ein Blick in deine
-              Ist-Analyse aus Phase 1 hilft.
-            </p>
-          </div>
-        </details>
+          }
+          detailLabel="Beispiele ansehen"
+        >
+          Stecken Personen darin? Geh in deren Perspektive — sonst frag, was dem
+          Cluster selbst wichtig ist.
+        </InfoCallout>
       </div>
 
       {/* Cluster-Navigation */}
@@ -420,27 +444,44 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
             <p className="text-xs font-medium uppercase tracking-wide text-faint">
               Werte der Anderen
             </p>
-            <div className="mt-1.5 space-y-1">
+            <div className="mt-1.5 space-y-1.5">
               {sorted.map((cluster, index) => {
                 const entries = valuesOf(cluster.id);
                 if (entries.length === 0) return null;
                 return (
-                  <p key={cluster.id} className="text-xs text-muted">
+                  <div key={cluster.id} className="text-xs text-muted">
                     <span className="font-medium text-foreground">
                       {clusterName(cluster, index)}:
                     </span>{" "}
-                    {entries.map((i) => i.text).join(" · ")}
-                  </p>
+                    <span className="mt-0.5 inline-flex flex-wrap gap-1 align-middle">
+                      {entries.map((i) => (
+                        <span
+                          key={i.id}
+                          className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+                        >
+                          {i.text}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
                 );
               })}
               {legacy.some((i) => i.text.trim()) ? (
-                <p className="text-xs text-muted">
+                <div className="text-xs text-muted">
                   <span className="font-medium text-foreground">Weitere:</span>{" "}
-                  {legacy
-                    .filter((i) => i.text.trim())
-                    .map((i) => i.text)
-                    .join(" · ")}
-                </p>
+                  <span className="mt-0.5 inline-flex flex-wrap gap-1 align-middle">
+                    {legacy
+                      .filter((i) => i.text.trim())
+                      .map((i) => (
+                        <span
+                          key={i.id}
+                          className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+                        >
+                          {i.text}
+                        </span>
+                      ))}
+                  </span>
+                </div>
               ) : null}
               {!sorted.some((c) => valuesOf(c.id).length > 0) &&
               !legacy.some((i) => i.text.trim()) ? (

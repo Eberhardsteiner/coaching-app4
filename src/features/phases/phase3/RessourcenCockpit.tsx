@@ -1,6 +1,16 @@
-import { X } from "lucide-react";
+import {
+  CircleOff,
+  Compass,
+  Fingerprint,
+  Lightbulb,
+  Scale,
+  Telescope,
+  Users,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, type ReactNode } from "react";
 
+import { SuitcaseSymbol } from "@/components/icons/PhaseSymbols";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { DontPatternEntry, ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -18,9 +28,15 @@ function splitByPolarity(items: ResourceItem[]) {
   };
 }
 
-/** One cockpit area card. `tone: "ist"` marks the Don't box (IST pattern). */
+/**
+ * One cockpit area card. `tone: "ist"` marks the Don't box (IST pattern).
+ * VIS-2: each area carries a small symbol in the head and a count badge
+ * (n Einträge) once it starts filling.
+ */
 function Area({
   title,
+  icon,
+  count,
   filled,
   emptyHint,
   tone = "default",
@@ -28,6 +44,10 @@ function Area({
   children,
 }: {
   title: string;
+  /** Small area symbol (VIS-2 — consistent symbol language). */
+  icon?: ReactNode;
+  /** Entry count for the header badge; hidden while 0/undefined. */
+  count?: number;
   filled: boolean;
   emptyHint: string;
   tone?: "default" | "ist";
@@ -45,11 +65,35 @@ function Area({
     >
       <h3
         className={cn(
-          "text-sm font-semibold",
+          "flex items-center gap-1.5 text-sm font-semibold",
           tone === "ist" ? "text-ist" : "text-foreground",
         )}
       >
-        {title}
+        {icon ? (
+          <span
+            aria-hidden
+            className={cn(
+              "shrink-0",
+              tone === "ist" ? "text-ist" : "text-accent",
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+        <span className="min-w-0">{title}</span>
+        {count ? (
+          <span
+            aria-label={`${count} Einträge`}
+            className={cn(
+              "ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-xs font-medium tabular-nums",
+              tone === "ist"
+                ? "bg-ist/10 text-ist"
+                : "bg-accent/10 text-accent",
+            )}
+          >
+            {count}
+          </span>
+        ) : null}
       </h3>
       {filled ? (
         <div className="mt-3">{children}</div>
@@ -197,6 +241,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
     >
       <Area
         title="Meine Intelligenzen"
+        icon={<Lightbulb className="size-4" />}
+        count={phase3.intelligences.length}
         filled={phase3.intelligences.length > 0}
         emptyHint="Füllt sich in Schritt 3.2."
       >
@@ -205,6 +251,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Meine Motive"
+        icon={<Compass className="size-4" />}
+        count={phase3.motives.length}
         filled={phase3.motives.length > 0}
         emptyHint="Füllt sich in Schritt 3.3."
       >
@@ -213,6 +261,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Meine Persönlichkeitseigenschaften"
+        icon={<Fingerprint className="size-4" />}
+        count={personalityTraits.length}
         filled={personalityTraits.length > 0}
         emptyHint="Füllt sich in Schritt 3.3."
       >
@@ -221,6 +271,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Meine Werte"
+        icon={<Scale className="size-4" />}
+        count={values.filter((i) => i.text.trim()).length}
         filled={values.length > 0}
         emptyHint="Füllt sich in Schritt 3.4."
       >
@@ -268,6 +320,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Werte der Anderen"
+        icon={<Users className="size-4" />}
+        count={othersValues.filter((i) => !i.category && i.text.trim()).length}
         filled={otherGroups.length > 0 || otherLegacy.length > 0 || !!insight}
         emptyHint="Füllt sich in Schritt 3.5."
       >
@@ -313,6 +367,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Ressourcen aus Modellen"
+        icon={<Telescope className="size-4" />}
+        count={modelResources.length}
         filled={modelResources.length > 0}
         emptyHint="Füllt sich in Schritt 3.6."
       >
@@ -332,6 +388,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Weitere Ressourcen"
+        icon={<SuitcaseSymbol className="size-4" />}
+        count={erfahrungen.length + aussen.length + innerLegacy.length}
         filled={
           erfahrungen.length > 0 ||
           aussen.length > 0 ||
@@ -392,6 +450,8 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 
       <Area
         title="Bisheriges Muster — Don’t!"
+        icon={<CircleOff className="size-4" />}
+        count={donts.length}
         filled={donts.length > 0}
         emptyHint="Füllt sich in Schritt 3.9."
         tone="ist"

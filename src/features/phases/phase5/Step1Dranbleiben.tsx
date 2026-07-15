@@ -1,6 +1,19 @@
-import { Check, Plus, Trash2 } from "lucide-react";
+import {
+  CalendarDays,
+  Check,
+  Eye,
+  HeartHandshake,
+  HeartPulse,
+  Plus,
+  Sparkles,
+  Trash2,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 
+import { FlagSymbol } from "@/components/icons/PhaseSymbols";
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
@@ -10,17 +23,38 @@ import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem, Strategy } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
-/** Beispiel-Anregungen (Methodik-Vorlage; Nr. 6 variiert je Zweig). */
-function buildSuggestions(coached: boolean): string[] {
+/**
+ * Beispiel-Anregungen (Methodik-Vorlage; Nr. 6 variiert je Zweig) — je Karte
+ * ein kleines Symbol (VIS-2: Auge · Mensch · Kalender · Stern · Körper ·
+ * Coach).
+ */
+function buildSuggestions(
+  coached: boolean,
+): { icon: LucideIcon; text: string }[] {
   return [
-    "Eine Visualisierung deines Ziels, die du sehr häufig siehst",
-    "Ein vertrauter Mensch, mit dem du deine Absichten teilst",
-    "Eine Eintragung deiner Maßnahmen in deinen Kalender",
-    "Deine Erfolge feiern",
-    "Deine Körpersignale als Rückmeldeinstrument über dein Wohlbefinden",
-    coached
-      ? "Ein Follow-up mit deinem Coach auf der halben Zeitstrecke zu deinem Ziel"
-      : "Ein Follow-up mit einem Coach auf der halben Zeitstrecke zu deinem Ziel",
+    {
+      icon: Eye,
+      text: "Eine Visualisierung deines Ziels, die du sehr häufig siehst",
+    },
+    {
+      icon: UserRound,
+      text: "Ein vertrauter Mensch, mit dem du deine Absichten teilst",
+    },
+    {
+      icon: CalendarDays,
+      text: "Eine Eintragung deiner Maßnahmen in deinen Kalender",
+    },
+    { icon: Sparkles, text: "Deine Erfolge feiern" },
+    {
+      icon: HeartPulse,
+      text: "Deine Körpersignale als Rückmeldeinstrument über dein Wohlbefinden",
+    },
+    {
+      icon: HeartHandshake,
+      text: coached
+        ? "Ein Follow-up mit deinem Coach auf der halben Zeitstrecke zu deinem Ziel"
+        : "Ein Follow-up mit einem Coach auf der halben Zeitstrecke zu deinem Ziel",
+    },
   ];
 }
 
@@ -114,9 +148,8 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-5">
       <p className="text-muted">
-        Bitte überlege dir einmal: Wer oder was kann dich beim Umsetzen deines
-        Plans unterstützen? Trage die Punkte, die dir einfallen, mit den
-        zugehörigen Ressourcen ein.
+        Wer oder was kann dich beim Umsetzen deines Plans unterstützen? Trage
+        die Punkte mit den zugehörigen Ressourcen ein.
       </p>
 
       {/* Beispiel-Anregungen — ein Klick legt eine Strategien-Zeile an. */}
@@ -129,14 +162,15 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
           aria-label="Beispiel-Anregungen übernehmen"
           className="grid gap-2 sm:grid-cols-2"
         >
-          {suggestions_.map((text, index) => {
-            const taken = isTakenSuggestion(text);
+          {suggestions_.map((suggestion, index) => {
+            const taken = isTakenSuggestion(suggestion.text);
+            const Icon = suggestion.icon;
             return (
               <button
-                key={text}
+                key={suggestion.text}
                 type="button"
                 disabled={taken}
-                onClick={() => takeSuggestion(text)}
+                onClick={() => takeSuggestion(suggestion.text)}
                 className={cn(
                   "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                   taken
@@ -149,11 +183,27 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                 ) : (
                   <Plus className="mt-0.5 size-4 shrink-0 text-accent" />
                 )}
-                <span>
-                  {text}
+                <span className="min-w-0">
+                  <span className="flex items-start gap-1.5">
+                    <Icon
+                      className="mt-0.5 size-4 shrink-0 text-muted"
+                      aria-hidden
+                    />
+                    <span>{suggestion.text}</span>
+                  </span>
                   {index === BODY_SUGGESTION_INDEX && bodyMarkers.length > 0 ? (
-                    <span className="mt-1 block text-xs text-faint">
-                      Deine Signalgeber: {bodyMarkers.join(" · ")}
+                    <span className="mt-1.5 flex flex-wrap items-center gap-1">
+                      <span className="text-xs text-faint">
+                        Deine Signalgeber:
+                      </span>
+                      {bodyMarkers.map((marker) => (
+                        <span
+                          key={marker}
+                          className="rounded-full border border-subtle bg-surface-2 px-2 py-0.5 text-xs text-muted"
+                        >
+                          {marker}
+                        </span>
+                      ))}
                     </span>
                   ) : null}
                 </span>
@@ -262,9 +312,14 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
         </Button>
       </div>
 
-      <p className="rounded-lg border border-subtle bg-surface-2 p-3 text-sm text-muted">
+      {/* Kurs-Hinweis als Callout mit Fahnen-Symbol (Baukasten). */}
+      <InfoCallout
+        icon={<FlagSymbol className="size-5" />}
+        title="Dranbleiben"
+        tone="neutral"
+      >
         Wenn du vom Kurs abkommst, nutze deine Ressourcen einfach erneut.
-      </p>
+      </InfoCallout>
 
       <NoPersonalDataHint />
 

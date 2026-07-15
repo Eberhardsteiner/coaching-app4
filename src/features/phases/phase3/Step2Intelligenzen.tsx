@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import { useModel } from "@/features/content/useModel";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
@@ -7,8 +8,11 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem } from "@/features/session/types";
 
-/** Anmoderation (Methodik-Vorlage, wortgetreu, leicht gekürzt). */
-const INTRO =
+/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
+const INTRO_CORE =
+  "Identifiziere mit Hilfe der Beschreibungen, welche Intelligenzarten dich besonders kennzeichnen — womit du dich leicht tust.";
+
+const INTRO_VOLLTEXT =
   "Beginne mit deinen Begabungen — den Intelligenzarten. Die psychologische Forschung weiß, dass wir über genetisch bestimmte grundlegende Begabungen verfügen. Sie bestimmen, welche Aufgaben uns immer schon leichtfallen und welche eher schwer. Identifiziere mit Hilfe der Beschreibungen, welche Intelligenzarten dich besonders kennzeichnen — womit du dich leicht tust. Üblicherweise spiegelt sich das in Teilen auch in der Berufswahl.";
 
 /**
@@ -29,7 +33,17 @@ export function Step2Intelligenzen({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO}</p>
+      <p className="text-muted">{INTRO_CORE}</p>
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+          <ChevronDown
+            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+          Die ganze Anmoderation
+        </summary>
+        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
+      </details>
 
       {loaded.status === "loading" || loaded.status === "error" ? (
         <ContentLoadState

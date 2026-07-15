@@ -1,3 +1,6 @@
+import { Lightbulb } from "lucide-react";
+
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { useSessionStore } from "@/features/session/sessionStore";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { StepNav } from "@/features/phases/StepNav";
@@ -13,17 +16,55 @@ import { cn } from "@/lib/utils";
 const CRITERIA: {
   key: keyof MeasureQuality;
   label: string;
+  /** Kurzlabel für die Status-Badge-Reihe je Maßnahme (VIS-2). */
+  short: string;
   hint?: string;
 }[] = [
-  { key: "zielbeitrag", label: "Zahlt in mein Ziel ein" },
-  { key: "ressourcenbasiert", label: "Beruht auf meinen gewählten Ressourcen" },
-  { key: "ichSatz", label: "Ganzer Ich-Satz" },
+  { key: "zielbeitrag", label: "Zahlt in mein Ziel ein", short: "Ziel" },
+  {
+    key: "ressourcenbasiert",
+    label: "Beruht auf meinen gewählten Ressourcen",
+    short: "Ressourcen",
+  },
+  { key: "ichSatz", label: "Ganzer Ich-Satz", short: "Ich-Satz" },
   {
     key: "neu",
     label: "Neu",
+    short: "Neu",
     hint: "Falls nicht gänzlich neu, dann zumindest qualitativ oder quantitativ neu.",
   },
 ];
+
+/**
+ * Die Vier-Kriterien-Badge-Reihe einer Maßnahme (VIS-2): je Kriterium ein
+ * kleines Status-Badge — grün = ja, amber = bewusst nein, neutral = offen.
+ * Reine Anzeige; geprüft wird über die ja/nein-Schalter darunter.
+ */
+function QualityBadges({ quality }: { quality?: MeasureQuality }) {
+  return (
+    <span aria-hidden className="flex flex-wrap gap-1">
+      {CRITERIA.map((criterion) => {
+        const value = quality?.[criterion.key];
+        return (
+          <span
+            key={criterion.key}
+            className={cn(
+              "rounded-full px-2 py-0.5 text-[0.65rem] font-medium",
+              value === true
+                ? "bg-green-400/20 text-green-800"
+                : value === false
+                  ? "bg-amber-100/60 text-amber-900"
+                  : "bg-surface-2 text-faint",
+            )}
+          >
+            {criterion.short}
+            {value === true ? " ✓" : value === false ? " ✗" : ""}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
 
 function clusterName(cluster: Cluster, index: number): string {
   return cluster.name.trim() || `Cluster ${index + 1}`;
@@ -163,19 +204,23 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
         einmal nach den Kriterien für wirksame Maßnahmen.
       </p>
 
-      {/* Fehlende Ressourcen? */}
-      <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-        <p className="text-sm font-medium text-foreground">
-          Fehlende Ressourcen?
-        </p>
-        <p className="mt-1 text-sm text-muted">
-          Hast du fehlende, aber erforderliche Ressourcen in Maßnahmen
-          übersetzt? Beispiel: Du hast erkannt, dir fehlt Führungswissen — dann
-          landet das möglicherweise als ‚Ich bewerbe mich in der
-          Personalabteilung um Teilnahme an einem Führungstraining ab dem
-          nächsten Quartal‘ in deinem Handlungsplan.
-        </p>
-      </div>
+      {/* Fehlende Ressourcen? — Callout, Beispiel aufklappbar (VIS-2). */}
+      <InfoCallout
+        icon={<Lightbulb className="size-4" />}
+        title="Fehlende Ressourcen?"
+        tone="neutral"
+        detail={
+          <p>
+            Beispiel: Du hast erkannt, dir fehlt Führungswissen — dann landet
+            das möglicherweise als ‚Ich bewerbe mich in der Personalabteilung um
+            Teilnahme an einem Führungstraining ab dem nächsten Quartal‘ in
+            deinem Handlungsplan.
+          </p>
+        }
+        detailLabel="Beispiel ansehen"
+      >
+        Hast du fehlende, aber erforderliche Ressourcen in Maßnahmen übersetzt?
+      </InfoCallout>
 
       {allMeasures.length === 0 ? (
         <p className="rounded-lg border border-dashed border-subtle bg-surface p-6 text-center text-sm text-faint">
@@ -207,12 +252,15 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
                     className="space-y-3 rounded-xl border border-subtle bg-surface p-4"
                   >
                     <div className="space-y-1.5">
-                      <label
-                        htmlFor={`q-measure-${measure.id}`}
-                        className="block text-xs font-medium text-faint"
-                      >
-                        Maßnahme (hier direkt nachschärfen)
-                      </label>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <label
+                          htmlFor={`q-measure-${measure.id}`}
+                          className="block text-xs font-medium text-faint"
+                        >
+                          Maßnahme (hier direkt nachschärfen)
+                        </label>
+                        <QualityBadges quality={measure.quality} />
+                      </div>
                       <textarea
                         id={`q-measure-${measure.id}`}
                         value={measure.text}
@@ -279,6 +327,7 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
                   key={measure.id}
                   className="space-y-3 rounded-xl border border-subtle bg-surface p-4"
                 >
+                  <QualityBadges quality={measure.quality} />
                   <textarea
                     aria-label="Maßnahme"
                     value={measure.text}

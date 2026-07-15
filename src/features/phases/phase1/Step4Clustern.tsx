@@ -45,26 +45,29 @@ function Schmerzskala({
   clusters: Cluster[];
   onWeightChange: (clusterId: string, weight: number | undefined) => void;
 }) {
-  const named = clusters.filter((c) => c.name.trim());
-  if (named.length === 0) return null;
+  if (clusters.length === 0) return null;
 
-  const rated = named
+  // ALLE Cluster (auch noch unbenannte) — sonst wäre ein unbenanntes Cluster
+  // mit Gewicht weder sichtbar noch sperrte es seinen Wert (Eindeutigkeit!).
+  const rated = clusters
     .filter((c) => c.weight != null)
     .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
-  const unrated = named.filter((c) => c.weight == null);
+  const unrated = clusters.filter((c) => c.weight == null);
   const takenFor = (cluster: Cluster) =>
     new Set(
-      named
+      clusters
         .filter((c) => c.id !== cluster.id && c.weight != null)
         .map((c) => c.weight as number),
     );
+  const labelOf = (cluster: Cluster) =>
+    cluster.name.trim() || `Cluster ${clusters.indexOf(cluster) + 1}`;
 
   const row = (cluster: Cluster) => {
     const isCore = Boolean(cluster.isCore) && cluster.weight != null;
     return (
       <li key={cluster.id}>
         <SkalaBar
-          label={cluster.name.trim()}
+          label={labelOf(cluster)}
           value={cluster.weight}
           onSelect={(weight) => onWeightChange(cluster.id, weight)}
           taken={takenFor(cluster)}

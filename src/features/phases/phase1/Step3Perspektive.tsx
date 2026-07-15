@@ -34,7 +34,10 @@ const INTRO_DETAILS = [
   "Gehe die Begriffe des gewählten Modells durch und entscheide, ob du etwas ergänzen möchtest. Wenn ja, gehe genauso vor wie im ersten Teil: Schreibe auf extra Karten, was du genau mit den Begriffen meinst und wie sie zu deinem Gefühl beitragen.",
 ];
 
-const INTRO_TERMS =
+const INTRO_TERMS_CORE =
+  "Suche nach Ergänzungen deines Ist-Bildes: Was genau meinst du mit dem Begriff, und wie trägt das zu deinem Gefühl bei?";
+
+const INTRO_TERMS_VOLLTEXT =
   "Wenn du ein Modell gewählt hast, dann suche nach möglichen Ergänzungen deines aktuellen Bildes der Ist-Situation. Wenn du welche gefunden hast, gehe wieder genauso vor, wie du es bereits praktiziert hast: Was genau meinst du mit dem Begriff und wie trägt das zu deinem Gefühl bei?";
 
 /** Model-button presentation metadata (icon + Anliegen + Kurzbeschreibung). */
@@ -587,7 +590,19 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
               <h3 className="font-serif text-lg text-foreground">
                 Begriffe durchgehen
               </h3>
-              <p className="mt-1 text-sm text-muted">{INTRO_TERMS}</p>
+              <p className="mt-1 text-sm text-muted">{INTRO_TERMS_CORE}</p>
+              <details className="group mt-1">
+                <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                  <ChevronDown
+                    className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                    aria-hidden
+                  />
+                  Die ganze Anleitung
+                </summary>
+                <p className="mt-1.5 text-sm text-muted">
+                  {INTRO_TERMS_VOLLTEXT}
+                </p>
+              </details>
               {/* Legende: die Farbe zeigt sich selbst — keine Farbnamen. */}
               <div
                 role="list"

@@ -1,12 +1,17 @@
 import {
   Check,
   ChevronDown,
+  Gift,
   LayoutDashboard,
   Plus,
+  Telescope,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
+import { BeispielPaar } from "@/components/method/BeispielPaar";
+import { InfoCallout } from "@/components/method/InfoCallout";
+import { MiniFlow } from "@/components/method/MiniFlow";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
@@ -266,6 +271,16 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         {QUALITIES_CARD}
       </p>
 
+      {/* Das Vorgehen je Cluster als Kette (VIS-2). */}
+      <MiniFlow
+        ariaLabel="Vorgehen je Cluster"
+        steps={[
+          { label: "Ressourcen wählen", detail: "mindestens 3" },
+          { label: "kombinieren", detail: "Ressourcen zusammen denken" },
+          { label: "Ich-Satz-Maßnahmen", detail: "3–4 je Cluster" },
+        ]}
+      />
+
       {/* Cluster-Navigation */}
       <div
         role="group"
@@ -350,10 +365,25 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
           <div>
             {activeConsequence && activeConsequence.recognition.trim() ? (
               <div className="space-y-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
-                <p className="text-xs font-medium uppercase tracking-wide text-faint">
+                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-faint">
+                  <Telescope
+                    className="size-4 shrink-0 text-accent"
+                    aria-hidden
+                  />
                   Dein Wirkindikator aus Phase 2
                 </p>
-                <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
+                <details className="group">
+                  <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                    <ChevronDown
+                      className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                      aria-hidden
+                    />
+                    Was der Wirkindikator ist
+                  </summary>
+                  <p className="mt-1.5 text-xs text-muted">
+                    {WIRKINDIKATOR_TEXT}
+                  </p>
+                </details>
                 <div className="space-y-1">
                   <p className="text-xs text-muted">
                     An welcher konkreten Handlung von dir erkennt „{activeName}
@@ -428,7 +458,21 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   Cockpit öffnen
                 </Button>
               </div>
-              <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
+              <p className="text-xs text-muted">
+                Wähle mindestens 3 hilfreiche Ressourcen zu diesem Cluster —
+                deine starken förderlichen Motive und
+                Persönlichkeitseigenschaften sollen vorkommen.
+              </p>
+              <details className="group">
+                <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                  <ChevronDown
+                    className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                    aria-hidden
+                  />
+                  Die ganze Anleitung
+                </summary>
+                <p className="mt-1.5 text-xs text-muted">{RESSOURCEN_TEXT}</p>
+              </details>
               {foerderliche.length === 0 ? (
                 <p className="text-xs text-faint">
                   Keine als förderlich markierten Ressourcen. Du kannst trotzdem
@@ -477,18 +521,46 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                 Deine Maßnahmen (max. {MAX_MEASURES})
               </p>
               <p className="text-xs text-muted">
-                Lass aus den gewählten Ressourcen konkrete Handlungen entstehen.
-                Drücke sie in einem ganzen ‚Ich‘-Satz aus, der konkret
-                beschreibt, was du tust — ein Verhalten, kein Gefühl. ‚Ich bin
-                fröhlich, wenn ich in die Arbeit gehe‘ ist keine Handlung. ‚Ich
-                begrüße täglich meine Kollegen freundlich und frage sie, wie ich
-                sie unterstützen kann‘ ist ein konkretes, wahrnehmbares
-                Verhalten. Verzichte auf verneinende Aussagen über das, was du
-                nicht mehr tun willst — frage dich: Was tue ich stattdessen? Je
-                konkreter du formulierst, desto wahrscheinlicher setzt du um. Du
-                darfst dich hier auch für deine Mühen im{" "}
-                {branch === "coached" ? "Coaching" : "Selbstcoaching"} belohnen!
+                Lass aus den gewählten Ressourcen konkrete Handlungen entstehen
+                — je konkreter du formulierst, desto wahrscheinlicher setzt du
+                um.
               </p>
+
+              {/* Kurzregel-Chips (VIS-2). */}
+              <ul
+                aria-label="Regeln für wirksame Maßnahmen"
+                className="flex flex-wrap gap-1.5"
+              >
+                {[
+                  "ganzer Ich-Satz",
+                  "Verhalten, kein Gefühl",
+                  "keine Verneinung — was tue ich stattdessen?",
+                ].map((rule) => (
+                  <li
+                    key={rule}
+                    className="rounded-full border border-subtle bg-surface-2 px-2.5 py-1 text-xs text-muted"
+                  >
+                    {rule}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Ich-Satz-Coaching als Beispiel-Paar (VIS-2). */}
+              <BeispielPaar
+                bad="‚Ich bin fröhlich, wenn ich in die Arbeit gehe‘"
+                badWhy="ein Gefühl — keine Handlung"
+                good="‚Ich begrüße täglich meine Kollegen freundlich und frage sie, wie ich sie unterstützen kann‘"
+                goodWhy="konkretes, wahrnehmbares Verhalten"
+              />
+
+              {/* Belohnung — freundlicher Mini-Callout (VIS-2). */}
+              <InfoCallout
+                icon={<Gift className="size-4" />}
+                title="Nicht vergessen"
+              >
+                Du darfst dich hier auch für deine Mühen im{" "}
+                {branch === "coached" ? "Coaching" : "Selbstcoaching"} belohnen!
+              </InfoCallout>
 
               {measures.map((measure, index) => (
                 <div

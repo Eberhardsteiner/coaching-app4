@@ -1,3 +1,5 @@
+import { SuitcaseSymbol } from "@/components/icons/PhaseSymbols";
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
 import { StepNav } from "@/features/phases/StepNav";
@@ -164,11 +166,19 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-6">
       <p className="text-muted">
-        Trag deine gewählten Maßnahmen der besseren Übersicht halber in eine
-        Tabelle ein. Falls dir etwas einfällt, was deinem Plan in die Quere
-        kommen kann, überlege dir schon einmal einen Plan B. Ressourcenbasiert,
-        versteht sich!
+        Trag deine gewählten Maßnahmen der besseren Übersicht halber in die
+        Tabelle ein.
       </p>
+
+      {/* Plan-B-Anleitung als Callout mit Koffer-Symbol (VIS-2). */}
+      <InfoCallout
+        icon={<SuitcaseSymbol className="size-5" />}
+        title="Plan B — ressourcenbasiert!"
+      >
+        Falls dir etwas einfällt, was deinem Plan in die Quere kommen kann,
+        überlege dir schon einmal einen Plan B. Ressourcenbasiert, versteht
+        sich!
+      </InfoCallout>
 
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-subtle bg-surface p-6 text-center text-sm text-faint">

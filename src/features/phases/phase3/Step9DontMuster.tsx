@@ -1,5 +1,7 @@
-import { Plus, Trash2 } from "lucide-react";
+import { ArrowRight, ChevronDown, CircleOff, Plus, Trash2 } from "lucide-react";
+import { Fragment, useState } from "react";
 
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
@@ -8,20 +10,38 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { DontPatternEntry, ResourceItem } from "@/features/session/types";
+import { cn } from "@/lib/utils";
 
 const NO_DONTS: DontPatternEntry[] = [];
 
-/** Anmoderation (Methodik-Vorlage, wortgetreu, gekürzt). */
-const INTRO =
+/** Kernsatz sichtbar — der volle Wortlaut bleibt aufklappbar (VIS-2). */
+const INTRO_CORE =
+  "Eine bestimmte, wiederkehrende Ressourcen-Kombination hat dazu beigetragen, dass du in deiner Lage steckst — identifiziere dieses Muster.";
+
+const INTRO_VOLLTEXT =
   "Dieser wichtige letzte Schritt der Ressourcenidentifikation macht dir klar, was du dazu beigetragen hast, dass du in deiner derzeitigen Lage steckst — und was du künftig vermeiden musst. Aus den vielen Ressourcen auf deinem Board trägt eine bestimmte, wiederkehrende Auswahl dazu bei, dass du in diese Situation geraten bist. Identifiziere dieses Muster, damit du dein Verhalten künftig aus einer anderen Ressourcenkombination speist. Vor allem die hinderlichen Ressourcen spielen dabei eine tragende Rolle — sieh sie dir genau an.";
 
-/** Giftschrank-Abschluss (Methodik-Vorlage, wortgetreu, gekürzt). */
-const GIFTSCHRANK =
+/** Giftschrank — Kernsatz + Volltext (Callout im ist-Ton, VIS-2). */
+const GIFTSCHRANK_CORE =
+  "Diese Ressourcen-Kombination gehört auf dem Weg zu deinem Ziel in den ‚Giftschrank‘ — nicht weil die Ressourcen schlecht wären, sondern weil sie dich in dieser Kombination immer wieder in dieselbe Situation führen.";
+
+const GIFTSCHRANK_VOLLTEXT =
   "Damit weißt du, welche Ressourcenkombination auf dem Weg zu deinem Ziel in den ‚Giftschrank‘ gehört. Das bedeutet nicht, dass diese Ressourcen schlecht oder falsch sind — nur in dieser Kombination und in diesem Kontext führen sie dich immer wieder in die gleiche unerwünschte Situation.";
 
-/** Die zwei Einstiege (Methodik-Vorlage, wortgetreu). */
-const LEITFOLGEN: { title: string; steps: string[] }[] = [
+/**
+ * Die zwei Einstiegs-Logiken (Methodik-Vorlage, wortgetreu). Der gewählte
+ * Einstieg bestimmt die Reihenfolge/Nummerierung der Ketten-Felder (VIS-2):
+ * `order` = Feld-Reihenfolge der Muster-Kette (die Erkenntnis steckt im
+ * Wirkung/Erkenntnis-Feld der Kette).
+ */
+const LEITFOLGEN: {
+  id: "ressourcen" | "verhalten";
+  title: string;
+  steps: string[];
+  order: (keyof Omit<DontPatternEntry, "id">)[];
+}[] = [
   {
+    id: "ressourcen",
     title: "Einstieg über die Ressourcen",
     steps: [
       "Welche Ressourcen habe ich genutzt?",
@@ -29,8 +49,10 @@ const LEITFOLGEN: { title: string; steps: string[] }[] = [
       "Was hat das bei meinen systemischen Partnern bewirkt?",
       "Welche Erkenntnis gewinne ich daraus?",
     ],
+    order: ["resources", "behavior", "effect"],
   },
   {
+    id: "verhalten",
     title: "Einstieg über das Verhalten",
     steps: [
       "Wie habe ich mich verhalten?",
@@ -38,6 +60,7 @@ const LEITFOLGEN: { title: string; steps: string[] }[] = [
       "Was hat das bewirkt?",
       "Welche Erkenntnis gewinne ich daraus?",
     ],
+    order: ["behavior", "resources", "effect"],
   },
 ];
 
@@ -82,6 +105,16 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
     (s) => s.session?.phase3.pastPatterns ?? [],
   );
   const patch = useSessionStore((s) => s.patch);
+  // Gewählte Einstiegs-Logik — bestimmt die Reihenfolge der Ketten-Felder
+  // (reine Darstellung, keine Daten: alle Felder schreiben dieselben Keys).
+  const [entryLogic, setEntryLogic] = useState<"ressourcen" | "verhalten">(
+    "ressourcen",
+  );
+  const activeFolge =
+    LEITFOLGEN.find((f) => f.id === entryLogic) ?? LEITFOLGEN[0];
+  const orderedFields = activeFolge.order.map(
+    (key) => FIELDS.find((f) => f.key === key) as (typeof FIELDS)[number],
+  );
 
   // Dedupe: the same text can be rated hinderlich in several fields (and the
   // harvest UI explicitly invites taking a term twice) — unique chips only.
@@ -142,27 +175,59 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO}</p>
+      {/* Kernsatz + Wortlaut aufklappbar (VIS-2). */}
+      <p className="text-muted">{INTRO_CORE}</p>
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+          <ChevronDown
+            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+          Worum es in diesem Schritt geht
+        </summary>
+        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
+      </details>
 
-      {/* Zwei Einstiege */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        {LEITFOLGEN.map((folge) => (
-          <div
-            key={folge.title}
-            className="rounded-xl border border-subtle bg-surface p-4"
-          >
-            <p className="text-xs font-medium uppercase tracking-wide text-faint">
-              {folge.title}
-            </p>
-            <ol className="mt-2 space-y-1 text-sm text-muted">
-              {folge.steps.map((step, index) => (
-                <li key={step}>
-                  {index + 1}. {step}
-                </li>
-              ))}
-            </ol>
-          </div>
-        ))}
+      {/* Zwei Einstiegs-Logiken — zum Antippen; die Wahl bestimmt die
+          Reihenfolge der Ketten-Felder (VIS-2). */}
+      <div
+        role="group"
+        aria-label="Einstieg wählen"
+        className="grid gap-3 sm:grid-cols-2"
+      >
+        {LEITFOLGEN.map((folge) => {
+          const active = folge.id === entryLogic;
+          return (
+            <button
+              key={folge.id}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setEntryLogic(folge.id)}
+              className={cn(
+                "rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                active
+                  ? "border-accent bg-accent/5"
+                  : "border-subtle bg-surface hover:bg-surface-2",
+              )}
+            >
+              <p
+                className={cn(
+                  "text-xs font-medium uppercase tracking-wide",
+                  active ? "text-accent" : "text-faint",
+                )}
+              >
+                {folge.title}
+              </p>
+              <ol className="mt-2 space-y-1 text-sm text-muted">
+                {folge.steps.map((step, index) => (
+                  <li key={step}>
+                    {index + 1}. {step}
+                  </li>
+                ))}
+              </ol>
+            </button>
+          );
+        })}
       </div>
 
       {/* Don't-Bereich — die eine bewusste ist-Token-Ausnahme der Phase 3. */}
@@ -215,26 +280,44 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
                 <Trash2 className="size-4" />
               </button>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {FIELDS.map((field) => (
-                <div key={field.key} className="space-y-1">
-                  <label
-                    htmlFor={`dont-${field.key}-${entry.id}`}
-                    className="block text-xs font-medium text-foreground"
-                  >
-                    {field.label}
-                  </label>
-                  <textarea
-                    id={`dont-${field.key}-${entry.id}`}
-                    value={entry[field.key]}
-                    rows={2}
-                    onChange={(event) =>
-                      updateEntry(entry.id, { [field.key]: event.target.value })
-                    }
-                    placeholder={field.placeholder}
-                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-2.5 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  />
-                </div>
+            {/* Die Muster-Kette: nummerierte, verbundene Felder in der
+                Reihenfolge des gewählten Einstiegs (VIS-2). */}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-1.5">
+              {orderedFields.map((field, index) => (
+                <Fragment key={field.key}>
+                  {index > 0 ? (
+                    <ArrowRight
+                      className="mx-auto size-4 shrink-0 rotate-90 self-center text-ist/50 sm:rotate-0"
+                      aria-hidden
+                    />
+                  ) : null}
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <label
+                      htmlFor={`dont-${field.key}-${entry.id}`}
+                      className="flex items-center gap-1.5 text-xs font-medium text-foreground"
+                    >
+                      <span
+                        aria-hidden
+                        className="flex size-4.5 shrink-0 items-center justify-center rounded-full bg-ist/10 text-[0.65rem] font-semibold text-ist"
+                      >
+                        {index + 1}
+                      </span>
+                      {field.label}
+                    </label>
+                    <textarea
+                      id={`dont-${field.key}-${entry.id}`}
+                      value={entry[field.key]}
+                      rows={2}
+                      onChange={(event) =>
+                        updateEntry(entry.id, {
+                          [field.key]: event.target.value,
+                        })
+                      }
+                      placeholder={field.placeholder}
+                      className="w-full resize-y rounded-lg border border-subtle bg-surface px-2.5 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    />
+                  </div>
+                </Fragment>
               ))}
             </div>
           </div>
@@ -246,9 +329,16 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-subtle bg-surface-2 p-4">
-        <p className="text-sm text-muted">{GIFTSCHRANK}</p>
-      </div>
+      {/* Giftschrank als Callout im ist-Ton (VIS-2) — Volltext aufklappbar. */}
+      <InfoCallout
+        icon={<CircleOff className="size-4" />}
+        title="Der Giftschrank"
+        tone="ist"
+        detail={<p>{GIFTSCHRANK_VOLLTEXT}</p>}
+        detailLabel="Warum das kein Urteil über die Ressourcen ist"
+      >
+        {GIFTSCHRANK_CORE}
+      </InfoCallout>
 
       {/* Legacy pastPatterns — nothing is thrown away. */}
       {pastPatterns.length > 0 ? (

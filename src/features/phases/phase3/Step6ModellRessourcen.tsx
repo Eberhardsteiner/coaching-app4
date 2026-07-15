@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+
 import { KiImpuls } from "@/features/ai/KiImpuls";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import {
@@ -10,8 +12,11 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem } from "@/features/session/types";
 
-/** Anmoderation (Methodik-Vorlage, wortgetreu, gekürzt). */
-const INTRO =
+/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
+const INTRO_CORE =
+  "Jetzt wechselst du die Warte: Ein Blick durch die Brille eines wissenschaftlichen Modells kann neue Erkenntnisse bis hin zu Impulsen für neues Verhalten liefern.";
+
+const INTRO_VOLLTEXT =
   "Bisher hast du dich am Kompetenzmodell orientiert und deine inneren Ressourcen befragt — auf sie kannst du immer zugreifen, denn sie liegen bereits in dir. Jetzt betrachtest du dein Thema und dein Ziel aus einer ganz anderen Warte: aus wissenschaftlicher Sicht. Zu fast allem, was dich bewegt, hat sich eine wissenschaftliche Disziplin schon einmal Gedanken gemacht und ihr Wissen in Modelle gegossen. Modelle sind kein Abbild der Wirklichkeit, aber sie bieten eine Ordnung an, um die Welt in einer bestimmten Perspektive zu verstehen. Ein Blick durch die Brille eines Modells kann neue Erkenntnisse bis hin zu Impulsen für neues Verhalten liefern.";
 
 /** Die vier Leitfragen (Methodik-Vorlage, wortgetreu). */
@@ -70,7 +75,17 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO}</p>
+      <p className="text-muted">{INTRO_CORE}</p>
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+          <ChevronDown
+            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+          Die ganze Anmoderation
+        </summary>
+        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
+      </details>
 
       <p className="text-sm text-muted">
         Es gibt hunderte solcher Modelle — längst nicht alle passen zu deinem

@@ -1,4 +1,4 @@
-import { LayoutDashboard } from "lucide-react";
+import { ChevronDown, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,11 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 
-/** Anmoderation (Methodik-Vorlage, wortgetreu). */
-const INTRO =
+/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
+const INTRO_CORE =
+  "Ressourcen sind zuallererst deine inneren Ressourcen — sieh dir das Kompetenzmodell an und halte deinen Zielsatz als Bewertungsmaßstab bereit.";
+
+const INTRO_VOLLTEXT =
   "Im Coaching sind Ressourcen immer zuallererst deine inneren Ressourcen — alles, was du an Fähigkeiten und Kompetenzen in dir trägst. Aber auch die Motive und Werte, die dich als Persönlichkeit ausmachen und deinen inneren Kompass steuern. Als Orientierungshilfe findest du hier unser Kompetenzmodell, das der Ressourcenanalyse zugrunde liegt. Sieh es dir einmal an. Du beginnst von innen nach außen. Bitte halte deinen Zielsatz bereit — du brauchst ihn als Bewertungsmaßstab.";
 
 /**
@@ -57,7 +60,17 @@ export function Step1Orientierung({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO}</p>
+      <p className="text-muted">{INTRO_CORE}</p>
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+          <ChevronDown
+            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+          Die ganze Anmoderation
+        </summary>
+        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
+      </details>
 
       {/* Der Zielsatz — durchgehender Bewertungsmaßstab dieser Phase. */}
       {goalText.trim() ? (
