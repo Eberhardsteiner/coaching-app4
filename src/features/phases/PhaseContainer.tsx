@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { SectionHead } from "@/components/method/SectionHead";
 import { Phase0View } from "@/features/phases/phase0/Phase0View";
 import { Phase1View } from "@/features/phases/phase1/Phase1View";
 import { Phase2View } from "@/features/phases/phase2/Phase2View";
@@ -85,20 +86,13 @@ export function PhaseContainer() {
 
   return (
     <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
-      <header className="mb-6">
-        <p className="text-xs font-medium uppercase tracking-wider text-faint">
-          {phaseDef.title}
-        </p>
-        <h2 className="mt-1 font-serif text-2xl text-foreground sm:text-3xl">
-          {stepDef.title}
-        </h2>
-        <p className="mt-1 text-xs text-muted">
-          Schritt {stepIndex + 1} von {stepCount}
-        </p>
-        {stepDef.intro ? (
-          <p className="mt-3 text-muted">{stepDef.intro}</p>
-        ) : null}
-      </header>
+      <SectionHead
+        phase={phaseDef.id}
+        eyebrow={phaseDef.title}
+        title={stepDef.title}
+        stepLine={`Schritt ${stepIndex + 1} von ${stepCount}`}
+        intro={stepDef.intro}
+      />
 
       <div className="flex-1">
         {phaseDef.id === 0 ? (

@@ -46,9 +46,6 @@ const KEY_STEP = 16;
    vertically when cards/ovals are placed lower — no needless horizontal scroll. */
 const CANVAS_MARGIN = 320;
 
-/** The unique 1..10 weight scale (10 = "drückt am meisten"). */
-const WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
 const atLeast = (min: number, values: number[]) =>
   values.length ? Math.max(min, ...values) : min;
 
@@ -176,10 +173,6 @@ export function ClusterBoard({
     onClustersChange(
       clusters.map((c) => (c.id === id ? { ...c, x: nx, y: ny } : c)),
     );
-  }
-
-  function weightLockedBy(clusterId: string, value: number): boolean {
-    return clusters.some((c) => c.id !== clusterId && c.weight === value);
   }
 
   /* Oval drag (pointer) --------------------------------------------------- */
@@ -381,44 +374,20 @@ export function ClusterBoard({
                     />
                   </div>
 
-                  {/* Prominent unique-weight badge (select; taken values locked). */}
-                  <label
-                    className="sr-only"
-                    htmlFor={`cluster-weight-${cluster.id}`}
-                  >
-                    Gewicht für Cluster {cluster.name.trim() || index + 1}
-                  </label>
-                  <select
-                    id={`cluster-weight-${cluster.id}`}
-                    value={cluster.weight ?? ""}
-                    disabled={readOnly}
-                    onChange={(event) =>
-                      updateCluster(cluster.id, {
-                        weight: event.target.value
-                          ? Number(event.target.value)
-                          : undefined,
-                      })
-                    }
-                    title="Gewicht (10 = drückt am meisten)"
+                  {/* Wert-Badge (VIS-2): reine Anzeige — bewertet wird direkt
+                      auf der Schmerzskala unter dem Board. */}
+                  <span
+                    aria-label={`Gewicht für Cluster ${cluster.name.trim() || index + 1}: ${cluster.weight ?? "noch ohne Wert"}`}
+                    title="Gewicht (10 = drückt am meisten) — bewerten auf der Schmerzskala"
                     className={cn(
-                      "h-8 shrink-0 rounded-lg px-1.5 text-center text-sm font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+                      "flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg px-1.5 text-center text-sm font-semibold tabular-nums",
                       cluster.weight != null
                         ? "bg-blue-600 text-white"
                         : "border border-dashed border-blue-600/40 bg-white text-blue-900",
                     )}
                   >
-                    <option value="">–</option>
-                    {WEIGHTS.map((value) => (
-                      <option
-                        key={value}
-                        value={value}
-                        disabled={weightLockedBy(cluster.id, value)}
-                      >
-                        {value}
-                        {value === 10 ? " (max)" : ""}
-                      </option>
-                    ))}
-                  </select>
+                    {cluster.weight ?? "–"}
+                  </span>
 
                   <button
                     type="button"

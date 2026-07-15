@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
  * the model cards, the background explanation is collapsible below.
  */
 const INTRO_SHORT =
-  "Du hast aufgeschrieben, was dir aus deiner eigenen Perspektive einfällt. Prüfe nun aus der ‚Vogelperspektive‘, ob weitere Aspekte zu deinem Gefühl beitragen: Wähle dazu eins der vier Modelle (nur eins!) — sie folgen den häufigsten Veränderungsanliegen, und du kannst bei der Auswahl nichts falsch machen.";
+  "Du hast aufgeschrieben, was dir aus deiner eigenen Perspektive einfällt. Prüfe nun aus der ‚Vogelperspektive‘, ob weitere Aspekte zu deinem Gefühl beitragen — die vier Modelle folgen den häufigsten Veränderungsanliegen, und du kannst bei der Auswahl nichts falsch machen.";
 
 /** Condensed background, collapsible (nothing lost — off the surface). */
 const INTRO_DETAILS = [
@@ -456,29 +456,37 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           loadingLabel="Modelle werden geladen …"
         />
       ) : (
-        <div
-          role="group"
-          aria-label="Modell wählen (nur eins)"
-          className="grid gap-3 sm:grid-cols-2"
-        >
-          {list.models.map((model) => (
-            <div
-              key={model.id}
-              className={cn(
-                "h-full transition-opacity",
-                // Exklusive Wahl sichtbar: die nicht gewählten treten zurück.
-                selectedModel && model.id !== selectedModel && "opacity-55",
-              )}
-            >
-              <ModelCard
-                id={model.id}
-                name={model.name}
-                meta={MODEL_META[model.id] ?? DEFAULT_META}
-                selected={model.id === selectedModel}
-                onSelect={() => selectModel(model.id)}
-              />
-            </div>
-          ))}
+        <div className="space-y-2">
+          <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+            Wähle dein Modell
+            <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+              nur 1 Modell
+            </span>
+          </p>
+          <div
+            role="group"
+            aria-label="Modell wählen (nur eins)"
+            className="grid gap-3 sm:grid-cols-2"
+          >
+            {list.models.map((model) => (
+              <div
+                key={model.id}
+                className={cn(
+                  "h-full transition-opacity",
+                  // Exklusive Wahl sichtbar: die nicht gewählten treten zurück.
+                  selectedModel && model.id !== selectedModel && "opacity-55",
+                )}
+              >
+                <ModelCard
+                  id={model.id}
+                  name={model.name}
+                  meta={MODEL_META[model.id] ?? DEFAULT_META}
+                  selected={model.id === selectedModel}
+                  onSelect={() => selectModel(model.id)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

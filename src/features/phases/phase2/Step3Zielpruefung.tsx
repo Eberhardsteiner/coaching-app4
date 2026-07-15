@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -124,6 +124,14 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
   const { emotionalAttraktiv, selbstErreichbar } = components;
   const canNext = emotionalAttraktiv === 10 && selbstErreichbar === 10;
 
+  // Status-Board (VIS-2): der Zustand aller sechs Kriterien in Kachel-Reihenfolge.
+  const doneFlags = [
+    emotionalAttraktiv === 10,
+    selbstErreichbar === 10,
+    ...BOOL_CRITERIA.map((item) => Boolean(components[item.key])),
+  ];
+  const doneCount = doneFlags.filter(Boolean).length;
+
   /** Contextual note nudging a checklist item from earlier input. */
   function contextNote(key: BoolComponentKey): string | null {
     if (key === "terminiert" && datum) return "Datum ist gesetzt.";
@@ -162,12 +170,43 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
           )}
         </div>
 
-        <p className="text-sm font-medium text-foreground">
-          Prüfe dein Ziel in Ruhe — sechs Qualitätskriterien.
-        </p>
+        {/* Status-Board-Kopf (VIS-2): Fortschritt x/6 sichtbar. */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium text-foreground">
+            Prüfe dein Ziel in Ruhe — sechs Qualitätskriterien.
+          </p>
+          <p
+            aria-label={`${doneCount} von 6 Kriterien erfüllt`}
+            className="flex items-center gap-1.5"
+          >
+            <span aria-hidden className="flex gap-1">
+              {doneFlags.map((done, index) => (
+                <span
+                  key={index}
+                  className={cn(
+                    "size-2.5 rounded-full",
+                    done
+                      ? "bg-green-400"
+                      : "border border-faint bg-transparent",
+                  )}
+                />
+              ))}
+            </span>
+            <span className="text-sm font-medium tabular-nums text-foreground">
+              {doneCount}/6
+            </span>
+          </p>
+        </div>
 
         {/* Criteria 1 + 2 — the two scales (10/10 stopper) */}
-        <Criterion number={1} title="Emotional attraktiv">
+        <Criterion
+          number={1}
+          title="Emotional attraktiv"
+          done={emotionalAttraktiv === 10}
+          statusBadge={
+            <ScaleTargetBadge value={emotionalAttraktiv} label="Ziel: 10/10" />
+          }
+        >
           <Scale
             label="Wie emotional attraktiv ist dieses Ziel für dich? (1–10)"
             ariaLabel="Emotional attraktiv von 1 bis 10"
@@ -181,20 +220,26 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
             </Impulse>
           ) : null}
           <Explanation>
-            Ist dein Ziel für dich attraktiv – dann bekommt es 10 von 10
-            Punkten. Ist das nicht der Fall, dann überprüfe einmal, ob du andere
-            Worte verwenden möchtest, ohne dabei die Struktur des Satzes zu
-            verändern.
+            <>
+              Ist dein Ziel für dich attraktiv – dann bekommt es 10 von 10
+              Punkten. Ist das nicht der Fall, dann überprüfe einmal, ob du
+              andere Worte verwenden möchtest, ohne dabei die Struktur des
+              Satzes zu verändern. Ist dein Ziel nicht attraktiv für dich, wird
+              es keine Motivation, keine Bewegung auslösen. Auch wenn es „nur“
+              um einen Satz geht, lass dir Zeit und spüre vor allem, ob er sich
+              richtig für dich anfühlt.
+            </>
           </Explanation>
-          {/* Rahmen-Satz der Vorlage — nahe der Attraktivitäts-Skala. */}
-          <p className="text-sm text-muted">
-            Ist dein Ziel nicht attraktiv für dich, wird es keine Motivation,
-            keine Bewegung auslösen. Auch wenn es „nur“ um einen Satz geht, lass
-            dir Zeit und spüre vor allem, ob er sich richtig für dich anfühlt.
-          </p>
         </Criterion>
 
-        <Criterion number={2} title="Selbst erreichbar">
+        <Criterion
+          number={2}
+          title="Selbst erreichbar"
+          done={selbstErreichbar === 10}
+          statusBadge={
+            <ScaleTargetBadge value={selbstErreichbar} label="Ziel: 10/10" />
+          }
+        >
           <Scale
             label="Wie sehr liegt die Erreichung in deiner eigenen Hand? (1–10)"
             ariaLabel="Selbst erreichbar von 1 bis 10"
@@ -235,7 +280,12 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
           const checked = Boolean(components[item.key]);
           const note = contextNote(item.key);
           return (
-            <Criterion key={item.key} number={item.number} title={item.label}>
+            <Criterion
+              key={item.key}
+              number={item.number}
+              title={item.label}
+              done={checked}
+            >
               <label
                 htmlFor={`comp-${item.key}`}
                 className="flex cursor-pointer items-start gap-3"
@@ -296,27 +346,63 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
   );
 }
 
-/** One quality criterion — numbered card holding its control + explanation. */
+/**
+ * One quality criterion — numbered status tile (VIS-2): the border, the
+ * number chip and a check mark show erfüllt/offen at a glance; the control
+ * and the collapsible explanation live inside.
+ */
 function Criterion({
   number,
   title,
+  done,
+  statusBadge,
   children,
 }: {
   number: number;
   title: string;
+  done: boolean;
+  /** Optional extra status element (e.g. the 10/10 target badge). */
+  statusBadge?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section
-      aria-label={`Kriterium ${number}: ${title}`}
-      className="space-y-3 rounded-xl border border-subtle bg-surface p-4"
+      aria-label={`Kriterium ${number}: ${title} — ${done ? "erfüllt" : "offen"}`}
+      className={cn(
+        "space-y-3 rounded-xl border p-4",
+        done ? "border-green-200 bg-green-50/40" : "border-subtle bg-surface",
+      )}
     >
-      <h3 className="flex items-baseline gap-2">
-        <span className="text-xs font-semibold text-faint">{number}</span>
+      <h3 className="flex flex-wrap items-center gap-2">
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+            done ? "bg-green-400 text-white" : "bg-surface-2 text-faint",
+          )}
+        >
+          {done ? <Check className="size-3" /> : number}
+        </span>
         <span className="text-sm font-medium text-foreground">{title}</span>
+        {statusBadge}
       </h3>
       {children}
     </section>
+  );
+}
+
+/** The visible 10/10 condition on a scale tile (the stopper, VIS-2). */
+function ScaleTargetBadge({ value, label }: { value: number; label: string }) {
+  const done = value === 10;
+  return (
+    <span
+      className={cn(
+        "ml-auto rounded-full px-2 py-0.5 text-xs font-medium",
+        done ? "bg-green-400/15 text-green-800" : "bg-amber-50 text-amber-800",
+      )}
+    >
+      {done ? "10/10 ✓" : value >= 1 ? `${value}/10 — ${label}` : label}
+    </span>
   );
 }
 

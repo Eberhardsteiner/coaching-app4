@@ -1,5 +1,8 @@
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
+import { SunSymbol } from "@/components/icons/PhaseSymbols";
+import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import {
@@ -132,8 +135,18 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
 
         <p className="text-muted">{INTRO}</p>
 
-        {/* Perspektivwechsel — sichtbarer Teil der durchgehenden Anmoderation. */}
-        <p className="text-muted">{PERSPEKTIV_TEXT}</p>
+        {/* Perspektivwechsel — Kernsatz im Callout, Wortlaut aufklappbar
+            (MP2-REV: Volltext bleibt erreichbar). */}
+        <InfoCallout
+          icon={<SunSymbol className="size-5" />}
+          title="Neue Perspektive einnehmen"
+          detail={<p>{PERSPEKTIV_TEXT}</p>}
+          detailLabel="Die ganze Übung lesen"
+        >
+          Such dir einen Platz, an dem du dich wohlfühlst — und stell dir vor,
+          deine Probleme aus der Ist-Situation wären verschwunden. Beschreibe
+          einfach den neuen, positiven Zustand, ohne einen Gedanken an das Wie.
+        </InfoCallout>
 
         <div className="space-y-2">
           <label
@@ -156,23 +169,34 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
         {/* C2 — Gefühlswörter herausziehen (Auswahl → phase2.gefuehl) */}
         <div className="space-y-4 border-t border-subtle pt-6">
           <p className="text-muted">
-            Unterstreiche dann die{" "}
+            Unterstreiche die{" "}
             <strong className="font-semibold text-foreground">
               Gefühlswörter
-            </strong>
-            . Denn zunächst geht es um das neue, positive Gefühl, das sich
-            einstellt, wenn dein neuer Zustand eingetreten ist.
+            </strong>{" "}
+            in deinem Brainstorming — nimm das{" "}
+            <strong className="font-semibold text-foreground">stärkste</strong>{" "}
+            (2 Gefühle sind auch ok):
           </p>
-          <p className="text-muted">
-            Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
-            Ausdruck bringt, dann kannst du dir durch die Liste helfen lassen.
-            Sie hat keinen Anspruch auf Vollständigkeit. Wenn du mehrere Gefühle
-            in dir spürst, dann nimm das{" "}
-            <strong className="font-semibold text-foreground">stärkste</strong>.{" "}
-            <strong className="font-semibold text-foreground">
-              2 Gefühle sind auch ok.
-            </strong>
-          </p>
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+              <ChevronDown
+                className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+                aria-hidden
+              />
+              Warum zuerst das Gefühl?
+            </summary>
+            <div className="mt-1.5 space-y-2 text-sm text-muted">
+              <p>
+                Denn zunächst geht es um das neue, positive Gefühl, das sich
+                einstellt, wenn dein neuer Zustand eingetreten ist.
+              </p>
+              <p>
+                Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
+                Ausdruck bringt, dann kannst du dir durch die Liste helfen
+                lassen. Sie hat keinen Anspruch auf Vollständigkeit.
+              </p>
+            </div>
+          </details>
 
           <div
             role="group"

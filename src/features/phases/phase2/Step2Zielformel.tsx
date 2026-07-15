@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import {
@@ -37,25 +38,85 @@ function assembleGoalText(
   return `Ab dem ${datePart} werde ich ${rollePart}${feeling} in Bezug auf ${coreLabel} erreicht haben.`;
 }
 
-/** A filled or placeholder slot in the live mantra preview. */
-function Slot({ value, placeholder }: { value: string; placeholder?: string }) {
-  const filled = value.trim().length > 0;
+/** The editable mantra segments (Kernthema comes from Phase 1, read-only). */
+type SegmentKey = "datum" | "rolle" | "gefuehl";
+
+/** Segment colour language: field marker + sentence chip share one tone. */
+const SEGMENT_TONES: Record<
+  SegmentKey | "kernthema",
+  { chip: string; activeRing: string; dot: string }
+> = {
+  datum: {
+    chip: "bg-blue-50 text-blue-900",
+    activeRing: "ring-2 ring-blue-400",
+    dot: "bg-blue-400",
+  },
+  rolle: {
+    chip: "bg-teal-100 text-teal-900",
+    activeRing: "ring-2 ring-teal-600",
+    dot: "bg-teal-600",
+  },
+  gefuehl: {
+    chip: "bg-green-50 text-green-900",
+    activeRing: "ring-2 ring-green-400",
+    dot: "bg-green-400",
+  },
+  // Das Kernthema IST der Bezug zur Ist-Situation aus Phase 1 → ist-Ton.
+  kernthema: {
+    chip: "bg-ist/10 text-ist",
+    activeRing: "ring-2 ring-ist",
+    dot: "bg-ist",
+  },
+};
+
+/** One coloured building block inside the live mantra sentence (VIS-2). */
+function MantraChip({
+  tone,
+  active,
+  filled,
+  children,
+}: {
+  tone: SegmentKey | "kernthema";
+  active?: boolean;
+  filled: boolean;
+  children: ReactNode;
+}) {
+  const t = SEGMENT_TONES[tone];
   return (
     <span
-      className={filled ? "font-medium text-foreground" : "italic text-faint"}
+      className={cn(
+        "inline-block rounded-md px-1.5 py-0.5 transition-shadow",
+        t.chip,
+        !filled && "italic opacity-70",
+        active && t.activeRing,
+      )}
     >
-      «{filled ? value : (placeholder ?? "…")}»
+      {children}
     </span>
   );
 }
 
 /**
+ * Anmoderation (MP2-REV, wortgetreu) — vollständig erreichbar im
+ * aufklappbaren „Warum ein Mantra?" (VIS-2: Kernsatz sichtbar, Volltext hier).
+ */
+const INTRO_VOLLTEXT =
+  "Du hast nun eine Vorstellung deiner positiven neuen Situation. Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht alle einfach so merken können. Deshalb geht es nun darum, dass du dir einen Satz zurechtlegst, der für dich wie eine Art Mantra dienen kann. Der in einem Satz beschreibt, wonach du strebst. Damit der Satz für dich gut funktioniert, sollen Qualitätsmerkmale unterstützen, die du leicht selbst überprüfen kannst. Bitte beginne damit, dass du dein erstrebenswertes Gefühl (als Substantiv, also z. B. „Gelassenheit“ statt „gelassen“) identifizierst. Formuliere dann bitte einen Satz, der dem obigen Muster entspricht.";
+
+/** Muster-Zeile (MP2-REV, wortgetreu) — im selben Aufklapp-Bereich. */
+const MUSTER =
+  "Muster: Ab dem DATUM werde ich (in meiner Funktion als …) das POSITIVE GEFÜHL in Bezug auf „mein Hauptproblem“ erreicht haben.";
+
+/**
  * Phase 2, Step 2.2 — Mein Zielsatz. The mantra builder following the method's
- * fixed pattern: „Ab dem DATUM werde ich (in meiner Funktion als ROLLE) GEFÜHL
- * in Bezug auf KERNTHEMA erreicht haben." The FEELING (a noun, prefilled from
- * 2.1) is the core; the role bracket disappears entirely when empty. Every
- * building-block change re-assembles and persists phase2.goalText (the full
- * sentence). Forward is gated on gefuehl + datum. No AI here.
+ * fixed pattern, VIS-2: the sentence is rendered from COLOURED BUILDING
+ * BLOCKS (chips) — focusing an input lights up its chip, so the field ↔
+ * sentence-segment mapping is visible; each field label carries the matching
+ * colour dot. The FEELING (a noun, prefilled from 2.1) is the core; the role
+ * bracket disappears entirely when empty (it shows while its field has
+ * focus, so the mapping stays visible). Every building-block change
+ * re-assembles and persists phase2.goalText (the full sentence). Forward is
+ * gated on gefuehl + datum. No AI here.
  */
 export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
   const datum = useSessionStore((s) => s.session?.phase2.datum ?? "");
@@ -64,6 +125,8 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
   const patch = useSessionStore((s) => s.patch);
   const core = useCoreTheme();
   const label = coreThemeLabel(core);
+  // Which input has focus → its sentence chip lights up (VIS-2 mapping).
+  const [focusSegment, setFocusSegment] = useState<SegmentKey | null>(null);
 
   /**
    * Patch a building block, re-assemble goalText from the NEW values and keep
@@ -92,57 +155,85 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
 
   const canNext = gefuehl.trim().length > 0 && datum.length > 0;
 
+  /** Focus handlers wiring an input to its sentence chip. */
+  const focusProps = (segment: SegmentKey) => ({
+    onFocus: () => setFocusSegment(segment),
+    onBlur: () =>
+      setFocusSegment((current) => (current === segment ? null : current)),
+  });
+
   return (
     <div>
       <div className="space-y-5">
+        {/* Kernsatz sichtbar — Volltext + Muster aufklappbar (MP2-REV bleibt). */}
         <p className="text-muted">
-          Du hast nun eine Vorstellung deiner positiven neuen Situation.
-          Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht
-          alle einfach so merken können. Deshalb geht es nun darum, dass du dir
-          einen Satz zurechtlegst, der für dich wie eine Art{" "}
+          Lege dir einen Satz zurecht, der dir wie ein{" "}
           <strong className="font-semibold text-foreground">Mantra</strong>{" "}
-          dienen kann. Der in einem Satz beschreibt, wonach du strebst. Damit
-          der Satz für dich gut funktioniert, sollen Qualitätsmerkmale
-          unterstützen, die du leicht selbst überprüfen kannst. Bitte beginne
-          damit, dass du dein erstrebenswertes Gefühl (als Substantiv, also z.
-          B. „Gelassenheit“ statt „gelassen“) identifizierst. Formuliere dann
-          bitte einen Satz, der dem obigen Muster entspricht.
+          dient und in einem Satz beschreibt, wonach du strebst. Baue ihn aus
+          den farbigen Bausteinen unten zusammen — beginne mit deinem
+          erstrebenswerten Gefühl (als Substantiv).
         </p>
+        <details className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+            <ChevronDown
+              className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
+              aria-hidden
+            />
+            Warum ein Mantra? (die ganze Anleitung)
+          </summary>
+          <div className="mt-1.5 space-y-2 text-sm text-muted">
+            <p>{INTRO_VOLLTEXT}</p>
+            <p className="font-medium text-foreground">{MUSTER}</p>
+          </div>
+        </details>
 
-        {/* Das Satzmuster der Vorlage — Platzhalter-Schreibweise. */}
-        <p className="text-sm text-muted">
-          Muster:{" "}
-          <strong className="font-semibold text-foreground">
-            Ab dem DATUM werde ich (in meiner Funktion als …) das POSITIVE
-            GEFÜHL in Bezug auf „mein Hauptproblem“ erreicht haben.
-          </strong>
-        </p>
-
-        {/* Live mantra preview — the feeling is the core of the sentence. */}
+        {/* Der Zielsatz aus farbigen Bausteinen (VIS-2) — Fokus im Feld lässt
+            den zugehörigen Baustein aufleuchten. */}
         <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-faint">
             Dein Zielsatz
           </p>
           <p className="mt-2 leading-relaxed text-muted">
             Ab dem{" "}
-            <Slot
-              value={datum ? formatGermanDate(datum) : ""}
-              placeholder="Datum"
-            />{" "}
+            <MantraChip
+              tone="datum"
+              active={focusSegment === "datum"}
+              filled={Boolean(datum)}
+            >
+              {datum ? formatGermanDate(datum) : "Datum"}
+            </MantraChip>{" "}
             werde ich{" "}
-            {rolle.trim() ? (
+            {rolle.trim() || focusSegment === "rolle" ? (
               <>
-                in meiner Funktion als <Slot value={rolle} />{" "}
+                in meiner Funktion als{" "}
+                <MantraChip
+                  tone="rolle"
+                  active={focusSegment === "rolle"}
+                  filled={Boolean(rolle.trim())}
+                >
+                  {rolle.trim() || "Rolle"}
+                </MantraChip>{" "}
               </>
             ) : null}
-            <Slot value={gefuehl} placeholder="Gefühl" /> in Bezug auf{" "}
-            <Slot value={label} /> erreicht haben.
+            <MantraChip
+              tone="gefuehl"
+              active={focusSegment === "gefuehl"}
+              filled={Boolean(gefuehl.trim())}
+            >
+              {gefuehl.trim() || "Gefühl"}
+            </MantraChip>{" "}
+            in Bezug auf{" "}
+            <MantraChip tone="kernthema" filled>
+              {label}
+            </MantraChip>{" "}
+            erreicht haben.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Datum"
+            dot={SEGMENT_TONES.datum.dot}
             htmlFor="phase2-datum"
             hint="Wann willst du es erreicht haben?"
           >
@@ -150,6 +241,7 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
               id="phase2-datum"
               type="date"
               value={datum}
+              {...focusProps("datum")}
               onChange={(event) => setField({ datum: event.target.value })}
               className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
@@ -157,6 +249,7 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
 
           <Field
             label="Gefühl"
+            dot={SEGMENT_TONES.gefuehl.dot}
             htmlFor="phase2-gefuehl"
             hint="Als Substantiv, z. B. „Gelassenheit“ statt „gelassen“."
           >
@@ -164,6 +257,7 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
               id="phase2-gefuehl"
               type="text"
               value={gefuehl}
+              {...focusProps("gefuehl")}
               onChange={(event) => setField({ gefuehl: event.target.value })}
               placeholder="z. B. Gelassenheit"
               className={cn(
@@ -176,6 +270,7 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
 
         <Field
           label="Rolle / Funktion (optional)"
+          dot={SEGMENT_TONES.rolle.dot}
           htmlFor="phase2-rolle"
           hint="Ist sie leer, entfällt der Einschub „in meiner Funktion als …“ komplett."
         >
@@ -183,6 +278,7 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
             id="phase2-rolle"
             type="text"
             value={rolle}
+            {...focusProps("rolle")}
             onChange={(event) => setField({ rolle: event.target.value })}
             placeholder="z. B. Teamleitung"
             className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -190,6 +286,13 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
         </Field>
 
         <div className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm">
+          <span
+            aria-hidden
+            className={cn(
+              "mr-1.5 inline-block size-2.5 rounded-full",
+              SEGMENT_TONES.kernthema.dot,
+            )}
+          />
           <span className="text-muted">Bezug zum Kernthema: </span>
           <span className="font-medium text-foreground">{label}</span>
         </div>
@@ -215,14 +318,17 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
   );
 }
 
-/** Small labelled field wrapper with an optional hint. */
+/** Small labelled field wrapper with the segment colour dot + optional hint. */
 function Field({
   label,
+  dot,
   htmlFor,
   hint,
   children,
 }: {
   label: string;
+  /** Colour-dot class matching the sentence chip (field ↔ segment mapping). */
+  dot?: string;
   htmlFor: string;
   hint?: string;
   children: ReactNode;
@@ -231,8 +337,14 @@ function Field({
     <div className="space-y-1.5">
       <label
         htmlFor={htmlFor}
-        className="block text-sm font-medium text-foreground"
+        className="flex items-center gap-1.5 text-sm font-medium text-foreground"
       >
+        {dot ? (
+          <span
+            aria-hidden
+            className={cn("size-2.5 shrink-0 rounded-full", dot)}
+          />
+        ) : null}
         {label}
       </label>
       {children}
