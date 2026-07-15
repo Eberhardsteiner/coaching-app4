@@ -96,13 +96,14 @@ function MantraChip({
 }
 
 /**
- * Anmoderation (MP2-REV, wortgetreu) — vollständig erreichbar im
- * aufklappbaren „Warum ein Mantra?" (VIS-2: Kernsatz sichtbar, Volltext hier).
+ * Anmoderation (MP2-REV, wortgetreu) — sichtbarer Coaching-Absatz (VOICE-1).
+ * „dem obigen Muster" ist Pflicht-Wortlaut aus der Methodik-Vorlage; die
+ * Muster-Zeile wird hier direkt darunter gerendert (wie schon in MP2-REV).
  */
 const INTRO_VOLLTEXT =
   "Du hast nun eine Vorstellung deiner positiven neuen Situation. Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht alle einfach so merken können. Deshalb geht es nun darum, dass du dir einen Satz zurechtlegst, der für dich wie eine Art Mantra dienen kann. Der in einem Satz beschreibt, wonach du strebst. Damit der Satz für dich gut funktioniert, sollen Qualitätsmerkmale unterstützen, die du leicht selbst überprüfen kannst. Bitte beginne damit, dass du dein erstrebenswertes Gefühl (als Substantiv, also z. B. „Gelassenheit“ statt „gelassen“) identifizierst. Formuliere dann bitte einen Satz, der dem obigen Muster entspricht.";
 
-/** Muster-Zeile (MP2-REV, wortgetreu) — im selben Aufklapp-Bereich. */
+/** Muster-Zeile (MP2-REV, wortgetreu) — sichtbar unter der Anmoderation. */
 const MUSTER =
   "Muster: Ab dem DATUM werde ich (in meiner Funktion als …) das POSITIVE GEFÜHL in Bezug auf „mein Hauptproblem“ erreicht haben.";
 

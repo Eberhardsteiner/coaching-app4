@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
 import { StepNav } from "@/features/phases/StepNav";
@@ -7,10 +6,7 @@ import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
-/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
-const INTRO_CORE =
-  "Dein Körper ist dein erster Signalgeber — identifiziere, welche Stellen oder Bereiche dir anzeigen, wenn etwas ‚nicht stimmt‘, und notiere sie unter deinen Ressourcen.";
-
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
 const INTRO_VOLLTEXT =
   "Dein Körper ist der wichtigste und erste Signalgeber für dein Wohlbefinden. Er ist unser Seismograf für Veränderungen von außen und innen — und unsere Gefühlslandkarte, die uns mit Körpersignalen anzeigt, wenn etwas ‚nicht stimmt‘. Oft haben wir spezifische Stellen oder Bereiche, die wir als Signalgeber bereits kennen. Identifiziere, welche das bei dir sind, und notiere sie unter deinen Ressourcen.";
 
@@ -81,17 +77,7 @@ export function Step8Koerpersignale({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_CORE}</p>
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-          <ChevronDown
-            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Die ganze Anmoderation
-        </summary>
-        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
-      </details>
+      <p className="text-muted">{INTRO_VOLLTEXT}</p>
 
       <div className="space-y-2">
         <p className="text-sm font-medium text-foreground">

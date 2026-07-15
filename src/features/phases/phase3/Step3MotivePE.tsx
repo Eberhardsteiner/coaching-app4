@@ -12,10 +12,7 @@ import type { ResourceItem } from "@/features/session/types";
 /** Stable empty default for the additive-optional personalityTraits field. */
 const NO_ITEMS: ResourceItem[] = [];
 
-/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
-const INTRO_CORE =
-  "Identifiziere deine stärksten Motive und Persönlichkeitseigenschaften — wenn du einen Motivtest (EPP) gemacht hast, nimm die Ergebnisse zur Hand.";
-
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
 const INTRO_VOLLTEXT =
   "Wenn du einen Motivtest (EPP) gemacht hast, nimm bitte die Ergebnisse zur Hand. Identifiziere deine stärksten Motive und Persönlichkeitseigenschaften — du erkennst sie an hohen Werten. Bei Fragen zu deinem Motivtest kannst du dich jederzeit an einen unserer Coaches und EPP-Berater*innen wenden. Für eine erste Orientierung helfen dir die kurzen Beschreibungen zu den Motivwörtern.";
 
@@ -73,17 +70,7 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_CORE}</p>
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-          <ChevronDown
-            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Die ganze Anmoderation
-        </summary>
-        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
-      </details>
+      <p className="text-muted">{INTRO_VOLLTEXT}</p>
 
       {loaded.status === "loading" || loaded.status === "error" ? (
         <ContentLoadState

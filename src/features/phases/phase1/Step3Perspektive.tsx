@@ -36,10 +36,8 @@ const INTRO_VORGEHEN =
 const INTRO_VERTIEFUNG =
   "Der SMC-Prozess hat dir eine Erweiterung deiner Perspektiven zugesagt. Ein Blick durch die Brille eines Modells kann Aspekte sichtbar machen, die dir aus der eigenen Perspektive nicht eingefallen sind.";
 
-const INTRO_TERMS_CORE =
-  "Suche nach Ergänzungen deines Ist-Bildes: Was genau meinst du mit dem Begriff, und wie trägt das zu deinem Gefühl bei?";
-
-const INTRO_TERMS_VOLLTEXT =
+/** Kern-Anleitung der Begriffsarbeit — sichtbar (VOICE-1). */
+const INTRO_TERMS =
   "Wenn du ein Modell gewählt hast, dann suche nach möglichen Ergänzungen deines aktuellen Bildes der Ist-Situation. Wenn du welche gefunden hast, gehe wieder genauso vor, wie du es bereits praktiziert hast: Was genau meinst du mit dem Begriff und wie trägt das zu deinem Gefühl bei?";
 
 /** Model-button presentation metadata (icon + Anliegen + Kurzbeschreibung). */
@@ -590,19 +588,7 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
               <h3 className="font-serif text-lg text-foreground">
                 Begriffe durchgehen
               </h3>
-              <p className="mt-1 text-sm text-muted">{INTRO_TERMS_CORE}</p>
-              <details className="group mt-1">
-                <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-                  <ChevronDown
-                    className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                    aria-hidden
-                  />
-                  Die ganze Anleitung
-                </summary>
-                <p className="mt-1.5 text-sm text-muted">
-                  {INTRO_TERMS_VOLLTEXT}
-                </p>
-              </details>
+              <p className="mt-1 text-sm text-muted">{INTRO_TERMS}</p>
               {/* Legende: die Farbe zeigt sich selbst — keine Farbnamen. */}
               <div
                 role="list"

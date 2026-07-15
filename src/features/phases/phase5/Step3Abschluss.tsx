@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import { ContactCard } from "@/components/ContactCard";
 import { METHOD_LABELS } from "@/config/method";
 import { PhaseCheck } from "@/features/phases/PhaseCheck";
@@ -14,10 +13,7 @@ const EMPTY_CHECK: PhaseCheckValue = {
   transfer: "",
 };
 
-/** Kernsatz sichtbar — der Wortlaut bleibt aufklappbar (VIS-2). */
-const OUTRO_1_CORE =
-  "Du hast deinen Coachingprozess vollständig durchlaufen — dem Erreichen deines Ziels steht nun nichts mehr entgegen.";
-
+/** Abschlusstext — vollständig sichtbar (VOICE-1). */
 const OUTRO_1_VOLLTEXT =
   "Du hast deinen Coachingprozess vollständig durchlaufen. Wenn du zufrieden bist mit deinem Weg und den Ergebnissen, dann steht dem Erreichen deines Ziels nun nichts mehr entgegen. Solltest du noch unsicher sein und Zweifel haben, so wende dich gern an einen Coach aus unserem Team, der oder die dich gern darin unterstützt, deine Unklarheiten auszuräumen.";
 
@@ -53,17 +49,7 @@ export function Step3Abschluss({
 
   return (
     <div className="space-y-5">
-      <p className="text-muted">{OUTRO_1_CORE}</p>
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-          <ChevronDown
-            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Der ganze Abschlusstext
-        </summary>
-        <p className="mt-1.5 text-sm text-muted">{OUTRO_1_VOLLTEXT}</p>
-      </details>
+      <p className="text-muted">{OUTRO_1_VOLLTEXT}</p>
 
       <ContactCard />
 

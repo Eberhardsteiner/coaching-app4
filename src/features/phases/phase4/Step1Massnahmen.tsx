@@ -372,18 +372,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   />
                   Dein Wirkindikator aus Phase 2
                 </p>
-                <details className="group">
-                  <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-                    <ChevronDown
-                      className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                      aria-hidden
-                    />
-                    Was der Wirkindikator ist
-                  </summary>
-                  <p className="mt-1.5 text-xs text-muted">
-                    {WIRKINDIKATOR_TEXT}
-                  </p>
-                </details>
+                <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
                 <div className="space-y-1">
                   <p className="text-xs text-muted">
                     An welcher konkreten Handlung von dir erkennt „{activeName}
@@ -458,21 +447,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   Cockpit öffnen
                 </Button>
               </div>
-              <p className="text-xs text-muted">
-                Wähle mindestens 3 hilfreiche Ressourcen zu diesem Cluster —
-                deine starken förderlichen Motive und
-                Persönlichkeitseigenschaften sollen vorkommen.
-              </p>
-              <details className="group">
-                <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-                  <ChevronDown
-                    className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-                    aria-hidden
-                  />
-                  Die ganze Anleitung
-                </summary>
-                <p className="mt-1.5 text-xs text-muted">{RESSOURCEN_TEXT}</p>
-              </details>
+              <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
               {foerderliche.length === 0 ? (
                 <p className="text-xs text-faint">
                   Keine als förderlich markierten Ressourcen. Du kannst trotzdem

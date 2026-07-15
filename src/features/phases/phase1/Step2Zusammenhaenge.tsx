@@ -170,17 +170,13 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
               <li key={point}>{point}</li>
             ))}
           </ol>
+          {/* Merkzeile ohne Begründungs-Doppelung (VOICE-1): der Frage-Satz
+              steht wortgetreu im sichtbaren Anmoderations-Absatz darüber. */}
           <div className="mt-3 flex items-start gap-2 rounded-lg border border-ist/30 bg-ist/5 p-3">
             <Info className="mt-0.5 size-4 shrink-0 text-ist" aria-hidden />
-            <div>
-              <p className="text-sm font-semibold text-ist">
-                ACHTUNG: keine Lösungen!
-              </p>
-              <p className="mt-0.5 text-sm text-muted">
-                Wenn dir eine Lösung einfällt, frage dich: ‚Wie ist es aktuell
-                wirklich?‘
-              </p>
-            </div>
+            <p className="text-sm font-semibold text-ist">
+              ACHTUNG: keine Lösungen!
+            </p>
           </div>
         </div>
 

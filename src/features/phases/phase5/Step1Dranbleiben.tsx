@@ -148,8 +148,9 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
   return (
     <div className="space-y-5">
       <p className="text-muted">
-        Wer oder was kann dich beim Umsetzen deines Plans unterstützen? Trage
-        die Punkte mit den zugehörigen Ressourcen ein.
+        Bitte überlege dir einmal: Wer oder was kann dich beim Umsetzen deines
+        Plans unterstützen? Trage die Punkte, die dir einfallen, mit den
+        zugehörigen Ressourcen ein.
       </p>
 
       {/* Beispiel-Anregungen — ein Klick legt eine Strategien-Zeile an. */}

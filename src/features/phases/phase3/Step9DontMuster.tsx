@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, CircleOff, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, CircleOff, Plus, Trash2 } from "lucide-react";
 import { Fragment, useState } from "react";
 
 import { InfoCallout } from "@/components/method/InfoCallout";
@@ -14,17 +14,11 @@ import { cn } from "@/lib/utils";
 
 const NO_DONTS: DontPatternEntry[] = [];
 
-/** Kernsatz sichtbar — der volle Wortlaut bleibt aufklappbar (VIS-2). */
-const INTRO_CORE =
-  "Eine bestimmte, wiederkehrende Ressourcen-Kombination hat dazu beigetragen, dass du in deiner Lage steckst — identifiziere dieses Muster.";
-
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
 const INTRO_VOLLTEXT =
   "Dieser wichtige letzte Schritt der Ressourcenidentifikation macht dir klar, was du dazu beigetragen hast, dass du in deiner derzeitigen Lage steckst — und was du künftig vermeiden musst. Aus den vielen Ressourcen auf deinem Board trägt eine bestimmte, wiederkehrende Auswahl dazu bei, dass du in diese Situation geraten bist. Identifiziere dieses Muster, damit du dein Verhalten künftig aus einer anderen Ressourcenkombination speist. Vor allem die hinderlichen Ressourcen spielen dabei eine tragende Rolle — sieh sie dir genau an.";
 
-/** Giftschrank — Kernsatz + Volltext (Callout im ist-Ton, VIS-2). */
-const GIFTSCHRANK_CORE =
-  "Diese Ressourcen-Kombination gehört auf dem Weg zu deinem Ziel in den ‚Giftschrank‘ — nicht weil die Ressourcen schlecht wären, sondern weil sie dich in dieser Kombination immer wieder in dieselbe Situation führen.";
-
+/** Giftschrank — sichtbar im Callout (VOICE-1). */
 const GIFTSCHRANK_VOLLTEXT =
   "Damit weißt du, welche Ressourcenkombination auf dem Weg zu deinem Ziel in den ‚Giftschrank‘ gehört. Das bedeutet nicht, dass diese Ressourcen schlecht oder falsch sind — nur in dieser Kombination und in diesem Kontext führen sie dich immer wieder in die gleiche unerwünschte Situation.";
 
@@ -175,18 +169,8 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      {/* Kernsatz + Wortlaut aufklappbar (VIS-2). */}
-      <p className="text-muted">{INTRO_CORE}</p>
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-          <ChevronDown
-            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Worum es in diesem Schritt geht
-        </summary>
-        <p className="mt-1.5 text-sm text-muted">{INTRO_VOLLTEXT}</p>
-      </details>
+      {/* Anmoderation — sichtbar (VOICE-1). */}
+      <p className="text-muted">{INTRO_VOLLTEXT}</p>
 
       {/* Zwei Einstiegs-Logiken — zum Antippen; die Wahl bestimmt die
           Reihenfolge der Ketten-Felder (VIS-2). */}
@@ -329,15 +313,13 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
         </Button>
       </div>
 
-      {/* Giftschrank als Callout im ist-Ton (VIS-2) — Volltext aufklappbar. */}
+      {/* Giftschrank als Callout im ist-Ton — Volltext sichtbar (VOICE-1). */}
       <InfoCallout
         icon={<CircleOff className="size-4" />}
         title="Der Giftschrank"
         tone="ist"
-        detail={<p>{GIFTSCHRANK_VOLLTEXT}</p>}
-        detailLabel="Warum das kein Urteil über die Ressourcen ist"
       >
-        {GIFTSCHRANK_CORE}
+        {GIFTSCHRANK_VOLLTEXT}
       </InfoCallout>
 
       {/* Legacy pastPatterns — nothing is thrown away. */}

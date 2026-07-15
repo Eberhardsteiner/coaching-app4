@@ -1,7 +1,6 @@
 import {
   Boxes,
   Check,
-  ChevronDown,
   HelpCircle,
   Plus,
   SkipForward,
@@ -189,17 +188,8 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
+      <p className="text-muted">{INTRO_1}</p>
       <p className="text-muted">{INTRO_2}</p>
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
-          <ChevronDown
-            className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          Woher deine Klassifikation kommt
-        </summary>
-        <p className="mt-1.5 text-sm text-muted">{INTRO_1}</p>
-      </details>
 
       <p className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm text-muted">
         Wenn du ein „Ich“-Cluster hast, kannst du es hier weglassen — deine
