@@ -129,7 +129,10 @@ export function AppShell() {
         <TopBar />
         <div className="flex min-h-0 flex-1">
           <main data-tour="stage" className="min-w-0 flex-1 overflow-y-auto">
-            <div className="mx-auto h-full w-full max-w-[var(--stage-max-width)] p-[var(--stage-padding)]">
+            {/* Mobil: schlanke, feste Polsterung, damit der Inhalt nicht auf
+                eine schmale Spalte gequetscht wird (K3 — sonst brechen Chips/
+                Wörter unlesbar um). Ab sm die persona-abhängige Bühnendichte. */}
+            <div className="mx-auto h-full w-full max-w-[var(--stage-max-width)] px-4 py-6 sm:p-[var(--stage-padding)]">
               <Outlet />
             </div>
           </main>

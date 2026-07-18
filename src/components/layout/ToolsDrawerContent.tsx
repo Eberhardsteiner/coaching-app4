@@ -29,7 +29,7 @@ export function ToolsDrawerContent() {
           <p className="text-xs font-medium uppercase tracking-wide text-faint">
             Dein Zielsatz
           </p>
-          <p className="mt-1.5 text-sm font-medium leading-relaxed text-foreground">
+          <p className="mt-1.5 text-sm font-medium leading-relaxed break-words text-foreground">
             {goalText.trim()}
           </p>
         </div>

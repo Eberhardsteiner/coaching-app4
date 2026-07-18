@@ -1,5 +1,7 @@
 import { SuitcaseSymbol } from "@/components/icons/PhaseSymbols";
 import { InfoCallout } from "@/components/method/InfoCallout";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
 import { StepNav } from "@/features/phases/StepNav";
@@ -28,7 +30,7 @@ function DueField({
   onUpdate: UpdateMeasure;
 }) {
   return (
-    <input
+    <Input
       type="date"
       aria-label={`Bis wann: ${row.measure.text.slice(0, 40)}`}
       value={row.measure.dueDate ?? ""}
@@ -37,7 +39,7 @@ function DueField({
           dueDate: event.target.value || undefined,
         })
       }
-      className="w-full rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="px-2 py-1.5"
     />
   );
 }
@@ -51,7 +53,8 @@ function ObstaclesField({
   onUpdate: UpdateMeasure;
 }) {
   return (
-    <textarea
+    <Textarea
+      autoResize
       aria-label={`Mögliche Hindernisse: ${row.measure.text.slice(0, 40)}`}
       value={row.measure.obstacles ?? ""}
       rows={2}
@@ -61,7 +64,7 @@ function ObstaclesField({
         })
       }
       placeholder="Was kann dazwischenkommen?"
-      className="w-full resize-y rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="px-2 py-1.5"
     />
   );
 }
@@ -75,7 +78,8 @@ function AlternativesField({
   onUpdate: UpdateMeasure;
 }) {
   return (
-    <textarea
+    <Textarea
+      autoResize
       aria-label={`Ressourcen & Alternativen: ${row.measure.text.slice(0, 40)}`}
       value={row.measure.alternatives ?? ""}
       rows={2}
@@ -85,7 +89,7 @@ function AlternativesField({
         })
       }
       placeholder="Plan B — aus deinen Ressourcen"
-      className="w-full resize-y rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="px-2 py-1.5"
     />
   );
 }
@@ -188,26 +192,30 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
         <>
           {/* md+: die Tabelle der Vorlage */}
           <div className="hidden overflow-x-auto md:block">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full table-fixed border-collapse text-sm">
               <caption className="sr-only">
                 Maßnahmenplan: Handlungsfeld, Maßnahme, Bis wann, mögliche
                 Hindernisse, Ressourcen und Alternativen
               </caption>
               <thead>
                 <tr className="border-b border-subtle text-left">
-                  <th className="py-2 pr-3 font-medium text-foreground">
+                  {/* table-fixed: „Bis wann" braucht eine feste Breite (das
+                      native Datumsfeld schneidet sonst ab); die beiden
+                      Textspalten ohne Breite teilen sich den Rest — sie
+                      dominieren (K3). */}
+                  <th className="w-[14%] py-2 pr-3 font-medium text-foreground">
                     Handlungsfeld
                   </th>
-                  <th className="py-2 pr-3 font-medium text-foreground">
+                  <th className="w-[22%] py-2 pr-3 font-medium text-foreground">
                     Maßnahme
                   </th>
-                  <th className="w-36 py-2 pr-3 font-medium text-foreground">
+                  <th className="w-32 py-2 pr-3 font-medium text-foreground">
                     Bis wann
                   </th>
-                  <th className="w-1/5 py-2 pr-3 font-medium text-foreground">
+                  <th className="py-2 pr-3 font-medium text-foreground">
                     Mögliche Hindernisse
                   </th>
-                  <th className="w-1/5 py-2 font-medium text-foreground">
+                  <th className="py-2 font-medium text-foreground">
                     Ressourcen &amp; Alternativen
                   </th>
                 </tr>
@@ -218,10 +226,10 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
                     key={row.measure.id}
                     className="border-b border-subtle align-top"
                   >
-                    <td className="py-2.5 pr-3 text-muted">
+                    <td className="py-2.5 pr-3 break-words text-muted">
                       {row.clusterName}
                     </td>
-                    <td className="py-2.5 pr-3 text-foreground">
+                    <td className="py-2.5 pr-3 break-words text-foreground">
                       {row.measure.text.trim()}
                     </td>
                     <td className="py-2.5 pr-3">

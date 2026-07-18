@@ -1,5 +1,13 @@
 import type { ReactNode } from "react";
 
+import {
+  BoatSymbol,
+  CloudSymbol,
+  FlagSymbol,
+  SuitcaseSymbol,
+  SunSymbol,
+} from "@/components/icons/PhaseSymbols";
+import { BRANCH_LABELS } from "@/config/constants";
 import { BRANDING } from "@/config/branding";
 import { PHASES } from "@/features/phases/phaseConfig";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
@@ -15,11 +23,44 @@ function formatDate(iso: string): string {
   return y && m && d ? `${d}.${m}.${y}` : iso;
 }
 
-/** A summary section — heading + body; rendered only when it has content. */
+/** A summary sub-section — heading + body; rendered only when it has content. */
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="summary-section space-y-2">
-      <h2 className="font-serif text-lg text-foreground">{title}</h2>
+      <h3 className="font-serif text-base text-foreground">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+/**
+ * One phase block of the summary (K3): a phase symbol + numbered heading, then
+ * its sub-sections. In print each phase starts on a new page (`.summary-phase`);
+ * the symbol colour follows the Rubikon language (Phase 1 = IST-rosa, else the
+ * accent). Rendered only when the phase actually has content.
+ */
+function PhaseGroup({
+  n,
+  title,
+  symbol,
+  ist = false,
+  children,
+}: {
+  n: number;
+  title: string;
+  symbol: ReactNode;
+  ist?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <section className="summary-phase space-y-4">
+      <div className="summary-keep flex items-center gap-2.5 border-b border-subtle pb-2">
+        <span className={ist ? "text-ist" : "text-accent"}>{symbol}</span>
+        <h2 className="font-serif text-xl text-foreground">
+          <span className="text-faint">{n} · </span>
+          {title}
+        </h2>
+      </div>
       {children}
     </section>
   );
@@ -258,411 +299,506 @@ export function SessionSummary({ session }: { session: Session }) {
     }))
     .filter((entry) => entry.fields.length > 0);
 
+  // Which phase blocks have any content (→ printed as their own page).
+  const p1Has = Boolean(
+    phase0.topicSketch.trim() || phase1.istWord.trim() || coreCluster,
+  );
+  const p2Has = hasGoal || consequenceRows.length > 0;
+  const p3Has = hasPhase3;
+  // preMortem is only rendered inside the planRows section, so it alone does
+  // not open the phase (else an empty phase-4 heading would show).
+  const p4Has = planRows.length > 0;
+  const p5Has = strategies.length > 0 || Boolean(phase5.insights.trim());
+  const notesHas = Boolean(notebook) || reflexionen.length > 0;
+
   return (
-    <article className="space-y-8">
-      {/* Head */}
-      <header className="summary-section space-y-1 border-b border-subtle pb-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-faint">
-          {BRANDING.appName}
-        </p>
-        <h1 className="font-serif text-2xl text-foreground">Zusammenfassung</h1>
-        <p className="text-sm text-muted">{formatDate(meta.createdAt)}</p>
+    <article className="summary-print space-y-8">
+      {/* Deckblatt-Kopf (K3): Methodenname, Titel, Datum/Zweig + Zielsatz-Karte. */}
+      <header className="summary-cover summary-section space-y-3 border-b border-subtle pb-5">
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-wider text-faint">
+            {BRANDING.appName} · {BRANDING.methodLabel}
+          </p>
+          <h1 className="font-serif text-3xl text-foreground">
+            Meine Coaching-Zusammenfassung
+          </h1>
+          <p className="text-sm text-muted">
+            {formatDate(meta.createdAt)} · {BRANCH_LABELS[meta.branch]}
+          </p>
+        </div>
+        {goalText ? (
+          <div className="summary-keep rounded-xl border border-accent/30 bg-accent/5 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-faint">
+              Dein Zielsatz
+            </p>
+            <p className="mt-1.5 font-serif text-lg leading-relaxed break-words text-foreground">
+              {goalText}
+            </p>
+          </div>
+        ) : null}
       </header>
 
-      {/* Dein Thema */}
-      {phase0.topicSketch.trim() || phase1.istWord.trim() ? (
-        <Section title="Dein Thema">
-          {phase0.topicSketch.trim() ? (
-            <p className="text-foreground">{phase0.topicSketch.trim()}</p>
-          ) : null}
-          {phase1.istWord.trim() ? (
-            <p className="inline-flex flex-wrap items-center gap-2 rounded-lg border border-ist/40 bg-pink-50 px-3 py-1.5 text-sm">
-              <span className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
-                IST
-              </span>
-              <span className="font-medium text-pink-900">
-                {phase1.istWord.trim()}
-              </span>
-              {typeof phase1.istBurden === "number" ? (
-                <span className="text-pink-900/70">
-                  · Belastung {phase1.istBurden}/10
-                </span>
+      {p1Has ? (
+        <PhaseGroup
+          n={1}
+          title="IST verstehen"
+          symbol={<CloudSymbol className="size-6" />}
+          ist
+        >
+          {/* Dein Thema */}
+          {phase0.topicSketch.trim() || phase1.istWord.trim() ? (
+            <Section title="Dein Thema">
+              {phase0.topicSketch.trim() ? (
+                <p className="text-foreground">{phase0.topicSketch.trim()}</p>
               ) : null}
-            </p>
-          ) : null}
-        </Section>
-      ) : null}
-
-      {/* Dein Kernthema */}
-      {coreCluster ? (
-        <Section title="Dein Kernthema">
-          <p className="font-medium text-foreground">{coreLabel}</p>
-          {otherClusters.length > 0 ? (
-            <ul className="ml-4 list-disc text-sm text-muted">
-              {otherClusters.map((c) => (
-                <li key={c.id}>
-                  {c.name.trim() || "Cluster"}
-                  {c.weight != null ? ` · Gewicht ${c.weight}` : ""}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </Section>
-      ) : null}
-
-      {/* Dein Ziel */}
-      {hasGoal ? (
-        <Section title="Dein Ziel">
-          <p className="font-medium text-foreground">{goalText || "—"}</p>
-          {gefuehl ? (
-            <p className="text-sm text-muted">
-              <span className="text-foreground">Zielgefühl:</span> {gefuehl}
-            </p>
-          ) : null}
-          {hasCriteria ? (
-            <ul className="text-sm text-muted">
-              {comp.emotionalAttraktiv > 0 ? (
-                <li>
-                  <span className="text-foreground">Emotional attraktiv:</span>{" "}
-                  {comp.emotionalAttraktiv}/10
-                </li>
-              ) : null}
-              {comp.selbstErreichbar > 0 ? (
-                <li>
-                  <span className="text-foreground">Selbst erreichbar:</span>{" "}
-                  {comp.selbstErreichbar}/10
-                </li>
-              ) : null}
-              {fulfilledChecks.length > 0 ? (
-                <li>
-                  <span className="text-foreground">Erfüllt:</span>{" "}
-                  {fulfilledChecks.join(", ")}
-                </li>
-              ) : null}
-            </ul>
-          ) : null}
-        </Section>
-      ) : null}
-
-      {/* Folgen deines Ziels */}
-      {consequenceRows.length > 0 ? (
-        <Section title="Folgen deines Ziels">
-          <ul className="space-y-2">
-            {consequenceRows.map((row) => (
-              <li key={row.id}>
-                <p className="text-sm font-medium text-foreground">
-                  {row.name}
-                  {row.isCore ? (
-                    <span className="font-normal text-muted"> (Kernthema)</span>
-                  ) : null}
-                  {row.valuation ? (
-                    <span className="font-normal text-muted">
-                      {" "}
-                      — {row.valuation}
+              {phase1.istWord.trim() ? (
+                <p className="inline-flex flex-wrap items-center gap-2 rounded-lg border border-ist/40 bg-pink-50 px-3 py-1.5 text-sm">
+                  <span className="text-[0.65rem] font-medium uppercase tracking-wide text-ist">
+                    IST
+                  </span>
+                  <span className="font-medium text-pink-900">
+                    {phase1.istWord.trim()}
+                  </span>
+                  {typeof phase1.istBurden === "number" ? (
+                    <span className="text-pink-900/70">
+                      · Belastung {phase1.istBurden}/10
                     </span>
                   ) : null}
                 </p>
-                {row.recognition ? (
-                  <p className="text-sm text-muted">{row.recognition}</p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </Section>
+              ) : null}
+            </Section>
+          ) : null}
+
+          {/* Dein Kernthema */}
+          {coreCluster ? (
+            <Section title="Dein Kernthema">
+              <p className="font-medium text-foreground">{coreLabel}</p>
+              {otherClusters.length > 0 ? (
+                <ul className="ml-4 list-disc text-sm text-muted">
+                  {otherClusters.map((c) => (
+                    <li key={c.id}>
+                      {c.name.trim() || "Cluster"}
+                      {c.weight != null ? ` · Gewicht ${c.weight}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </Section>
+          ) : null}
+        </PhaseGroup>
       ) : null}
 
-      {/* Deine Ressourcen — Cockpit-Gliederung (MP3) */}
-      {hasPhase3 ? (
-        <Section title="Deine Ressourcen">
-          <div className="space-y-3 text-sm">
-            {ownResourceRows.map((row) => (
-              <p key={row.label} className="text-muted">
-                <span className="font-medium text-foreground">
-                  {row.label}:
-                </span>{" "}
-                {row.text}
-              </p>
-            ))}
-            {valueColumns.length > 0 || valueLegacyText ? (
-              <div>
-                <p className="font-medium text-foreground">Meine Werte</p>
-                <ul className="ml-4 list-disc text-muted">
-                  {valueColumns.map((row) => (
-                    <li key={row.label}>
-                      <span className="text-foreground">{row.label}:</span>{" "}
-                      {row.text}
-                    </li>
-                  ))}
-                  {valueLegacyText ? (
-                    <li>
-                      <span className="text-foreground">Weitere:</span>{" "}
-                      {valueLegacyText}
-                    </li>
-                  ) : null}
-                </ul>
-              </div>
-            ) : null}
-            {othersGroups.length > 0 || othersLegacy.length > 0 ? (
-              <div>
-                <p className="font-medium text-foreground">Werte der Anderen</p>
-                <ul className="ml-4 list-disc text-muted">
-                  {othersGroups.map((group) => (
-                    <li key={group.id}>
-                      <span className="text-foreground">{group.name}</span>
-                      {group.wer ? ` (${group.wer})` : ""}
-                      {group.werte.length > 0
-                        ? `: ${group.werte.join(" · ")}`
-                        : ""}
-                    </li>
-                  ))}
-                  {othersLegacy.length > 0 ? (
-                    <li>
-                      <span className="text-foreground">Weitere:</span>{" "}
-                      {othersLegacy.join(" · ")}
-                    </li>
-                  ) : null}
-                </ul>
-              </div>
-            ) : null}
-            {othersInsight ? (
-              <p className="text-muted">
-                <span className="font-medium text-foreground">
-                  Erkenntnisse aus dem Werte-Abgleich:
-                </span>{" "}
-                {othersInsight}
-              </p>
-            ) : null}
-            {modelResources.length > 0 ? (
-              <div>
-                <p className="font-medium text-foreground">
-                  Ressourcen aus Modellen
+      {p2Has ? (
+        <PhaseGroup
+          n={2}
+          title="Ziel finden"
+          symbol={<SunSymbol className="size-6" />}
+        >
+          {/* Dein Ziel */}
+          {hasGoal ? (
+            <Section title="Dein Ziel">
+              <p className="font-medium text-foreground">{goalText || "—"}</p>
+              {gefuehl ? (
+                <p className="text-sm text-muted">
+                  <span className="text-foreground">Zielgefühl:</span> {gefuehl}
                 </p>
-                <ul className="ml-4 list-disc text-muted">
-                  {modelResources.map((i) => (
-                    <li key={i.id}>
-                      {i.note?.trim() ? (
-                        <span className="text-foreground">
-                          {i.note.trim()}:{" "}
+              ) : null}
+              {hasCriteria ? (
+                <ul className="text-sm text-muted">
+                  {comp.emotionalAttraktiv > 0 ? (
+                    <li>
+                      <span className="text-foreground">
+                        Emotional attraktiv:
+                      </span>{" "}
+                      {comp.emotionalAttraktiv}/10
+                    </li>
+                  ) : null}
+                  {comp.selbstErreichbar > 0 ? (
+                    <li>
+                      <span className="text-foreground">
+                        Selbst erreichbar:
+                      </span>{" "}
+                      {comp.selbstErreichbar}/10
+                    </li>
+                  ) : null}
+                  {fulfilledChecks.length > 0 ? (
+                    <li>
+                      <span className="text-foreground">Erfüllt:</span>{" "}
+                      {fulfilledChecks.join(", ")}
+                    </li>
+                  ) : null}
+                </ul>
+              ) : null}
+            </Section>
+          ) : null}
+
+          {/* Folgen deines Ziels */}
+          {consequenceRows.length > 0 ? (
+            <Section title="Folgen deines Ziels">
+              <ul className="space-y-2">
+                {consequenceRows.map((row) => (
+                  <li key={row.id}>
+                    <p className="text-sm font-medium text-foreground">
+                      {row.name}
+                      {row.isCore ? (
+                        <span className="font-normal text-muted">
+                          {" "}
+                          (Kernthema)
                         </span>
                       ) : null}
-                      {i.text.trim()}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {erfahrungenText || aussenText || innerText ? (
-              <div>
-                <p className="font-medium text-foreground">
-                  Weitere Ressourcen
-                </p>
-                <ul className="ml-4 list-disc text-muted">
-                  {erfahrungenText ? (
-                    <li>
-                      <span className="text-foreground">Biografie:</span>{" "}
-                      {erfahrungenText}
-                    </li>
-                  ) : null}
-                  {aussenText ? (
-                    <li>
-                      <span className="text-foreground">
-                        Fakten des Kontexts / Andere:
-                      </span>{" "}
-                      {aussenText}
-                    </li>
-                  ) : null}
-                  {innerText ? (
-                    <li>
-                      <span className="text-foreground">
-                        Innere Ressourcen:
-                      </span>{" "}
-                      {innerText}
-                    </li>
-                  ) : null}
-                </ul>
-              </div>
-            ) : null}
-            {markerText ? (
-              <p className="text-muted">
-                <span className="font-medium text-foreground">
-                  Körpersignale:
-                </span>{" "}
-                {markerText}
-              </p>
-            ) : null}
-            {dontRows.length > 0 ? (
-              <div>
-                <p className="font-medium text-ist">
-                  Bisheriges Muster — Don’t!
-                </p>
-                <ul className="ml-4 list-disc text-muted">
-                  {dontRows.map((d) => (
-                    <li key={d.id}>
-                      <span className="text-foreground">
-                        {d.resources.trim() || "—"}
-                      </span>{" "}
-                      → {d.behavior.trim() || "—"} → {d.effect.trim() || "—"}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {pastText ? (
-              <p className="text-muted">
-                <span className="font-medium text-foreground">
-                  Frühere Notizen:
-                </span>{" "}
-                {pastText}
-              </p>
-            ) : null}
-          </div>
-        </Section>
-      ) : null}
-
-      {/* Dein Handlungsplan — Maßnahmenplan-Tabelle (MP4) */}
-      {planRows.length > 0 ? (
-        <Section title="Dein Handlungsplan">
-          <table className="w-full border-collapse text-sm">
-            <caption className="sr-only">
-              Maßnahmenplan: Handlungsfeld, Maßnahme, bis wann, mögliche
-              Hindernisse, Ressourcen und Alternativen
-            </caption>
-            <thead>
-              <tr className="border-b border-subtle text-left">
-                <th className="py-1.5 pr-3 font-medium text-foreground">
-                  Handlungsfeld
-                </th>
-                <th className="py-1.5 pr-3 font-medium text-foreground">
-                  Maßnahme
-                </th>
-                <th className="py-1.5 pr-3 font-medium text-foreground">
-                  Bis wann
-                </th>
-                <th className="py-1.5 pr-3 font-medium text-foreground">
-                  Mögliche Hindernisse
-                </th>
-                <th className="py-1.5 font-medium text-foreground">
-                  Ressourcen &amp; Alternativen
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {planRows.map((row) => (
-                <tr key={row.id} className="border-b border-subtle align-top">
-                  <td className="py-1.5 pr-3 text-muted">{row.cluster}</td>
-                  <td className="py-1.5 pr-3 text-foreground">
-                    {row.measure.text.trim()}
-                    {row.measure.basedOnResource ? (
-                      <span className="block text-xs text-muted">
-                        Ressource: {resText(row.measure.basedOnResource)}
-                      </span>
+                      {row.valuation ? (
+                        <span className="font-normal text-muted">
+                          {" "}
+                          — {row.valuation}
+                        </span>
+                      ) : null}
+                    </p>
+                    {row.recognition ? (
+                      <p className="text-sm text-muted">{row.recognition}</p>
                     ) : null}
-                    {measureQualityMark(row.measure) ? (
-                      <span className="block text-xs text-muted">
-                        Qualität: {measureQualityMark(row.measure)}
-                      </span>
-                    ) : null}
-                  </td>
-                  <td className="py-1.5 pr-3 text-muted">
-                    {row.measure.dueDate
-                      ? formatDate(row.measure.dueDate)
-                      : "—"}
-                  </td>
-                  <td className="py-1.5 pr-3 text-muted">
-                    {row.measure.obstacles?.trim() || "—"}
-                  </td>
-                  <td className="py-1.5 text-muted">
-                    {row.measure.alternatives?.trim() || "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {preMortem.length > 0 ? (
-            <div className="mt-3">
-              <p className="text-sm font-medium text-foreground">
-                Frühere Hindernis-Notizen
-              </p>
-              <ul className="ml-4 list-disc text-muted">
-                {preMortem.map((text, i) => (
-                  <li key={`pm-${i}-${text}`}>{text}</li>
+                  </li>
                 ))}
               </ul>
-            </div>
+            </Section>
           ) : null}
-        </Section>
+        </PhaseGroup>
       ) : null}
 
-      {/* Dranbleiben — Vorlage-Tabelle „Eingesetzte Ressource | Konkrete Strategien" */}
-      {strategies.length > 0 ? (
-        <Section title="Dranbleiben">
-          <table className="w-full border-collapse text-sm">
-            <caption className="sr-only">
-              Dranbleiben: eingesetzte Ressource und konkrete Strategien
-            </caption>
-            <thead>
-              <tr className="border-b border-subtle text-left">
-                <th className="w-1/3 py-1.5 pr-3 font-medium text-foreground">
-                  Eingesetzte Ressource
-                </th>
-                <th className="py-1.5 font-medium text-foreground">
-                  Konkrete Strategien
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {strategies.map((s) => (
-                <tr key={s.id} className="border-b border-subtle align-top">
-                  <td className="py-1.5 pr-3 text-foreground">
-                    {s.resource.trim() || "—"}
-                  </td>
-                  <td className="py-1.5 text-muted">
-                    {s.concreteStrategy.trim() || "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Section>
-      ) : null}
-
-      {/* Erkenntnisse — multi-line (5.2 appends the notebook with "\n\n") */}
-      {phase5.insights.trim() ? (
-        <Section title="Erkenntnisse">
-          <p className="whitespace-pre-wrap text-foreground">
-            {phase5.insights.trim()}
-          </p>
-        </Section>
-      ) : null}
-
-      {/* Erkenntnisboard (Notizbuch — über alle Phasen hinweg) */}
-      {notebook ? (
-        <Section title="Erkenntnisboard">
-          <p className="whitespace-pre-wrap text-foreground">{notebook}</p>
-        </Section>
-      ) : null}
-
-      {/* Reflexionen */}
-      {reflexionen.length > 0 ? (
-        <Section title="Reflexionen">
-          <div className="space-y-3">
-            {reflexionen.map((entry) => (
-              <div key={entry.title}>
-                <p className="text-sm font-medium text-foreground">
-                  {entry.title}
-                </p>
-                <ul className="text-sm text-muted">
-                  {entry.fields.map((field) => (
-                    <li key={field.label}>
-                      <span className="text-foreground">{field.label}:</span>{" "}
-                      {field.value}
-                    </li>
-                  ))}
-                </ul>
+      {p3Has ? (
+        <PhaseGroup
+          n={3}
+          title="Ressourcen erkennen"
+          symbol={<SuitcaseSymbol className="size-6" />}
+        >
+          {/* Deine Ressourcen — Cockpit-Gliederung (MP3) */}
+          {hasPhase3 ? (
+            <Section title="Deine Ressourcen">
+              <div className="space-y-3 text-sm">
+                {ownResourceRows.map((row) => (
+                  <p key={row.label} className="text-muted">
+                    <span className="font-medium text-foreground">
+                      {row.label}:
+                    </span>{" "}
+                    {row.text}
+                  </p>
+                ))}
+                {valueColumns.length > 0 || valueLegacyText ? (
+                  <div>
+                    <p className="font-medium text-foreground">Meine Werte</p>
+                    <ul className="ml-4 list-disc text-muted">
+                      {valueColumns.map((row) => (
+                        <li key={row.label}>
+                          <span className="text-foreground">{row.label}:</span>{" "}
+                          {row.text}
+                        </li>
+                      ))}
+                      {valueLegacyText ? (
+                        <li>
+                          <span className="text-foreground">Weitere:</span>{" "}
+                          {valueLegacyText}
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
+                ) : null}
+                {othersGroups.length > 0 || othersLegacy.length > 0 ? (
+                  <div>
+                    <p className="font-medium text-foreground">
+                      Werte der Anderen
+                    </p>
+                    <ul className="ml-4 list-disc text-muted">
+                      {othersGroups.map((group) => (
+                        <li key={group.id}>
+                          <span className="text-foreground">{group.name}</span>
+                          {group.wer ? ` (${group.wer})` : ""}
+                          {group.werte.length > 0
+                            ? `: ${group.werte.join(" · ")}`
+                            : ""}
+                        </li>
+                      ))}
+                      {othersLegacy.length > 0 ? (
+                        <li>
+                          <span className="text-foreground">Weitere:</span>{" "}
+                          {othersLegacy.join(" · ")}
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
+                ) : null}
+                {othersInsight ? (
+                  <p className="text-muted">
+                    <span className="font-medium text-foreground">
+                      Erkenntnisse aus dem Werte-Abgleich:
+                    </span>{" "}
+                    {othersInsight}
+                  </p>
+                ) : null}
+                {modelResources.length > 0 ? (
+                  <div>
+                    <p className="font-medium text-foreground">
+                      Ressourcen aus Modellen
+                    </p>
+                    <ul className="ml-4 list-disc text-muted">
+                      {modelResources.map((i) => (
+                        <li key={i.id}>
+                          {i.note?.trim() ? (
+                            <span className="text-foreground">
+                              {i.note.trim()}:{" "}
+                            </span>
+                          ) : null}
+                          {i.text.trim()}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {erfahrungenText || aussenText || innerText ? (
+                  <div>
+                    <p className="font-medium text-foreground">
+                      Weitere Ressourcen
+                    </p>
+                    <ul className="ml-4 list-disc text-muted">
+                      {erfahrungenText ? (
+                        <li>
+                          <span className="text-foreground">Biografie:</span>{" "}
+                          {erfahrungenText}
+                        </li>
+                      ) : null}
+                      {aussenText ? (
+                        <li>
+                          <span className="text-foreground">
+                            Fakten des Kontexts / Andere:
+                          </span>{" "}
+                          {aussenText}
+                        </li>
+                      ) : null}
+                      {innerText ? (
+                        <li>
+                          <span className="text-foreground">
+                            Innere Ressourcen:
+                          </span>{" "}
+                          {innerText}
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
+                ) : null}
+                {markerText ? (
+                  <p className="text-muted">
+                    <span className="font-medium text-foreground">
+                      Körpersignale:
+                    </span>{" "}
+                    {markerText}
+                  </p>
+                ) : null}
+                {dontRows.length > 0 ? (
+                  <div>
+                    <p className="font-medium text-ist">
+                      Bisheriges Muster — Don’t!
+                    </p>
+                    <ul className="ml-4 list-disc text-muted">
+                      {dontRows.map((d) => (
+                        <li key={d.id}>
+                          <span className="text-foreground">
+                            {d.resources.trim() || "—"}
+                          </span>{" "}
+                          → {d.behavior.trim() || "—"} →{" "}
+                          {d.effect.trim() || "—"}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {pastText ? (
+                  <p className="text-muted">
+                    <span className="font-medium text-foreground">
+                      Frühere Notizen:
+                    </span>{" "}
+                    {pastText}
+                  </p>
+                ) : null}
               </div>
-            ))}
+            </Section>
+          ) : null}
+        </PhaseGroup>
+      ) : null}
+
+      {p4Has ? (
+        <PhaseGroup
+          n={4}
+          title="Handlungsplan"
+          symbol={<BoatSymbol className="size-6" />}
+        >
+          {/* Dein Handlungsplan — Maßnahmenplan-Tabelle (MP4) */}
+          {planRows.length > 0 ? (
+            <Section title="Dein Handlungsplan">
+              <table className="w-full table-fixed border-collapse text-sm">
+                <caption className="sr-only">
+                  Maßnahmenplan: Handlungsfeld, Maßnahme, bis wann, mögliche
+                  Hindernisse, Ressourcen und Alternativen
+                </caption>
+                <thead>
+                  <tr className="border-b border-subtle text-left">
+                    <th className="w-[15%] py-1.5 pr-3 font-medium text-foreground">
+                      Handlungsfeld
+                    </th>
+                    <th className="w-[24%] py-1.5 pr-3 font-medium text-foreground">
+                      Maßnahme
+                    </th>
+                    <th className="w-[13%] py-1.5 pr-3 font-medium text-foreground">
+                      Bis wann
+                    </th>
+                    <th className="w-[24%] py-1.5 pr-3 font-medium text-foreground">
+                      Mögliche Hindernisse
+                    </th>
+                    <th className="w-[24%] py-1.5 font-medium text-foreground">
+                      Ressourcen &amp; Alternativen
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {planRows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="border-b border-subtle align-top"
+                    >
+                      <td className="py-1.5 pr-3 break-words text-muted">
+                        {row.cluster}
+                      </td>
+                      <td className="py-1.5 pr-3 break-words text-foreground">
+                        {row.measure.text.trim()}
+                        {row.measure.basedOnResource ? (
+                          <span className="block text-xs text-muted">
+                            Ressource: {resText(row.measure.basedOnResource)}
+                          </span>
+                        ) : null}
+                        {measureQualityMark(row.measure) ? (
+                          <span className="block text-xs text-muted">
+                            Qualität: {measureQualityMark(row.measure)}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="py-1.5 pr-3 text-muted">
+                        {row.measure.dueDate
+                          ? formatDate(row.measure.dueDate)
+                          : "—"}
+                      </td>
+                      <td className="py-1.5 pr-3 break-words text-muted">
+                        {row.measure.obstacles?.trim() || "—"}
+                      </td>
+                      <td className="py-1.5 break-words text-muted">
+                        {row.measure.alternatives?.trim() || "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {preMortem.length > 0 ? (
+                <div className="mt-3">
+                  <p className="text-sm font-medium text-foreground">
+                    Frühere Hindernis-Notizen
+                  </p>
+                  <ul className="ml-4 list-disc text-muted">
+                    {preMortem.map((text, i) => (
+                      <li key={`pm-${i}-${text}`}>{text}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </Section>
+          ) : null}
+        </PhaseGroup>
+      ) : null}
+
+      {p5Has ? (
+        <PhaseGroup
+          n={5}
+          title="Dranbleiben"
+          symbol={<FlagSymbol className="size-6" />}
+        >
+          {/* Dranbleiben — Vorlage-Tabelle „Eingesetzte Ressource | Konkrete Strategien" */}
+          {strategies.length > 0 ? (
+            <Section title="Dranbleiben">
+              <table className="w-full table-fixed border-collapse text-sm">
+                <caption className="sr-only">
+                  Dranbleiben: eingesetzte Ressource und konkrete Strategien
+                </caption>
+                <thead>
+                  <tr className="border-b border-subtle text-left">
+                    <th className="w-1/3 py-1.5 pr-3 font-medium text-foreground">
+                      Eingesetzte Ressource
+                    </th>
+                    <th className="py-1.5 font-medium text-foreground">
+                      Konkrete Strategien
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {strategies.map((s) => (
+                    <tr key={s.id} className="border-b border-subtle align-top">
+                      <td className="py-1.5 pr-3 break-words text-foreground">
+                        {s.resource.trim() || "—"}
+                      </td>
+                      <td className="py-1.5 break-words text-muted">
+                        {s.concreteStrategy.trim() || "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Section>
+          ) : null}
+
+          {/* Erkenntnisse — multi-line (5.2 appends the notebook with "\n\n") */}
+          {phase5.insights.trim() ? (
+            <Section title="Erkenntnisse">
+              <p className="whitespace-pre-wrap text-foreground">
+                {phase5.insights.trim()}
+              </p>
+            </Section>
+          ) : null}
+        </PhaseGroup>
+      ) : null}
+
+      {notesHas ? (
+        <section className="summary-phase space-y-4">
+          <div className="summary-keep border-b border-subtle pb-2">
+            <h2 className="font-serif text-xl text-foreground">
+              Notizen &amp; Reflexion
+            </h2>
           </div>
-        </Section>
+          {/* Erkenntnisboard (Notizbuch — über alle Phasen hinweg) */}
+          {notebook ? (
+            <Section title="Erkenntnisboard">
+              <p className="whitespace-pre-wrap text-foreground">{notebook}</p>
+            </Section>
+          ) : null}
+
+          {/* Reflexionen */}
+          {reflexionen.length > 0 ? (
+            <Section title="Reflexionen">
+              <div className="space-y-3">
+                {reflexionen.map((entry) => (
+                  <div key={entry.title}>
+                    <p className="text-sm font-medium text-foreground">
+                      {entry.title}
+                    </p>
+                    <ul className="text-sm text-muted">
+                      {entry.fields.map((field) => (
+                        <li key={field.label}>
+                          <span className="text-foreground">
+                            {field.label}:
+                          </span>{" "}
+                          {field.value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          ) : null}
+        </section>
       ) : null}
 
       {/* Footer (§9.0 spirit) */}

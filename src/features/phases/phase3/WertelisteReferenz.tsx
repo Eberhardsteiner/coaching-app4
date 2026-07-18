@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import { useModel } from "@/features/content/useModel";
@@ -8,15 +8,20 @@ import { cn } from "@/lib/utils";
  * Collapsible reference of the method's value list (werteliste.json — ten
  * categories with their values as subterms, deliberately including ambivalent
  * ones). Clicking a value hands it to the caller (taken into the active
- * column/cluster); `disabled` blocks picking when the target is full.
+ * column/cluster). The list stays open across picks; `isTaken(value)` marks
+ * already-taken values with a check and disables that single chip (never the
+ * whole list). `disabled` blocks all picking only when the target is full.
  */
 export function WertelisteReferenz({
   onPick,
   disabled = false,
+  isTaken,
   summaryLabel = "Werteliste ansehen",
 }: {
   onPick: (value: string) => void;
   disabled?: boolean;
+  /** Whether a value is already present in the active target (→ check + lock). */
+  isTaken?: (value: string) => boolean;
   summaryLabel?: string;
 }) {
   const loaded = useModel("werteliste");
@@ -48,20 +53,31 @@ export function WertelisteReferenz({
                 {category.label}
               </p>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {(category.subterms ?? []).map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => onPick(value)}
-                    className={cn(
-                      "rounded-full border border-subtle bg-surface px-2.5 py-1 text-xs text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                      disabled && "cursor-not-allowed opacity-45",
-                    )}
-                  >
-                    {value}
-                  </button>
-                ))}
+                {(category.subterms ?? []).map((value) => {
+                  const taken = isTaken?.(value) ?? false;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      disabled={disabled || taken}
+                      aria-pressed={taken}
+                      onClick={() => onPick(value)}
+                      className={cn(
+                        // break-words: lange Begriffe umbrechen als ganzer Chip,
+                        // nie buchstabenweise, nie überlaufend (K3).
+                        "inline-flex max-w-full items-center gap-1 rounded-full border border-subtle bg-surface px-2.5 py-1 text-left text-xs break-words text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                        taken && "border-accent/40 bg-accent/10 text-accent",
+                        disabled && !taken && "cursor-not-allowed opacity-45",
+                        taken && "cursor-default",
+                      )}
+                    >
+                      {taken ? (
+                        <Check className="size-3 shrink-0" aria-hidden />
+                      ) : null}
+                      {value}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))

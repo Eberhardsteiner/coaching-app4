@@ -10,6 +10,8 @@ import { useState } from "react";
 
 import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
 import { WertelisteReferenz } from "@/features/phases/phase3/WertelisteReferenz";
@@ -197,7 +199,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
       </p>
 
       {/* Zwei Hilfe-Callouts (VIS-2) — Beispiele aufklappbar. */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <InfoCallout
           icon={<HelpCircle className="size-4" />}
           title="Es bleibt hypothetisch"
@@ -245,7 +247,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
               aria-pressed={isActive}
               onClick={() => setSelectedId(cluster.id)}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 isActive
                   ? "border-accent bg-accent text-white"
                   : "border-subtle bg-surface text-muted hover:text-foreground",
@@ -264,7 +266,9 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                   )}
                 />
               )}
-              <span>{clusterName(cluster, index)}</span>
+              <span className="min-w-0 break-words">
+                {clusterName(cluster, index)}
+              </span>
               {cluster.isCore ? (
                 <span
                   className={cn(
@@ -323,13 +327,11 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           >
             Wer? — Personen oder Gruppen in diesem Cluster
           </label>
-          <input
+          <Input
             id="others-wer"
-            type="text"
             value={werOf(active.id)?.text ?? ""}
             onChange={(event) => setWer(active.id, event.target.value)}
             placeholder="z. B. Mitarbeitende, meine Chefin"
-            className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
           <NoPersonalDataHint example="meine Chefin" />
         </div>
@@ -344,7 +346,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                 key={item.id}
                 className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-background px-2.5 py-1.5"
               >
-                <span className="min-w-0 truncate text-sm text-foreground">
+                <span className="min-w-0 flex-1 text-sm break-words text-foreground">
                   {item.text}
                 </span>
                 <button
@@ -360,8 +362,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
             ))}
           </ul>
           <div className="flex items-center gap-2">
-            <input
-              type="text"
+            <Input
               value={draft}
               disabled={activeFull}
               aria-label={`Wert für ${activeName} ergänzen`}
@@ -374,10 +375,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                 }
               }}
               placeholder={activeFull ? "Maximal 3 Werte." : "Wert …"}
-              className={cn(
-                "min-w-0 flex-1 rounded-lg border border-subtle bg-background px-2.5 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                activeFull && "cursor-not-allowed opacity-45",
-              )}
+              className="min-w-0 flex-1 bg-background px-2.5 py-1.5"
             />
             <Button
               variant="outline"
@@ -397,6 +395,9 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
         <WertelisteReferenz
           onPick={(value) => addValue(active.id, value)}
           disabled={activeFull}
+          isTaken={(value) =>
+            valuesOf(active.id).some((item) => item.text === value)
+          }
           summaryLabel="Werteliste als Anregung"
         />
       </div>
@@ -407,8 +408,8 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           Wenn du fertig bist, gleiche deine Werte mit denen der anderen ab.
           Welche Erkenntnisse gewinnst du dabei? Notiere sie bitte.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-wide text-faint">
               Meine Werte
             </p>
@@ -418,7 +419,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                 .map((i) => (
                   <span
                     key={i.id}
-                    className="rounded-full border border-accent/30 bg-accent/5 px-2.5 py-1 text-xs text-foreground"
+                    className="max-w-full rounded-full border border-accent/30 bg-accent/5 px-2.5 py-1 text-xs break-words text-foreground"
                   >
                     {i.text}
                   </span>
@@ -430,7 +431,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
               ) : null}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-wide text-faint">
               Werte der Anderen
             </p>
@@ -439,7 +440,10 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                 const entries = valuesOf(cluster.id);
                 if (entries.length === 0) return null;
                 return (
-                  <div key={cluster.id} className="text-xs text-muted">
+                  <div
+                    key={cluster.id}
+                    className="text-xs break-words text-muted"
+                  >
                     <span className="font-medium text-foreground">
                       {clusterName(cluster, index)}:
                     </span>{" "}
@@ -447,7 +451,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                       {entries.map((i) => (
                         <span
                           key={i.id}
-                          className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+                          className="max-w-full rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs break-words text-blue-900"
                         >
                           {i.text}
                         </span>
@@ -465,7 +469,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                       .map((i) => (
                         <span
                           key={i.id}
-                          className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+                          className="max-w-full rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs break-words text-blue-900"
                         >
                           {i.text}
                         </span>
@@ -487,13 +491,12 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           >
             Deine Erkenntnisse aus dem Abgleich
           </label>
-          <textarea
+          <Textarea
             id="others-insight"
             value={insight}
             rows={3}
             onChange={(event) => setInsight(event.target.value)}
             placeholder="Was fällt dir auf, wenn du deine Werte neben die der anderen legst?"
-            className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
       </div>

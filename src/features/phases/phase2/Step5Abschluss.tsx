@@ -58,7 +58,7 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
           <p className="text-xs font-medium uppercase tracking-wide text-faint">
             Dein Zielsatz
           </p>
-          <p className="mt-2 font-medium leading-relaxed text-foreground">
+          <p className="mt-2 font-medium leading-relaxed break-words text-foreground">
             {goalText.trim()}
           </p>
         </div>

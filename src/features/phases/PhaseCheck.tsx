@@ -1,3 +1,4 @@
+import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { PhaseCheck as PhaseCheckValue } from "@/features/session/types";
 
@@ -54,7 +55,7 @@ export function PhaseCheck({ value, onChange, readOnly }: PhaseCheckProps) {
           <p id={`phase-check-${field.key}-q`} className="text-sm text-muted">
             {field.question}
           </p>
-          <textarea
+          <Textarea
             id={`phase-check-${field.key}`}
             aria-describedby={`phase-check-${field.key}-q`}
             value={value[field.key]}
@@ -63,7 +64,6 @@ export function PhaseCheck({ value, onChange, readOnly }: PhaseCheckProps) {
             onChange={(event) =>
               onChange({ ...value, [field.key]: event.target.value })
             }
-            className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
       ))}

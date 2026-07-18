@@ -2,6 +2,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
 import { WertelisteReferenz } from "@/features/phases/phase3/WertelisteReferenz";
@@ -208,7 +209,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
       </details>
 
       {/* Drei Werte-Spalten */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {COLUMNS.map((column) => {
           const entries = ofColumn(column.category);
           const full = entries.length >= MAX_PER_COLUMN;
@@ -231,7 +232,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                     key={item.id}
                     className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-background px-2.5 py-1.5"
                   >
-                    <span className="min-w-0 truncate text-sm text-foreground">
+                    <span className="min-w-0 flex-1 text-sm break-words text-foreground">
                       {item.text}
                     </span>
                     <span className="flex shrink-0 items-center gap-1.5">
@@ -263,8 +264,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
               </ul>
 
               <div className="mt-auto flex items-center gap-2">
-                <input
-                  type="text"
+                <Input
                   value={drafts[column.category]}
                   disabled={full}
                   aria-label={`Wert ergänzen: ${column.title}`}
@@ -281,10 +281,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                     }
                   }}
                   placeholder={full ? "Maximal 5 — weniger ist ok!" : "Wert …"}
-                  className={cn(
-                    "min-w-0 flex-1 rounded-lg border border-subtle bg-background px-2.5 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                    full && "cursor-not-allowed opacity-45",
-                  )}
+                  className="min-w-0 flex-1 bg-background px-2.5 py-1.5"
                 />
                 <Button
                   variant="outline"
@@ -339,6 +336,9 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         <WertelisteReferenz
           onPick={(value) => addValue(pickTarget, value)}
           disabled={ofColumn(pickTarget).length >= MAX_PER_COLUMN}
+          isTaken={(value) =>
+            ofColumn(pickTarget).some((item) => item.text === value)
+          }
         />
       </div>
 
@@ -356,7 +356,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                 key={item.id}
                 className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-surface px-2.5 py-1.5"
               >
-                <span className="min-w-0 truncate text-sm text-foreground">
+                <span className="min-w-0 flex-1 text-sm break-words text-foreground">
                   {item.text || "—"}
                 </span>
                 <span className="flex shrink-0 items-center gap-1.5">

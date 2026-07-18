@@ -223,7 +223,7 @@ export function Card({
         onChange={(event) => onChange({ ...card, text: event.target.value })}
         placeholder="ein Wort …"
         aria-label="Kartentext"
-        className="w-full rounded bg-transparent px-1 py-0.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="w-full rounded bg-transparent px-1 py-0.5 text-sm text-current placeholder:text-current/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       />
       {clusterSelect}
     </div>

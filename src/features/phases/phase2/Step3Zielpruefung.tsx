@@ -149,7 +149,7 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
             Dein Zielsatz
           </p>
           {goalText.trim() ? (
-            <p className="mt-2 font-medium leading-relaxed text-foreground">
+            <p className="mt-2 font-medium leading-relaxed break-words text-foreground">
               {goalText.trim()}
             </p>
           ) : (

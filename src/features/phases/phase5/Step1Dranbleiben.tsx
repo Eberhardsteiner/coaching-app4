@@ -15,6 +15,8 @@ import { useState } from "react";
 import { FlagSymbol } from "@/components/icons/PhaseSymbols";
 import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
 import { StepNav } from "@/features/phases/StepNav";
@@ -250,9 +252,8 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                   >
                     Ressource
                   </label>
-                  <input
+                  <Input
                     id={`strategy-res-${strategy.id}`}
-                    type="text"
                     list="phase5-resource-suggestions"
                     autoFocus={strategy.id === focusId}
                     value={strategy.resource}
@@ -262,7 +263,6 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                       })
                     }
                     placeholder="z. B. Freiheit"
-                    className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
                 </div>
 
@@ -273,7 +273,8 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                   >
                     Strategie
                   </label>
-                  <textarea
+                  <Textarea
+                    autoResize
                     id={`strategy-how-${strategy.id}`}
                     value={strategy.concreteStrategy}
                     rows={2}
@@ -283,7 +284,6 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                       })
                     }
                     placeholder="Wie nutzt du diese Ressource konkret weiter, und woran prüfst du, ob es wirkt?"
-                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
                 </div>
 

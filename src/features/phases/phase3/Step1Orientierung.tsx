@@ -65,7 +65,7 @@ export function Step1Orientierung({ nav }: { nav: PhaseNavigation }) {
           <p className="text-xs font-medium uppercase tracking-wide text-faint">
             Dein Zielsatz — dein Bewertungsmaßstab
           </p>
-          <p className="mt-2 font-medium leading-relaxed text-foreground">
+          <p className="mt-2 font-medium leading-relaxed break-words text-foreground">
             {goalText.trim()}
           </p>
         </div>

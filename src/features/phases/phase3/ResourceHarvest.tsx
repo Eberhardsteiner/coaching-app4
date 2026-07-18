@@ -2,6 +2,7 @@ import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { ModelTerm } from "@/features/content/contentTypes";
 import type { ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -196,9 +197,8 @@ export function ResourceHarvest({
           >
             {ownLabel}
           </label>
-          <input
+          <Input
             id={`own-${ownLabel}`}
-            type="text"
             value={own}
             onChange={(event) => setOwn(event.target.value)}
             onKeyDown={(event) => {
@@ -208,7 +208,6 @@ export function ResourceHarvest({
               }
             }}
             placeholder={ownPlaceholder}
-            className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
         <Button variant="outline" size="sm" onClick={addOwn}>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
 import type { ResourceItem } from "@/features/session/types";
 
@@ -80,25 +81,23 @@ export function ResourceListEditor({
       {items.map((item, index) => (
         <div key={item.id} className="flex items-center gap-2">
           {noteLabel ? (
-            <input
-              type="text"
+            <Input
               value={item.note ?? ""}
               aria-label={`${noteLabel} für ${itemLabel} ${index + 1}`}
               onChange={(event) =>
                 update(item.id, { note: event.target.value })
               }
               placeholder={notePlaceholder ?? noteLabel}
-              className="w-32 shrink-0 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:w-44"
+              className="w-32 shrink-0 sm:w-44"
             />
           ) : null}
-          <input
-            type="text"
+          <Input
             value={item.text}
             autoFocus={item.id === focusId}
             aria-label={`${itemLabel} ${index + 1}`}
             onChange={(event) => update(item.id, { text: event.target.value })}
             placeholder={placeholder}
-            className="min-w-0 flex-1 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="min-w-0 flex-1"
           />
           {withPolarity ? (
             <PolarityToggle
