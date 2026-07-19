@@ -270,7 +270,7 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
                             text: event.target.value,
                           })
                         }
-                        className="w-full resize-y rounded-lg border border-subtle bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        className="w-full resize-y rounded-lg border border-subtle bg-background px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                       />
                     </div>
                     <ul className="space-y-2">
@@ -319,7 +319,7 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
               <h3 className="text-sm font-semibold text-foreground">
                 Weitere Maßnahmen
               </h3>
-              <p className="text-xs text-muted">
+              <p className="text-sm text-muted">
                 Diese Maßnahmen stammen aus einem Plan ohne (aktuelles) Cluster.
               </p>
               {orphanMeasures.map(({ clusterId, measure }) => (
@@ -337,7 +337,7 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
                         text: event.target.value,
                       })
                     }
-                    className="w-full resize-y rounded-lg border border-subtle bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="w-full resize-y rounded-lg border border-subtle bg-background px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
                   <ul className="space-y-2">
                     {CRITERIA.map((criterion) => (
@@ -365,7 +365,7 @@ export function Step2Qualitaet({ nav }: { nav: PhaseNavigation }) {
         </div>
       )}
 
-      <p className="text-xs text-faint">
+      <p className="text-sm text-faint">
         {checkedCount} von {allMeasures.length} Maßnahmen geprüft.
         {!canNext
           ? " „Weiter“ öffnet sich, wenn jede Maßnahme vollständig geprüft ist — ja oder bewusst nein."

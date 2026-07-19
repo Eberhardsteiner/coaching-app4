@@ -75,7 +75,7 @@ export function ResourceListEditor({
   return (
     <div className="space-y-2">
       {items.length === 0 && emptyHint ? (
-        <p className="text-xs text-faint">{emptyHint}</p>
+        <p className="text-sm text-faint">{emptyHint}</p>
       ) : null}
 
       {items.map((item, index) => (

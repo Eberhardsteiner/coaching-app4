@@ -119,7 +119,7 @@ function PolaritySplit({ items }: { items: ResourceItem[] }) {
               <li key={i.id}>{i.text || "—"}</li>
             ))}
             {hilfreich.length === 0 ? (
-              <li className="text-xs text-faint">—</li>
+              <li className="text-sm text-faint">—</li>
             ) : null}
           </ul>
         </div>
@@ -132,13 +132,13 @@ function PolaritySplit({ items }: { items: ResourceItem[] }) {
               <li key={i.id}>{i.text || "—"}</li>
             ))}
             {hinderlich.length === 0 ? (
-              <li className="text-xs text-faint">—</li>
+              <li className="text-sm text-faint">—</li>
             ) : null}
           </ul>
         </div>
       </div>
       {offen.length > 0 ? (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           Noch offen: {offen.map((i) => i.text || "—").join(" · ")}
         </p>
       ) : null}
@@ -279,7 +279,10 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
         <div className="space-y-3">
           {VALUE_COLUMNS.map((column) => {
             const entries = values.filter(
-              (i) => i.category === column.category && i.text.trim(),
+              (i) =>
+                (i.categories ?? (i.category ? [i.category] : [])).includes(
+                  column.category,
+                ) && i.text.trim(),
             );
             if (entries.length === 0) return null;
             return (
@@ -333,7 +336,7 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
                 {group.skipped ? " · übersprungen" : ""}
               </p>
               {group.wer ? (
-                <p className="mt-0.5 text-xs text-muted">Wer: {group.wer}</p>
+                <p className="mt-0.5 text-sm text-muted">Wer: {group.wer}</p>
               ) : null}
               {group.werte.length > 0 ? (
                 <ul className="mt-1 space-y-0.5 text-sm text-foreground">

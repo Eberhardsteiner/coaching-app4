@@ -165,9 +165,17 @@ export function ModelCard({
         ) : null}
 
         {/* Short description. */}
-        <span className="text-[13.5px] leading-[1.55] text-muted">
+        <span className="text-sm leading-[1.55] text-muted">
           {meta.summary}
         </span>
+
+        {/* P3: sichtbare Kurzerklärung des Modells (aus dem Modell-JSON) —
+            was ist das Modell, wofür wird es hier genutzt. */}
+        {loaded.model?.intro ? (
+          <span className="text-sm leading-[1.55] text-muted">
+            {loaded.model.intro}
+          </span>
+        ) : null}
       </button>
 
       {/* Explain-flyover trigger: focusable, tappable; hover handled on the card. */}

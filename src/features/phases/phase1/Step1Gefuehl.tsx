@@ -279,7 +279,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
               Übernehmen
             </Button>
           </div>
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             Wenn dein Gefühl nicht in der Liste steht, benenne hier ein eigenes.
           </p>
 

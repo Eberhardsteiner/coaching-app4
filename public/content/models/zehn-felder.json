@@ -2,25 +2,64 @@
   "id": "zehn-felder",
   "name": "10-Felder-Modell",
   "category": "ist",
-  "intro": "Betrachte dein Thema systematisch entlang mehrerer Lebens-/Wirkungsfelder.",
+  "intro": "Das 10-Felder-Modell bildet die Einflüsse auf dein psychobiologisches Wohlbefinden ab — von Körper und Gedanken über Erfahrungen und Erwartungen bis zu Umwelt, Sinn und Beziehungen. Hier nutzt du es, um bei einem Wohlbefindens-Thema systematisch zu prüfen, welche Felder zu deinem Gefühl beitragen.",
   "terms": [
     {
       "id": "psycho-biologisches-wohlbefinden",
       "label": "Psycho-biologisches Wohlbefinden"
     },
-    { "id": "erfahrung", "label": "Erfahrung" },
-    { "id": "eigene-erwartung", "label": "Eigene Erwartung" },
-    { "id": "koerperlicher-zustand", "label": "Körperlicher Zustand" },
-    { "id": "gedanken", "label": "Gedanken" },
-    { "id": "physische-umwelt", "label": "Physische Umwelt" },
-    { "id": "ablaeufe", "label": "Abläufe" },
-    { "id": "technologie", "label": "Technologie" },
-    { "id": "zukunft", "label": "Zukunft" },
-    { "id": "materielle-sicherheit", "label": "Materielle Sicherheit" },
-    { "id": "sinn", "label": "Sinn" },
-    { "id": "kultur", "label": "Kultur" },
-    { "id": "erwartungen-anderer", "label": "Erwartungen anderer" },
-    { "id": "beziehung", "label": "Beziehung" }
+    {
+      "id": "erfahrung",
+      "label": "Erfahrung"
+    },
+    {
+      "id": "eigene-erwartung",
+      "label": "Eigene Erwartung"
+    },
+    {
+      "id": "koerperlicher-zustand",
+      "label": "Körperlicher Zustand"
+    },
+    {
+      "id": "gedanken",
+      "label": "Gedanken"
+    },
+    {
+      "id": "physische-umwelt",
+      "label": "Physische Umwelt"
+    },
+    {
+      "id": "ablaeufe",
+      "label": "Abläufe"
+    },
+    {
+      "id": "technologie",
+      "label": "Technologie"
+    },
+    {
+      "id": "zukunft",
+      "label": "Zukunft"
+    },
+    {
+      "id": "materielle-sicherheit",
+      "label": "Materielle Sicherheit"
+    },
+    {
+      "id": "sinn",
+      "label": "Sinn"
+    },
+    {
+      "id": "kultur",
+      "label": "Kultur"
+    },
+    {
+      "id": "erwartungen-anderer",
+      "label": "Erwartungen anderer"
+    },
+    {
+      "id": "beziehung",
+      "label": "Beziehung"
+    }
   ],
   "bookRef": ""
 }

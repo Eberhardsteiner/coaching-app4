@@ -160,7 +160,7 @@ export function Step2Guide({ open, onClose }: Step2GuideProps) {
               />
             ))}
           </ol>
-          <span className="text-xs text-faint">
+          <span className="text-sm text-faint">
             Schritt {step + 1} von {SLIDES.length}
           </span>
         </div>

@@ -156,20 +156,19 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
         </>
       ) : null}
 
-      <div className="space-y-2 rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
+      {/* P7: Hinweistext — Wortlaut verbindlich übernommen. */}
+      <div className="rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
         <p>
-          Auch sehr schwache Motive können Einfluss auf die Zielerreichung
-          haben: Hast du z. B. 15 Punkte bei „Status“ und musst mit sehr
-          statusorientierten Menschen arbeiten, kann der niedrige Wert
-          hinderlich sein.
-        </p>
-        <p>
-          Motive und Persönlichkeitseigenschaften ohne Bezug zu deinem Ziel
-          kannst du weglassen.
+          Wenn du den EPP gemacht hast: Auch sehr schwache Motive können
+          Einfluss auf die Zielerreichung haben. Hast du z. B. wenige Punkte bei
+          ‚Status‘ und musst mit sehr statusorientierten Menschen arbeiten, kann
+          der niedrige Wert hinderlich sein. Motive und
+          Persönlichkeitseigenschaften ohne Bezug zu deinem Ziel kannst du
+          weglassen.
         </p>
       </div>
 
-      <p className="text-xs text-faint">
+      <p className="text-sm text-faint">
         Deine übernommenen und gewerteten Einträge erscheinen in deinem
         Ressourcen-Cockpit (Werkzeuge rechts).
       </p>

@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   Swords,
 } from "lucide-react";
+import { useState } from "react";
 
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
@@ -389,6 +390,12 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
   const cards = useSessionStore((s) => s.session?.phase1.cards ?? []);
   const istWord = useSessionStore((s) => s.session?.phase1.istWord ?? "");
   const patch = useSessionStore((s) => s.patch);
+  // P2: sichtbare Rückmeldung nach jedem Karten-Button (was ist passiert,
+  // was ist jetzt zu tun) — aria-live, direkt über dem Karten-Feld.
+  const [lastAdded, setLastAdded] = useState<{
+    term: string;
+    stage: string;
+  } | null>(null);
 
   const list = useModelList("ist");
   const loaded = useModel(selectedModel);
@@ -407,6 +414,8 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
 
   /** Add a model term as a colour-coded card (marked with modelTerm). */
   function addTermCard(term: ModelTerm, colorId: string) {
+    const stage = STAGE_ADDS.find((s) => s.colorId === colorId);
+    setLastAdded({ term: term.label, stage: stage?.label ?? colorId });
     patch((s) => {
       const offset = (s.phase1.cards.length % 6) * 24;
       const card: Card = {
@@ -609,9 +618,10 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                   </span>
                 ))}
               </div>
-              <p className="mt-1.5 text-xs text-faint">
-                Ergänze je Begriff passende Karten — gefüllte Kreise am Begriff
-                zeigen, was du dort schon erfasst hast.
+              <p className="mt-1.5 text-sm text-faint">
+                Die Kreis-Buttons legen den Begriff als farbige Karte auf dein
+                Karten-Feld unten — gefüllte Kreise am Begriff zeigen, was du
+                dort schon erfasst hast.
               </p>
 
               {loaded.model.terms.length > 0 ? (
@@ -626,11 +636,11 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                           {term.label}
                         </p>
                         {term.subterms && term.subterms.length > 0 ? (
-                          <p className="mt-0.5 text-xs text-muted">
+                          <p className="mt-0.5 text-sm text-muted">
                             {term.subterms.join(" · ")}
                           </p>
                         ) : term.hint ? (
-                          <p className="mt-0.5 text-xs text-muted">
+                          <p className="mt-0.5 text-sm text-muted">
                             {term.hint}
                           </p>
                         ) : null}
@@ -681,11 +691,24 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
           </div>
         ) : null
       ) : (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           Tipp: Wähle ein Modell, um seine Begriffe als Linsen zu nutzen. Du
           kannst auch ohne Modell weitergehen.
         </p>
       )}
+
+      {/* P2: Rückmeldung des letzten Karten-Buttons — sofort sichtbar. */}
+      <div aria-live="polite">
+        {lastAdded ? (
+          <p className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm text-foreground">
+            ✓ „{lastAdded.term}“ liegt jetzt als{" "}
+            <strong className="font-semibold">{lastAdded.stage}</strong>-Karte
+            auf deinem Karten-Feld (direkt hier unten). Zieh sie an ihren Platz
+            und beschreibe wie gewohnt, was du damit meinst und wie es zu deinem
+            Gefühl beiträgt.
+          </p>
+        ) : null}
+      </div>
 
       {/* The shared, enlarged board — model cards appear next to the others. */}
       <CoachCardBoard

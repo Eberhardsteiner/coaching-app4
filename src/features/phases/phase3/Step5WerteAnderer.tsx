@@ -54,7 +54,10 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
   const clusters = useSessionStore((s) => s.session?.phase1.clusters ?? []);
   const patch = useSessionStore((s) => s.patch);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
+  // P9: ein Wert-Entwurf je Person (statt eines globalen Entwurfs).
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  // P9: Ziel der Werteliste-Übernahme — die zuletzt bearbeitete Person.
+  const [activePersonId, setActivePersonId] = useState<string | null>(null);
 
   const sorted = [...clusters].sort(
     (a, b) =>
@@ -64,8 +67,18 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
 
   const valuesOf = (clusterId: string) =>
     othersValues.filter((i) => i.clusterId === clusterId && !i.category);
-  const werOf = (clusterId: string) =>
-    othersValues.find((i) => i.clusterId === clusterId && i.category === "wer");
+  // P9: MEHRERE Personen je Cluster — jeder "wer"-Eintrag ist eine Person.
+  const personsOf = (clusterId: string) =>
+    othersValues.filter(
+      (i) => i.clusterId === clusterId && i.category === "wer",
+    );
+  const valuesOfPerson = (personId: string) =>
+    othersValues.filter((i) => !i.category && i.personRef === personId);
+  /** Alt-Werte ohne Personen-Zuordnung (pre-P9) — bleiben sichtbar. */
+  const unassignedOf = (clusterId: string) =>
+    othersValues.filter(
+      (i) => i.clusterId === clusterId && !i.category && !i.personRef,
+    );
   const isSkipped = (clusterId: string) =>
     othersValues.some(
       (i) => i.clusterId === clusterId && i.category === "skip",
@@ -110,29 +123,53 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
     setSelectedId(clusterId);
   }
 
-  /** Upsert the single "Wer?" entry of a cluster. */
-  function setWer(clusterId: string, text: string) {
+  /** P9: eine weitere Person in diesem Cluster anlegen. */
+  function addPerson(clusterId: string) {
     pin(clusterId);
-    const existing = werOf(clusterId);
-    if (existing) {
-      setOthersValues(
-        othersValues.map((i) => (i.id === existing.id ? { ...i, text } : i)),
-      );
-    } else {
-      setOthersValues([
-        ...othersValues,
-        { id: crypto.randomUUID(), text, category: "wer", clusterId },
-      ]);
-    }
+    const person: ResourceItem = {
+      id: crypto.randomUUID(),
+      text: "",
+      category: "wer",
+      clusterId,
+    };
+    setActivePersonId(person.id);
+    setOthersValues([...othersValues, person]);
   }
 
-  function addValue(clusterId: string, text: string) {
+  function setPersonName(personId: string, clusterId: string, text: string) {
     pin(clusterId);
+    setActivePersonId(personId);
+    setOthersValues(
+      othersValues.map((i) => (i.id === personId ? { ...i, text } : i)),
+    );
+  }
+
+  /** P9: Person samt ihrer Werte entfernen. */
+  function removePerson(personId: string) {
+    setOthersValues(
+      othersValues.filter((i) => i.id !== personId && i.personRef !== personId),
+    );
+    setActivePersonId((current) => (current === personId ? null : current));
+  }
+
+  /** P9: einen Wert FÜR EINE PERSON erfassen (max. 3 je Person). */
+  function addValueForPerson(
+    clusterId: string,
+    personId: string,
+    text: string,
+  ) {
+    pin(clusterId);
+    setActivePersonId(personId);
     const trimmed = text.trim();
-    if (!trimmed || valuesOf(clusterId).length >= MAX_PER_CLUSTER) return;
+    if (!trimmed || valuesOfPerson(personId).length >= MAX_PER_CLUSTER) return;
     setOthersValues([
       ...othersValues,
-      { id: crypto.randomUUID(), text: trimmed, clusterId },
+      {
+        id: crypto.randomUUID(),
+        text: trimmed,
+        clusterId,
+        personRef: personId,
+      },
     ]);
   }
 
@@ -183,8 +220,9 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
     sorted[0];
   const activeIndex = sorted.findIndex((c) => c.id === active.id);
   const activeName = clusterName(active, activeIndex);
-  const activeValues = valuesOf(active.id);
-  const activeFull = activeValues.length >= MAX_PER_CLUSTER;
+  // P9: Personen des aktiven Clusters + Alt-Werte ohne Personen-Zuordnung.
+  const activePersons = personsOf(active.id);
+  const activeUnassigned = unassignedOf(active.id);
   const handled = sorted.filter((c) => isDone(c.id) || isSkipped(c.id)).length;
   const canNext = handled === sorted.length;
 
@@ -292,7 +330,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           );
         })}
       </div>
-      <p className="text-xs text-faint">
+      <p className="text-sm text-faint">
         {handled} von {sorted.length} Clustern bearbeitet oder übersprungen.
       </p>
 
@@ -301,9 +339,13 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-semibold text-foreground">
             {activeName}
-            {werOf(active.id)?.text.trim() ? (
+            {activePersons.some((p) => p.text.trim()) ? (
               <span className="ml-1.5 text-xs font-normal text-muted">
-                · {werOf(active.id)?.text.trim()}
+                ·{" "}
+                {activePersons
+                  .map((p) => p.text.trim())
+                  .filter(Boolean)
+                  .join(", ")}
               </span>
             ) : null}
           </h3>
@@ -320,84 +362,194 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           </Button>
         </div>
 
-        <div className="space-y-1.5">
-          <label
-            htmlFor="others-wer"
-            className="block text-sm font-medium text-foreground"
-          >
+        {/* P9: MEHRERE Personen je Cluster — jede mit eigenen Werten. */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-foreground">
             Wer? — Personen oder Gruppen in diesem Cluster
-          </label>
-          <Input
-            id="others-wer"
-            value={werOf(active.id)?.text ?? ""}
-            onChange={(event) => setWer(active.id, event.target.value)}
-            placeholder="z. B. Mitarbeitende, meine Chefin"
-          />
+          </p>
+          {activePersons.length === 0 ? (
+            <p className="text-sm text-faint">
+              Noch keine Person angelegt — leg mit „+ Person“ los.
+            </p>
+          ) : null}
+          {activePersons.map((person, personIndex) => {
+            const personValues = valuesOfPerson(person.id);
+            const personFull = personValues.length >= MAX_PER_CLUSTER;
+            const personLabel =
+              person.text.trim() || `Person ${personIndex + 1}`;
+            return (
+              <div
+                key={person.id}
+                className={cn(
+                  "space-y-2 rounded-lg border p-3",
+                  activePersonId === person.id
+                    ? "border-accent/40 bg-accent/5"
+                    : "border-subtle bg-background",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={person.text}
+                    aria-label={`Name von Person ${personIndex + 1}`}
+                    onFocus={() => setActivePersonId(person.id)}
+                    onChange={(event) =>
+                      setPersonName(person.id, active.id, event.target.value)
+                    }
+                    placeholder="z. B. meine Chefin, das Team"
+                    className="min-w-0 flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removePerson(person.id)}
+                    aria-label={`${personLabel} samt Werten entfernen`}
+                    title="Person entfernen"
+                    className="flex size-8 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-muted">
+                  Was nimmt {personLabel} wichtig? (max. {MAX_PER_CLUSTER}{" "}
+                  Werte)
+                </p>
+                <ul className="space-y-1.5">
+                  {personValues.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-surface px-2.5 py-1.5"
+                    >
+                      <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                        {item.text}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeEntry(item.id)}
+                        aria-label={`„${item.text}“ entfernen`}
+                        title="Entfernen"
+                        className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={drafts[person.id] ?? ""}
+                    disabled={personFull}
+                    aria-label={`Wert für ${personLabel} ergänzen`}
+                    onFocus={() => setActivePersonId(person.id)}
+                    onChange={(event) =>
+                      setDrafts((d) => ({
+                        ...d,
+                        [person.id]: event.target.value,
+                      }))
+                    }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        addValueForPerson(
+                          active.id,
+                          person.id,
+                          drafts[person.id] ?? "",
+                        );
+                        setDrafts((d) => ({ ...d, [person.id]: "" }));
+                      }
+                    }}
+                    placeholder={personFull ? "Maximal 3 Werte." : "Wert …"}
+                    className="min-w-0 flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={personFull}
+                    onClick={() => {
+                      addValueForPerson(
+                        active.id,
+                        person.id,
+                        drafts[person.id] ?? "",
+                      );
+                      setDrafts((d) => ({ ...d, [person.id]: "" }));
+                    }}
+                  >
+                    <Plus />
+                    Hinzufügen
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => addPerson(active.id)}
+          >
+            <Plus />
+            Person
+          </Button>
           <NoPersonalDataHint example="meine Chefin" />
         </div>
 
-        <div className="space-y-1.5">
-          <p className="text-sm font-medium text-foreground">
-            Was nehmen sie wichtig? (max. {MAX_PER_CLUSTER} Werte)
-          </p>
-          <ul className="space-y-1.5">
-            {activeValues.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-background px-2.5 py-1.5"
-              >
-                <span className="min-w-0 flex-1 text-sm break-words text-foreground">
-                  {item.text}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removeEntry(item.id)}
-                  aria-label={`„${item.text}“ entfernen`}
-                  title="Entfernen"
-                  className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        {/* P9: Alt-Werte ohne Personen-Zuordnung bleiben sichtbar. */}
+        {activeUnassigned.length > 0 ? (
+          <div className="space-y-1.5 border-t border-subtle pt-3">
+            <p className="text-sm font-medium text-foreground">
+              Früher erfasste Werte (ohne Personen-Zuordnung)
+            </p>
+            <ul className="space-y-1.5">
+              {activeUnassigned.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-background px-2.5 py-1.5"
                 >
-                  <Trash2 className="size-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="flex items-center gap-2">
-            <Input
-              value={draft}
-              disabled={activeFull}
-              aria-label={`Wert für ${activeName} ergänzen`}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  addValue(active.id, draft);
-                  setDraft("");
-                }
-              }}
-              placeholder={activeFull ? "Maximal 3 Werte." : "Wert …"}
-              className="min-w-0 flex-1 bg-background px-2.5 py-1.5"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={activeFull}
-              onClick={() => {
-                addValue(active.id, draft);
-                setDraft("");
-              }}
-            >
-              <Plus />
-              Hinzufügen
-            </Button>
+                  <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                    {item.text}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeEntry(item.id)}
+                    aria-label={`„${item.text}“ entfernen`}
+                    title="Entfernen"
+                    className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
+        ) : null}
 
         <WertelisteReferenz
-          onPick={(value) => addValue(active.id, value)}
-          disabled={activeFull}
-          isTaken={(value) =>
-            valuesOf(active.id).some((item) => item.text === value)
+          onPick={(value) => {
+            // Übernahme in die zuletzt bearbeitete (sonst erste) Person.
+            const target =
+              activePersons.find((p) => p.id === activePersonId) ??
+              activePersons[0];
+            if (target) addValueForPerson(active.id, target.id, value);
+          }}
+          disabled={
+            activePersons.length === 0 ||
+            (() => {
+              const target =
+                activePersons.find((p) => p.id === activePersonId) ??
+                activePersons[0];
+              return target
+                ? valuesOfPerson(target.id).length >= MAX_PER_CLUSTER
+                : true;
+            })()
           }
+          isTaken={(value) => {
+            // Review-Finding: „übernommen" gilt je ZIEL-Person — ein Wert
+            // von Person A bleibt für Person B übernehmbar.
+            const target =
+              activePersons.find((p) => p.id === activePersonId) ??
+              activePersons[0];
+            return target
+              ? valuesOfPerson(target.id).some((item) => item.text === value)
+              : false;
+          }}
           summaryLabel="Werteliste als Anregung"
         />
       </div>
@@ -425,7 +577,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                   </span>
                 ))}
               {myValues.filter((i) => i.text.trim()).length === 0 ? (
-                <span className="text-xs text-faint">
+                <span className="text-sm text-faint">
                   Noch keine — siehe Schritt 3.4.
                 </span>
               ) : null}
@@ -461,7 +613,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
                 );
               })}
               {legacy.some((i) => i.text.trim()) ? (
-                <div className="text-xs text-muted">
+                <div className="text-sm text-muted">
                   <span className="font-medium text-foreground">Weitere:</span>{" "}
                   <span className="mt-0.5 inline-flex flex-wrap gap-1 align-middle">
                     {legacy
@@ -479,7 +631,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
               ) : null}
               {!sorted.some((c) => valuesOf(c.id).length > 0) &&
               !legacy.some((i) => i.text.trim()) ? (
-                <span className="text-xs text-faint">Noch keine.</span>
+                <span className="text-sm text-faint">Noch keine.</span>
               ) : null}
             </div>
           </div>
@@ -507,7 +659,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
           <p className="text-sm font-medium text-foreground">
             Weitere Einträge (ohne Cluster-Bezug)
           </p>
-          <p className="text-xs text-muted">
+          <p className="text-sm text-muted">
             Diese Einträge stammen aus einer früheren Bearbeitung. Du kannst sie
             weiter bearbeiten, oben einem Cluster neu zuordnen oder löschen.
           </p>
@@ -521,7 +673,7 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
       ) : null}
 
       {!canNext ? (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           „Weiter“ öffnet sich, wenn du jedes Cluster bearbeitet oder bewusst
           übersprungen hast.
         </p>

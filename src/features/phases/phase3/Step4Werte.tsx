@@ -237,6 +237,11 @@ function MvwkSketch() {
  * förderlich sein.") — set automatically, shown as a badge. The value list
  * reference picks into the actively selected column. Soft step.
  */
+/** P8c: die Markierungen eines Werts (Mehrfach) — categories mit Fallback. */
+function categoriesOf(item: ResourceItem): string[] {
+  return item.categories ?? (item.category ? [item.category] : []);
+}
+
 export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
   const values = useSessionStore((s) => s.session?.phase3.values ?? []);
   const patch = useSessionStore((s) => s.patch);
@@ -245,18 +250,19 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
     funktion: "",
     ziel: "",
   });
-  const [pickTarget, setPickTarget] = useState<ValueCategory>("mensch");
 
   function setValues(next: ResourceItem[]) {
     patch((s) => ({ ...s, phase3: { ...s.phase3, values: next } }));
   }
 
   const ofColumn = (category: ValueCategory) =>
-    values.filter((item) => item.category === category);
-  // Legacy entries without a category (pre-MP3 sessions) — kept visible below.
+    values.filter((item) => categoriesOf(item).includes(category));
+  // Legacy entries without any category (pre-MP3 sessions) — kept below.
   const legacy = values.filter(
     (item) =>
-      !item.category || !COLUMNS.some((c) => c.category === item.category),
+      !categoriesOf(item).some((c) =>
+        COLUMNS.some((column) => column.category === c),
+      ),
   );
 
   function addValue(category: ValueCategory, text: string) {
@@ -268,6 +274,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         id: crypto.randomUUID(),
         text: trimmed,
         category,
+        categories: [category],
         // Regel der Methodik: Ziel-Werte sind per Definition förderlich.
         ...(category === "ziel" ? { polarity: "foerderlich" as const } : {}),
       },
@@ -277,6 +284,43 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
   function addDraft(category: ValueCategory) {
     addValue(category, drafts[category]);
     setDrafts((d) => ({ ...d, [category]: "" }));
+  }
+
+  /**
+   * P8c: eine Markierung (Mensch/Funktion/Ziel) an einem Wert umschalten.
+   * Die letzte Markierung bleibt bestehen (sonst verschwände der Wert aus
+   * allen Säulen); Ziel-Markierung erzwingt förderlich (Methodik-Regel);
+   * `category` bleibt als Erst-Markierung für Alt-Leser gepflegt.
+   */
+  function toggleCategory(id: string, category: ValueCategory) {
+    setValues(
+      values.map((item) => {
+        if (item.id !== id) return item;
+        const current = categoriesOf(item);
+        const has = current.includes(category);
+        if (has && current.length === 1) return item; // letzte Markierung
+        if (!has && ofColumn(category).length >= MAX_PER_COLUMN) return item;
+        const next = has
+          ? current.filter((c) => c !== category)
+          : [...current, category];
+        // Ziel-Markierung erzwingt förderlich (Methodik-Regel). Wird „ziel"
+        // wieder ABGEWÄHLT, geht die Wertung auf „offen" zurück — die
+        // erzwungene förderlich-Wertung darf nicht als Nutzerwahl
+        // stehenbleiben (Review-Finding: stiller Falschwert).
+        const zielVorher = current.includes("ziel");
+        const zielNachher = next.includes("ziel");
+        return {
+          ...item,
+          categories: next,
+          category: next[0],
+          ...(zielNachher
+            ? { polarity: "foerderlich" as const }
+            : zielVorher
+              ? { polarity: undefined }
+              : {}),
+        };
+      }),
+    );
   }
 
   function setPolarity(
@@ -290,6 +334,53 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
 
   function remove(id: string) {
     setValues(values.filter((item) => item.id !== id));
+  }
+
+  /** P8c: die drei Ankreuz-Chips einer Wert-Zeile. */
+  function renderCategoryChips(item: ResourceItem) {
+    const current = categoriesOf(item);
+    return (
+      <span
+        role="group"
+        aria-label={`„${item.text}“ ist mir wichtig als`}
+        className="flex flex-wrap items-center gap-1.5"
+      >
+        {COLUMNS.map((column) => {
+          const checked = current.includes(column.category);
+          const lastOne = checked && current.length === 1;
+          // Review-Finding: volle Ziel-Säule sichtbar sperren statt still
+          // zu verpuffen (Max 5 je Säule).
+          const columnFull =
+            !checked && ofColumn(column.category).length >= MAX_PER_COLUMN;
+          return (
+            <button
+              key={column.category}
+              type="button"
+              aria-pressed={checked}
+              aria-disabled={lastOne || columnFull || undefined}
+              title={
+                lastOne
+                  ? "Mindestens eine Markierung bleibt bestehen"
+                  : columnFull
+                    ? `Säule voll — maximal ${MAX_PER_COLUMN} Werte`
+                    : COLUMN_SHORT[column.category]
+              }
+              onClick={() => toggleCategory(item.id, column.category)}
+              className={cn(
+                "rounded-full border px-2.5 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                checked
+                  ? "border-accent bg-accent/10 font-medium text-accent"
+                  : "border-subtle bg-surface text-muted hover:text-foreground",
+                columnFull && "cursor-not-allowed opacity-45",
+              )}
+            >
+              {checked ? "✓ " : ""}
+              {COLUMN_SHORT[column.category]}
+            </button>
+          );
+        })}
+      </span>
+    );
   }
 
   return (
@@ -319,8 +410,10 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         </div>
       </details>
 
-      {/* Drei Werte-Spalten */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      {/* P8b: die drei Säulen ÜBEREINANDER in voller Breite (Mensch,
+          Funktion, Ziel). P8c: jeder Wert trägt drei einzeln setzbare
+          Markierungen — ein Wert kann in mehreren Säulen stehen. */}
+      <div className="grid grid-cols-1 gap-4">
         {COLUMNS.map((column) => {
           const entries = ofColumn(column.category);
           const full = entries.length >= MAX_PER_COLUMN;
@@ -331,51 +424,60 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
               className="flex flex-col gap-3 rounded-xl border border-subtle bg-surface p-4"
             >
               <div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-base font-semibold text-foreground">
                   {column.title}
                 </h3>
-                <div className="mt-1 space-y-1 text-xs text-muted">
+                <div className="mt-1 max-w-prose space-y-1 text-sm text-muted">
                   {column.guide.map((absatz) => (
                     <p key={absatz}>{absatz}</p>
                   ))}
                 </div>
               </div>
 
-              <ul className="space-y-1.5">
-                {entries.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-background px-2.5 py-1.5"
-                  >
-                    <span className="min-w-0 flex-1 text-sm break-words text-foreground">
-                      {item.text}
-                    </span>
-                    <span className="flex shrink-0 items-center gap-1.5">
-                      {column.category === "ziel" ? (
-                        <span className="rounded-full bg-green-600/10 px-2 py-0.5 text-xs font-medium text-green-600">
-                          förderlich
+              <ul className="space-y-2">
+                {entries.map((item) => {
+                  const zielMarkiert = categoriesOf(item).includes("ziel");
+                  return (
+                    /* P8a: Text horizontal lesbar in voller Breite; Chips
+                       und Wertung DARUNTER — nie über dem Text. */
+                    <li
+                      key={item.id}
+                      className="space-y-2 rounded-lg border border-subtle bg-background px-3 py-2"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                          {item.text}
                         </span>
-                      ) : (
-                        <PolarityToggle
-                          value={item.polarity}
-                          onChange={(next) => setPolarity(item.id, next)}
-                          helpLabel="zielförderlich"
-                          hinderLabel="zielhinderlich"
-                          ariaContext={`„${item.text}“`}
-                        />
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => remove(item.id)}
-                        aria-label={`„${item.text}“ entfernen`}
-                        title="Entfernen"
-                        className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </span>
-                  </li>
-                ))}
+                        <button
+                          type="button"
+                          onClick={() => remove(item.id)}
+                          aria-label={`„${item.text}“ entfernen`}
+                          title="Entfernen"
+                          className="flex size-7 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <span className="text-sm text-faint">Wichtig als:</span>
+                        {renderCategoryChips(item)}
+                        {zielMarkiert ? (
+                          <span className="rounded-full bg-green-600/10 px-2 py-0.5 text-sm font-medium text-green-600">
+                            förderlich
+                          </span>
+                        ) : (
+                          <PolarityToggle
+                            value={item.polarity}
+                            onChange={(next) => setPolarity(item.id, next)}
+                            helpLabel="zielförderlich"
+                            hinderLabel="zielhinderlich"
+                            ariaContext={`„${item.text}“`}
+                          />
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
 
               <div className="mt-auto flex items-center gap-2">
@@ -396,7 +498,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                     }
                   }}
                   placeholder={full ? "Maximal 5 — weniger ist ok!" : "Wert …"}
-                  className="min-w-0 flex-1 bg-background px-2.5 py-1.5"
+                  className="min-w-0 flex-1 bg-background"
                 />
                 <Button
                   variant="outline"
@@ -408,7 +510,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                   <Plus />
                 </Button>
               </div>
-              <p className="text-xs text-faint">
+              <p className="text-sm text-faint">
                 {entries.length}/{MAX_PER_COLUMN} — weniger ist ok!
               </p>
             </section>
@@ -420,39 +522,22 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         Die Werte für dein Ziel müssen alle förderlich sein.
       </p>
 
-      {/* Werteliste-Referenz mit Ziel-Spalte für die Übernahme */}
+      {/* Werteliste-Referenz — Übernahme startet „als Mensch"; die
+          Zuordnung verfeinerst du je Wert über die Ankreuz-Chips (P8c). */}
       <div className="space-y-2">
-        <div
-          role="group"
-          aria-label="Werteliste: Übernehmen in Spalte"
-          className="flex flex-wrap items-center gap-2 text-sm"
-        >
-          <span className="text-muted">Übernehmen in:</span>
-          <div className="inline-flex overflow-hidden rounded-lg border border-subtle">
-            {COLUMNS.map((column, index) => (
-              <button
-                key={column.category}
-                type="button"
-                aria-pressed={pickTarget === column.category}
-                onClick={() => setPickTarget(column.category)}
-                className={cn(
-                  "px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
-                  index > 0 && "border-l border-subtle",
-                  pickTarget === column.category
-                    ? "bg-accent text-white"
-                    : "bg-surface text-muted hover:text-foreground",
-                )}
-              >
-                {COLUMN_SHORT[column.category]}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="text-sm text-muted">
+          Übernommene Werte landen zunächst unter „als Mensch“ — markiere danach
+          je Wert, wofür er wichtig ist.
+        </p>
         <WertelisteReferenz
-          onPick={(value) => addValue(pickTarget, value)}
-          disabled={ofColumn(pickTarget).length >= MAX_PER_COLUMN}
+          onPick={(value) => addValue("mensch", value)}
+          disabled={ofColumn("mensch").length >= MAX_PER_COLUMN}
           isTaken={(value) =>
-            ofColumn(pickTarget).some((item) => item.text === value)
+            // Review-Finding: Legacy-Werte ohne Spalten-Zuordnung sperren
+            // die Übernahme nicht — nur markierte Werte zählen.
+            values.some(
+              (item) => categoriesOf(item).length > 0 && item.text === value,
+            )
           }
         />
       </div>
@@ -461,7 +546,7 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
       {legacy.length > 0 ? (
         <div className="space-y-2 border-t border-subtle pt-4">
           <p className="text-sm font-medium text-foreground">Weitere Werte</p>
-          <p className="text-xs text-muted">
+          <p className="text-sm text-muted">
             Diese Einträge stammen aus einer früheren Bearbeitung ohne
             Spalten-Zuordnung.
           </p>

@@ -115,6 +115,9 @@ export function SessionSummary({ session }: { session: Session }) {
   )
     .map(([label, items]) => ({ label, text: listWithPolarity(items) }))
     .filter((row) => row.text);
+  // P8c: Mehrfach-Markierung je Wert — categories mit category-Fallback.
+  const valueCats = (i: ResourceItem): string[] =>
+    i.categories ?? (i.category ? [i.category] : []);
   const valueColumns = (
     [
       ["mensch", "Als Mensch"],
@@ -125,14 +128,21 @@ export function SessionSummary({ session }: { session: Session }) {
     .map(([category, label]) => ({
       label,
       text: listWithPolarity(
-        phase3.values.filter((i) => i.category === category),
+        phase3.values.filter((i) => valueCats(i).includes(category)),
       ),
     }))
     .filter((row) => row.text);
   const valueLegacyText = listWithPolarity(
     phase3.values.filter(
-      (i) => !["mensch", "funktion", "ziel"].includes(i.category ?? ""),
+      (i) =>
+        !valueCats(i).some((c) => ["mensch", "funktion", "ziel"].includes(c)),
     ),
+  );
+  // P9: mehrere Personen je Cluster — Werte mit Personen-Zuordnung ausgeben.
+  const personNameById = new Map(
+    phase3.othersValues
+      .filter((i) => i.category === "wer")
+      .map((i) => [i.id, i.text.trim()]),
   );
   const othersGroups = clustersSorted
     .map((cluster) => {
@@ -149,7 +159,12 @@ export function SessionSummary({ session }: { session: Session }) {
           .join(", "),
         werte: entries
           .filter((i) => !i.category && i.text.trim())
-          .map((i) => i.text.trim()),
+          .map((i) => {
+            const person = i.personRef
+              ? personNameById.get(i.personRef)
+              : undefined;
+            return person ? `${person}: ${i.text.trim()}` : i.text.trim();
+          }),
       };
     })
     .filter((g) => g.wer || g.werte.length > 0);
@@ -667,11 +682,21 @@ export function SessionSummary({ session }: { session: Session }) {
                       </td>
                       <td className="py-1.5 pr-3 break-words text-foreground">
                         {row.measure.text.trim()}
-                        {row.measure.basedOnResource ? (
-                          <span className="block text-xs text-muted">
-                            Ressource: {resText(row.measure.basedOnResource)}
-                          </span>
-                        ) : null}
+                        {/* P13: mehrere Ressourcen je Maßnahme (mit
+                            Legacy-Einzelwert-Fallback). */}
+                        {(() => {
+                          const ids =
+                            row.measure.basedOnResources ??
+                            (row.measure.basedOnResource
+                              ? [row.measure.basedOnResource]
+                              : []);
+                          return ids.length > 0 ? (
+                            <span className="block text-xs text-muted">
+                              {ids.length === 1 ? "Ressource" : "Ressourcen"}:{" "}
+                              {ids.map(resText).join(" · ")}
+                            </span>
+                          ) : null;
+                        })()}
                         {measureQualityMark(row.measure) ? (
                           <span className="block text-xs text-muted">
                             Qualität: {measureQualityMark(row.measure)}

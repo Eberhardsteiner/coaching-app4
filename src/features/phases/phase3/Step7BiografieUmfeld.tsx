@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { requestDrawer } from "@/components/layout/drawerBus";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
 import { StepNav } from "@/features/phases/StepNav";
@@ -120,7 +121,8 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
               key={item.id}
               className="flex flex-col gap-2 rounded-lg border border-subtle bg-background px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
             >
-              <span className="min-w-0 text-sm text-foreground">
+              {/* P10/P8a: Text horizontal lesbar, Wertung daneben/darunter. */}
+              <span className="min-w-0 break-words text-base text-foreground">
                 {item.text || "—"}
               </span>
               <span className="flex shrink-0 items-center gap-1.5">
@@ -147,8 +149,7 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
           ))}
         </ul>
         <div className="flex items-center gap-2">
-          <input
-            type="text"
+          <Input
             value={drafts[category]}
             aria-label={ariaLabel}
             onChange={(event) =>
@@ -161,7 +162,7 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
               }
             }}
             placeholder={placeholder}
-            className="min-w-0 flex-1 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="min-w-0 flex-1"
           />
           <Button
             variant="outline"
@@ -187,14 +188,15 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
           was hat dir damals geholfen? Geh die drei Fragen durch und schreibe
           auf.
         </p>
-        <div className="grid gap-4 lg:grid-cols-3">
+        {/* P10: die drei Boxen ÜBEREINANDER in voller Breite (G1). */}
+        <div className="grid grid-cols-1 gap-4">
           {ANKER.map((anker) => (
             <section
               key={anker.category}
               aria-label={anker.title}
               className="space-y-2 rounded-xl border border-subtle bg-surface p-4"
             >
-              <h4 className="text-sm font-medium text-foreground">
+              <h4 className="text-base font-medium text-foreground">
                 {anker.title}
               </h4>
               {renderSection(

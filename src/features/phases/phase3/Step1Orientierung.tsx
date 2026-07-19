@@ -80,7 +80,7 @@ export function Step1Orientierung({ nav }: { nav: PhaseNavigation }) {
           <h3 className="text-sm font-semibold text-foreground">
             Das Kompetenzmodell
           </h3>
-          <p className="mt-1 text-xs text-muted">
+          <p className="mt-1 text-sm text-muted">
             Von innen nach außen — dein Startpunkt für die Ressourcenanalyse.
             Tippe ein Element an, um seine Beschreibung zu sehen.
           </p>

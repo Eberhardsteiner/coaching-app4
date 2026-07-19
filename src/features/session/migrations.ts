@@ -21,6 +21,18 @@ const MIGRATIONS: Record<number, Migration> = {
   }),
 };
 
+/*
+ * Additive v2-Felder OHNE Versionssprung (P8c/P9/P13 — Regel 5):
+ * - ResourceItem.categories (Werte: Mehrfach-Zuordnung Mensch/Funktion/Ziel;
+ *   Fallback beim Lesen: `categories ?? (category ? [category] : [])`),
+ * - ResourceItem.personRef (Werte anderer: Zuordnung zu einer Person =
+ *   "wer"-Eintrag; alte Werte ohne personRef bleiben cluster-weit gültig),
+ * - Measure.basedOnResources (mehrere Ressourcen je Maßnahme; Fallback:
+ *   `basedOnResources ?? (basedOnResource ? [basedOnResource] : [])`).
+ * Alte Sitzungen laden unverändert — die UI, der Export (ganze Session) und
+ * die Zusammenfassung lesen beide Formen defensiv.
+ */
+
 /** Raised when no migration path exists for a given version. */
 export class MigrationError extends Error {}
 

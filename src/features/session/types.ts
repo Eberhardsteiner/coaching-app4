@@ -152,6 +152,20 @@ export interface ResourceItem {
   category?: string;
   /** Owning Phase-1 cluster (additive, MP3): used by othersValues. */
   clusterId?: string;
+  /**
+   * Mehrfach-Zuordnung eines Werts (P8c, additiv-optional): `values` markiert
+   * hier, ob ein Wert wichtig ist als "mensch" | "funktion" | "ziel" —
+   * Mehrfachauswahl. Alte Einträge haben nur `category` (Einzelwert); die UI
+   * liest `categories ?? [category]`, kein Schema-Bump nötig.
+   */
+  categories?: string[];
+  /**
+   * Personen-Zuordnung (P9, additiv-optional): `othersValues`-WERTE verweisen
+   * auf die Person (= id des zugehörigen "wer"-Eintrags im selben Cluster),
+   * zu der sie erfasst wurden. Alte Werte ohne personRef bleiben gültig
+   * (cluster-weit, ohne Personen-Zuordnung angezeigt).
+   */
+  personRef?: string;
 }
 
 /** One structured "Bisheriges Muster — Don't!" entry (MP3, Folie 14). */
@@ -211,7 +225,15 @@ export interface MeasureQuality {
 export interface Measure {
   id: string;
   text: string; // Ich-Satz
+  /** Legacy-Einzelwert (pre-P13) — von basedOnResources abgelöst; alte
+   *  Sitzungen bleiben lesbar (UI/Summary lesen beide Felder). */
   basedOnResource?: string;
+  /**
+   * P13 (additiv-optional): MEHRERE Ressourcen je Maßnahme (Checkbox-Liste
+   * der förderlichen Ressourcen). Beim ersten Ändern hebt die UI den alten
+   * Einzelwert in dieses Array — kein Schema-Bump nötig.
+   */
+  basedOnResources?: string[];
   /** Legacy (pre-MP4): no longer collected — the Wirkindikator now comes from
    *  phase2.consequences. Existing values are tolerated read-only. */
   recognitionSignal?: string;

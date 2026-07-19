@@ -36,7 +36,7 @@ export function WertelisteReferenz({
         />
       </summary>
       <div className="mt-3 space-y-4">
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           Exemplarisch — kein Anspruch auf Vollständigkeit.
         </p>
         {loaded.status === "loading" || loaded.status === "error" ? (

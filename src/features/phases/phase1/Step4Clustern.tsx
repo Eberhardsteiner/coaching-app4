@@ -318,7 +318,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
             </span>
           ))}
         </p>
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           {clusters.length} von 5 Clustern angelegt.
         </p>
 
@@ -348,7 +348,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
             />
           </div>
         ) : (
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             Die Schmerzskala erscheint, sobald du dein erstes Cluster angelegt
             hast.
           </p>
@@ -356,7 +356,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
       </Abschnitt>
 
       {!canNext ? (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           Lege mindestens ein benanntes Cluster an, um fortzufahren.
         </p>
       ) : null}

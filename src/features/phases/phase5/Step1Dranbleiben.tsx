@@ -196,7 +196,7 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
                   </span>
                   {index === BODY_SUGGESTION_INDEX && bodyMarkers.length > 0 ? (
                     <span className="mt-1.5 flex flex-wrap items-center gap-1">
-                      <span className="text-xs text-faint">
+                      <span className="text-sm text-faint">
                         Deine Signalgeber:
                       </span>
                       {bodyMarkers.map((marker) => (
@@ -217,7 +217,7 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
       </div>
 
       {strategies.length === 0 ? (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           Noch keine Strategie angelegt — leg eine erste an.
         </p>
       ) : null}

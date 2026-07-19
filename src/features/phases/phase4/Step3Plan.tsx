@@ -261,15 +261,15 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
                   {row.measure.text.trim()}
                 </p>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted">Bis wann</p>
+                  <p className="text-sm text-muted">Bis wann</p>
                   <DueField row={row} onUpdate={updateMeasure} />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted">Mögliche Hindernisse</p>
+                  <p className="text-sm text-muted">Mögliche Hindernisse</p>
                   <ObstaclesField row={row} onUpdate={updateMeasure} />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted">
+                  <p className="text-sm text-muted">
                     Ressourcen &amp; Alternativen
                   </p>
                   <AlternativesField row={row} onUpdate={updateMeasure} />
@@ -286,7 +286,7 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
           <p className="text-sm font-medium text-foreground">
             Frühere Hindernis-Notizen
           </p>
-          <p className="text-xs text-muted">
+          <p className="text-sm text-muted">
             Diese Notizen stammen aus einer früheren Bearbeitung. Übertrage sie
             am besten in die Spalte „Mögliche Hindernisse“ deiner Tabelle — dann
             kannst du sie hier löschen.

@@ -307,7 +307,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             );
           })}
         </div>
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           {doneCount} von {sorted.length} Clustern beantwortet.
         </p>
 
@@ -341,7 +341,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
                 })
               }
               placeholder="z. B. Peter geht nach 8 Stunden Arbeitszeit nach Hause."
-              className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
 
@@ -423,7 +423,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             <p className="text-sm font-medium text-foreground">
               Weitere Perspektiven
             </p>
-            <p className="text-xs text-muted">
+            <p className="text-sm text-muted">
               Diese Einträge stammen aus einer früheren Bearbeitung ohne
               Cluster-Bezug. Du kannst sie weiter bearbeiten oder löschen.
             </p>
@@ -448,7 +448,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
                         updateLegacy(c.id, { perspective: event.target.value })
                       }
                       placeholder="z. B. mein Team"
-                      className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     />
                   </div>
                   <button
@@ -475,7 +475,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
                     onChange={(event) =>
                       updateLegacy(c.id, { recognition: event.target.value })
                     }
-                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -492,7 +492,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
                     onChange={(event) =>
                       updateLegacy(c.id, { valuation: event.target.value })
                     }
-                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
                 </div>
               </div>
@@ -564,7 +564,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
         </div>
 
         {!canNext ? (
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             „Weiter“ öffnet sich, wenn du für jedes Cluster eine Handlung
             beschrieben und eine Bewertung gesetzt hast.
           </p>

@@ -322,7 +322,7 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
         })}
 
         {!canNext ? (
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             „Weiter“ öffnet sich, wenn beide Skalen auf 10 stehen — ein Ziel,
             das dich wirklich zieht und das du selbst erreichen kannst.
           </p>

@@ -182,6 +182,25 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
           </div>
         </div>
 
+        {/* P1: die zwei Kernbegriffe des Schritts — sichtbar erklärt,
+            kein Aufklapper. */}
+        <div className="max-w-prose space-y-1.5 rounded-xl border border-subtle bg-surface p-4 text-sm text-muted">
+          <p>
+            <strong className="font-semibold text-foreground">
+              Zusammenhang
+            </strong>{" "}
+            meint alles, was mit deinem Gefühl zu tun hat — Menschen, Aufgaben,
+            Umstände oder Ereignisse. Du sammelst hier, wer oder was in deiner
+            Situation eine Rolle spielt.
+          </p>
+          <p>
+            <strong className="font-semibold text-foreground">Beitrag</strong>{" "}
+            meint die Art und Weise, wie ein Punkt dein Gefühl konkret auslöst
+            oder verstärkt. Du beschreibst also, WIE etwas zu deinem Gefühl
+            beiträgt.
+          </p>
+        </div>
+
         {/* Beispiel — Vertiefung, darf aufklappbar bleiben. */}
         <details className="group rounded-xl border border-subtle bg-surface p-4">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
@@ -232,7 +251,7 @@ export function Step2Zusammenhaenge({ nav }: { nav: PhaseNavigation }) {
                   <p className="text-sm font-medium text-foreground">
                     {stage.label}
                   </p>
-                  <p className="text-xs text-faint">{stage.question}</p>
+                  <p className="text-sm text-faint">{stage.question}</p>
                 </div>
               </li>
             ))}

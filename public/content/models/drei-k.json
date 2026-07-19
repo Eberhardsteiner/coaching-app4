@@ -2,26 +2,74 @@
   "id": "drei-k",
   "name": "3K-Modell (Konfliktmodell)",
   "category": "ist",
-  "intro": "Betrachte die Situation aus mehreren Beteiligten-Perspektiven.",
+  "intro": "Das 3K-Modell beschreibt die Merkmale eines Konflikts: die Beteiligten (Ich, andere Partei, Dritte), das Thema sowie die immer relevanten Kategorien Abhängigkeiten, Zeit, Werte und Emotionen. Hier nutzt du es, um deinen Konflikt vollständig zu durchleuchten und keine Konfliktdimension zu übersehen.",
   "coachRecommended": true,
   "coachNote": "Dieser Schritt mit dem 3K-Modell profitiert besonders von einem Coach; allein kann er schwieriger sein.",
   "terms": [
-    { "id": "ich", "label": "Ich" },
-    { "id": "erfahrungen", "label": "Erfahrungen" },
-    { "id": "thema", "label": "Thema" },
-    { "id": "andere-partei", "label": "die andere Partei" },
-    { "id": "dritte", "label": "Dritte" },
-    { "id": "werte", "label": "Werte" },
-    { "id": "abhaengigkeiten", "label": "Abhängigkeiten" },
-    { "id": "zeit", "label": "Zeit" },
-    { "id": "emotionen", "label": "Emotionen" },
-    { "id": "koerper", "label": "Körper" },
-    { "id": "folgen", "label": "Folgen" },
-    { "id": "kultur", "label": "Kultur" },
-    { "id": "prozesse", "label": "Prozesse" },
-    { "id": "erwartungen", "label": "Erwartungen" },
-    { "id": "sprache", "label": "Sprache" },
-    { "id": "annahmen", "label": "Annahmen" }
+    {
+      "id": "ich",
+      "label": "Ich"
+    },
+    {
+      "id": "erfahrungen",
+      "label": "Erfahrungen"
+    },
+    {
+      "id": "thema",
+      "label": "Thema"
+    },
+    {
+      "id": "andere-partei",
+      "label": "die andere Partei"
+    },
+    {
+      "id": "dritte",
+      "label": "Dritte"
+    },
+    {
+      "id": "werte",
+      "label": "Werte"
+    },
+    {
+      "id": "abhaengigkeiten",
+      "label": "Abhängigkeiten"
+    },
+    {
+      "id": "zeit",
+      "label": "Zeit"
+    },
+    {
+      "id": "emotionen",
+      "label": "Emotionen"
+    },
+    {
+      "id": "koerper",
+      "label": "Körper"
+    },
+    {
+      "id": "folgen",
+      "label": "Folgen"
+    },
+    {
+      "id": "kultur",
+      "label": "Kultur"
+    },
+    {
+      "id": "prozesse",
+      "label": "Prozesse"
+    },
+    {
+      "id": "erwartungen",
+      "label": "Erwartungen"
+    },
+    {
+      "id": "sprache",
+      "label": "Sprache"
+    },
+    {
+      "id": "annahmen",
+      "label": "Annahmen"
+    }
   ],
   "bookRef": ""
 }

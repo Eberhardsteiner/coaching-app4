@@ -19,12 +19,7 @@ import { RessourcenCockpitOverlay } from "@/features/phases/phase3/RessourcenCoc
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
-import type {
-  Cluster,
-  ClusterPlan,
-  Measure,
-  ResourceItem,
-} from "@/features/session/types";
+import type { Cluster, ClusterPlan, Measure } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
 /** Ressourcen-Minimum je Cluster (Gate) und Maßnahmen-Obergrenze (Methodik). */
@@ -96,8 +91,9 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [cockpitOpen, setCockpitOpen] = useState(false);
 
-  // Förderliche Ressourcen (id-referenced) + a text lookup for display.
-  const resById = new Map<string, ResourceItem>(
+  // Förderliche Ressourcen für Auswahl-Chips und P13-Checkboxen; alle
+  // Ressourcen als Lookup für stale Maßnahmen-Bezüge (Review-Finding).
+  const allResById = new Map(
     phase3
       ? collectSortableResources(phase3).map((entry) => [
           entry.item.id,
@@ -111,8 +107,6 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         .map((entry) => ({ id: entry.item.id, text: entry.item.text }))
     : [];
   const foerderlichIds = new Set(foerderliche.map((r) => r.id));
-  const resourceText = (id: string): string =>
-    resById.get(id)?.text || "(entfernt)";
   /**
    * Counter/gate only count selections that still resolve to a currently
    * förderliche resource — stale ids (resource deleted or re-rated in Phase 3)
@@ -169,6 +163,11 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
     });
   }
 
+  /** P13: gewählte Ressourcen einer Maßnahme (Array mit Legacy-Fallback). */
+  function measureResources(m: Measure): string[] {
+    return m.basedOnResources ?? (m.basedOnResource ? [m.basedOnResource] : []);
+  }
+
   function toggleResource(clusterId: string, resId: string) {
     withPlan(clusterId, (p) => {
       const has = p.resourcesUsed.includes(resId);
@@ -177,16 +176,34 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         resourcesUsed: has
           ? p.resourcesUsed.filter((r) => r !== resId)
           : [...p.resourcesUsed, resId],
-        // Removing a resource clears measures that referenced it.
-        measures: has
-          ? p.measures.map((m) =>
-              m.basedOnResource === resId
-                ? { ...m, basedOnResource: undefined }
-                : m,
-            )
-          : p.measures,
+        // P13: Maßnahmen-Ressourcenbezüge sind von resourcesUsed entkoppelt
+        // (Checkboxen bieten alle förderlichen an) — Abwählen eines
+        // Cluster-Chips löscht daher KEINE Maßnahmen-Bezüge mehr.
+        measures: p.measures,
       };
     });
+  }
+
+  /** P13: eine Ressource an einer Maßnahme an-/abhaken (Mehrfachauswahl). */
+  function toggleMeasureResource(
+    clusterId: string,
+    measureId: string,
+    resId: string,
+  ) {
+    withPlan(clusterId, (p) => ({
+      ...p,
+      measures: p.measures.map((m) => {
+        if (m.id !== measureId) return m;
+        const current = measureResources(m);
+        return {
+          ...m,
+          basedOnResource: undefined,
+          basedOnResources: current.includes(resId)
+            ? current.filter((r) => r !== resId)
+            : [...current, resId],
+        };
+      }),
+    }));
   }
 
   function addMeasure(clusterId: string) {
@@ -401,7 +418,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
           );
         })}
       </div>
-      <p className="text-xs text-faint">
+      <p className="text-sm text-faint">
         {doneCount} von {sorted.length} Clustern vollständig.
       </p>
 
@@ -416,43 +433,45 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
           ) : null}
         </h3>
 
-        {/* Arbeitsblatt-Layout: Kontext aus Phase 2 links, Erfassung rechts. */}
-        <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
-          {/* Links — die zwei Fragen aus 2.4, read-only gespiegelt */}
+        {/* P11+P12: einspaltig ÜBEREINANDER in voller Breite — Wirkindikator
+            zuoberst (Schrift min. 16 px), darunter Ressourcen, dann
+            Maßnahmen. Das frühere Zwei-Spalten-Grid ist aufgelöst. */}
+        <div className="space-y-5">
+          {/* Oben — der Wirkindikator aus 2.4, volle Breite */}
           <div>
             {activeConsequence && activeConsequence.recognition.trim() ? (
-              <div className="space-y-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
-                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-faint">
+              <div className="space-y-3 rounded-lg border border-accent/30 bg-accent/5 p-4">
+                <p className="flex items-center gap-1.5 text-sm font-medium uppercase tracking-wide text-faint">
                   <Telescope
                     className="size-4 shrink-0 text-accent"
                     aria-hidden
                   />
                   Dein Wirkindikator aus Phase 2
                 </p>
-                <div className="space-y-1.5">
+                <div className="max-w-prose space-y-1.5">
                   {WIRKINDIKATOR_ABSAETZE.map((absatz, index) => (
-                    <p key={index} className="text-xs text-muted">
+                    <p key={index} className="text-base text-muted">
                       {absatz}
                     </p>
                   ))}
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted">
+                  <p className="text-base text-muted">
                     An welcher konkreten Handlung von dir erkennt „{activeName}
                     “, dass du dein Ziel erreicht hast?
                   </p>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-base font-medium text-foreground">
                     {activeConsequence.recognition.trim()}
                   </p>
                 </div>
                 {badge ? (
                   <div className="space-y-1">
-                    <p className="text-xs text-muted">
+                    <p className="text-base text-muted">
                       Wie findet das dein „{activeName}“?
                     </p>
                     <span
                       className={cn(
-                        "inline-block rounded-full px-2 py-0.5 text-xs font-medium",
+                        "inline-block rounded-full px-2 py-0.5 text-sm font-medium",
                         badge.className,
                       )}
                     >
@@ -461,14 +480,14 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   </div>
                 ) : null}
                 <details className="group">
-                  <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-accent">
+                  <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-accent">
                     <ChevronDown
                       className="size-3.5 motion-safe:transition-transform group-open:rotate-180"
                       aria-hidden
                     />
                     Für OKR-Kenner
                   </summary>
-                  <p className="mt-1.5 text-xs text-muted">
+                  <p className="mt-1.5 text-sm text-muted">
                     Falls du mit OKRs vertraut bist: Dein Verhalten pro Cluster
                     beschreibt einen Key Result, dein Zielsatz ist das
                     Objective.
@@ -493,12 +512,13 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
             )}
           </div>
 
-          {/* Rechts — Erfassung: Eingesetzte Ressourcen + Maßnahmen */}
+          {/* P12: darunter — Erfassung in voller Breite: erst Eingesetzte
+              Ressourcen, dann Deine Maßnahmen. */}
           <div className="space-y-5">
             {/* Eingesetzte Ressourcen */}
             <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-medium text-foreground">
+                <p className="text-base font-medium text-foreground">
                   Eingesetzte Ressourcen
                 </p>
                 <Button
@@ -512,7 +532,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
               </div>
               {/* Die Anleitung steht im nummerierten Vorgehen (Punkt 1, K1). */}
               {foerderliche.length === 0 ? (
-                <p className="text-xs text-faint">
+                <p className="text-sm text-faint">
                   Keine als förderlich markierten Ressourcen. Du kannst trotzdem
                   Maßnahmen formulieren — oder in Phase 3 deine Ressourcen als
                   förderlich werten.
@@ -627,35 +647,74 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                       })
                     }
                     placeholder="Ich …"
-                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   />
-                  <div className="space-y-1">
-                    <label
-                      htmlFor={`measure-res-${measure.id}`}
-                      className="block text-xs text-muted"
-                    >
-                      Basiert auf Ressource (optional)
-                    </label>
-                    <select
-                      id={`measure-res-${measure.id}`}
-                      value={measure.basedOnResource ?? ""}
-                      onChange={(event) =>
-                        updateMeasure(active.id, measure.id, {
-                          basedOnResource: event.target.value || undefined,
-                        })
+                  {/* P13: MEHRERE Ressourcen je Maßnahme — Ankreuzfelder
+                      über die als förderlich markierten Ressourcen. */}
+                  <fieldset className="space-y-1">
+                    <legend className="text-sm text-muted">
+                      Basiert auf Ressourcen (Mehrfachauswahl, optional)
+                    </legend>
+                    {(() => {
+                      // Review-Finding: gespeicherte Bezüge auf Ressourcen,
+                      // die nicht mehr förderlich sind (gelöscht/umgewertet),
+                      // bleiben abwählbar — sonst wären sie unsichtbar
+                      // festgefroren und stünden weiter in der Zusammenfassung.
+                      const stale = measureResources(measure).filter(
+                        (id) => !foerderlichIds.has(id),
+                      );
+                      const rows = [
+                        ...foerderliche,
+                        ...stale.map((id) => ({
+                          id,
+                          text: `${
+                            allResById.get(id)?.text || "(entfernt)"
+                          } — nicht mehr förderlich`,
+                        })),
+                      ];
+                      if (rows.length === 0) {
+                        return (
+                          <p className="text-sm text-faint">
+                            Keine als förderlich markierten Ressourcen
+                            vorhanden.
+                          </p>
+                        );
                       }
-                      className="w-full max-w-xs rounded-lg border border-subtle bg-surface px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    >
-                      <option value="">— keine —</option>
-                      {(activePlan?.resourcesUsed ?? []).map((rid) => (
-                        <option key={rid} value={rid}>
-                          {resourceText(rid)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      return (
+                        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                          {rows.map((res) => {
+                            const checked = measureResources(measure).includes(
+                              res.id,
+                            );
+                            return (
+                              <label
+                                key={res.id}
+                                className="inline-flex cursor-pointer items-center gap-1.5 text-sm text-foreground"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() =>
+                                    toggleMeasureResource(
+                                      active.id,
+                                      measure.id,
+                                      res.id,
+                                    )
+                                  }
+                                  className="size-4 accent-accent"
+                                />
+                                <span className="break-words">
+                                  {res.text || "—"}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+                  </fieldset>
                   {measure.recognitionSignal?.trim() ? (
-                    <p className="text-xs text-faint">
+                    <p className="text-sm text-faint">
                       Erkennungssignal (früher erfasst):{" "}
                       {measure.recognitionSignal.trim()}
                     </p>
@@ -673,7 +732,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                 Maßnahme
               </Button>
               {measures.length >= MAX_MEASURES ? (
-                <p className="text-xs text-faint">
+                <p className="text-sm text-faint">
                   Maximal {MAX_MEASURES} Maßnahmen — beschränke dich auf 3–4.
                 </p>
               ) : null}
@@ -683,7 +742,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
       </div>
 
       {!canNext ? (
-        <p className="text-xs text-faint">
+        <p className="text-sm text-faint">
           „Weiter“ öffnet sich, wenn jedes Cluster mindestens {MIN_RESOURCES}{" "}
           gewählte Ressourcen und eine Maßnahme hat.
         </p>

@@ -189,7 +189,16 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
             <p key={index}>{absatz}</p>
           ))}
         </div>
-        <p className="text-sm font-medium text-foreground">{MUSTER}</p>
+        {/* P5: Muster + Beispielsatz — direkt über der Eingabe, damit der
+            Verweis „dem obigen Muster" an Ort und Stelle stimmt. */}
+        <div className="rounded-xl border border-subtle bg-surface-2 p-4">
+          <p className="font-medium text-foreground">{MUSTER}</p>
+          <p className="mt-2 text-sm text-muted">
+            Beispiel: „Ab dem 01.06.2027 werde ich in meiner Funktion als
+            Teamleiterin die Gelassenheit in Bezug auf mein Kernthema erreicht
+            haben.“
+          </p>
+        </div>
 
         {/* Der Zielsatz aus farbigen Bausteinen (VIS-2) — Fokus im Feld lässt
             den zugehörigen Baustein aufleuchten. */}
@@ -352,7 +361,7 @@ function Field({
         {label}
       </label>
       {children}
-      {hint ? <p className="text-xs text-faint">{hint}</p> : null}
+      {hint ? <p className="text-sm text-faint">{hint}</p> : null}
     </div>
   );
 }

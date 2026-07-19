@@ -109,6 +109,30 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
     persistGefuehl(chipParts, value);
   }
 
+  /**
+   * P4: ein Wort im Brainstorming-Text an-/abtippen. Listen-Wörter laufen
+   * über die Chip-Auswahl, freie Wörter über das Eigene-Gefühl-Feld — die
+   * Zwei-Gefühle-Grenze gilt unverändert.
+   */
+  function toggleTextWord(word: string) {
+    const listMatch = FEELINGS.find(
+      (feeling) => feeling.toLowerCase() === word.toLowerCase(),
+    );
+    if (listMatch) {
+      toggleChip(listMatch);
+      return;
+    }
+    const isCurrentCustom = custom.trim().toLowerCase() === word.toLowerCase();
+    if (isCurrentCustom) {
+      changeCustom("");
+      return;
+    }
+    // Neues freies Wort: belegt den Eigenes-Gefühl-Platz (ersetzt dessen
+    // Inhalt); gesperrt nur, wenn beide Plätze durch Chips belegt sind.
+    if (chipParts.length >= MAX_FEELINGS) return;
+    changeCustom(word);
+  }
+
   // Exceptional: no core theme (gating should prevent this).
   if (!core) {
     return (
@@ -193,14 +217,55 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
 
         {/* C2 — Gefühlswörter herausziehen (Auswahl → phase2.gefuehl) */}
         <div className="space-y-4 border-t border-subtle pt-6">
+          {/* P4: Anleitung passt zur Bedienung — Wörter sind antippbar. */}
           <p className="text-muted">
-            Unterstreiche dann die{" "}
+            Tippe die{" "}
             <strong className="font-semibold text-foreground">
               Gefühlswörter
-            </strong>
-            . Denn zunächst geht es um das neue, positive Gefühl, das sich
-            einstellt, wenn dein neuer Zustand eingetreten ist.
+            </strong>{" "}
+            in deinem Text an — sie werden unterstrichen und als dein Zielgefühl
+            übernommen. Denn zunächst geht es um das neue, positive Gefühl, das
+            sich einstellt, wenn dein neuer Zustand eingetreten ist.
           </p>
+
+          {/* P4: der eingegebene Text, Wort für Wort antippbar. */}
+          {vision.trim() ? (
+            <div className="rounded-xl border border-subtle bg-surface p-4">
+              <p className="text-sm font-medium text-foreground">
+                Dein Text — tippe die Gefühlswörter an:
+              </p>
+              <p className="mt-2 leading-relaxed text-muted">
+                {vision.split(/(\s+)/).map((token, index) => {
+                  const cleaned = token.replace(
+                    /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,
+                    "",
+                  );
+                  if (!cleaned || /^\s*$/.test(token)) {
+                    return <span key={index}>{token}</span>;
+                  }
+                  const marked = parts.some(
+                    (part) => part.toLowerCase() === cleaned.toLowerCase(),
+                  );
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      aria-pressed={marked}
+                      onClick={() => toggleTextWord(cleaned)}
+                      className={cn(
+                        "rounded px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                        marked
+                          ? "font-medium text-foreground underline decoration-accent decoration-2 underline-offset-4"
+                          : "hover:bg-accent/10 hover:text-foreground",
+                      )}
+                    >
+                      {token}
+                    </button>
+                  );
+                })}
+              </p>
+            </div>
+          ) : null}
           {/* K1: drei kurze Zeilen — Liste hilft · kein Anspruch auf
               Vollständigkeit · das stärkste; 2 sind ok. */}
           <div className="max-w-prose space-y-1 text-muted">
@@ -268,7 +333,7 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
                 customLocked && "cursor-not-allowed opacity-45",
               )}
             />
-            <p className="text-xs text-faint">
+            <p className="text-sm text-faint">
               Als Substantiv — z. B. „Gelassenheit“ statt „gelassen“. Zählt mit
               in die Zwei-Gefühle-Grenze.
             </p>
@@ -282,7 +347,7 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
               </span>
             </div>
           ) : (
-            <p className="text-xs text-faint">
+            <p className="text-sm text-faint">
               „Weiter“ öffnet sich, sobald du mindestens ein Gefühl gewählt
               hast.
             </p>

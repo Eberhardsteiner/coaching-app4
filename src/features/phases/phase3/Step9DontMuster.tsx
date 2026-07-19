@@ -274,12 +274,12 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
             </div>
             {/* Die Muster-Kette: nummerierte, verbundene Felder in der
                 Reihenfolge des gewählten Einstiegs (VIS-2). */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-2.5">
+            <div className="flex flex-col gap-3">
               {orderedFields.map((field, index) => (
                 <Fragment key={field.key}>
                   {index > 0 ? (
                     <ArrowRight
-                      className="mx-auto size-4 shrink-0 rotate-90 self-center text-ist/50 sm:rotate-0"
+                      className="mx-auto size-4 shrink-0 rotate-90 self-center text-ist/50"
                       aria-hidden
                     />
                   ) : null}
@@ -306,7 +306,7 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
                         })
                       }
                       placeholder={field.placeholder}
-                      className="w-full resize-y rounded-lg border border-subtle bg-surface px-2.5 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="w-full resize-y rounded-lg border border-subtle bg-surface px-2.5 py-1.5 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     />
                   </div>
                 </Fragment>
@@ -343,7 +343,7 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
               </button>
             ))}
           </div>
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             Tippe an — der Wert wandert ins Ressourcen-Feld deines letzten
             Musters.
           </p>
@@ -363,7 +363,7 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
       {pastPatterns.length > 0 ? (
         <div className="space-y-2 border-t border-subtle pt-5">
           <p className="text-sm font-medium text-foreground">Frühere Notizen</p>
-          <p className="text-xs text-muted">
+          <p className="text-sm text-muted">
             Diese Einträge stammen aus einer früheren Bearbeitung („was du so
             nicht mehr tun willst“). Du kannst sie weiter bearbeiten, in die
             Muster oben überführen oder löschen.

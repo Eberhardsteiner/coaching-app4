@@ -2,29 +2,92 @@
   "id": "gesundheit-konstruktivistisch",
   "name": "Selbsterlebte Gesundheit",
   "category": "ist",
-  "intro": "Betrachte dein Thema durch die Brille der selbst erlebten Gesundheit und ihrer Quellen.",
+  "intro": "Dieses Modell versteht Gesundheit als etwas selbst Erlebtes: Faktoren wie Erfahrungen, Biografie, Bewältigbarkeit, Verstehbarkeit und Bedeutsamkeit prägen dein Wohlbefinden. Hier nutzt du es, um bei einem Gesundheits-Thema strukturiert zu prüfen, womit dein Ist-Zustand zusammenhängt. Es ersetzt keinen Arzt — es erweitert deine Perspektive.",
   "terms": [
-    { "id": "erwartungen", "label": "Erwartungen" },
-    { "id": "bewaeltigbarkeit", "label": "Bewältigbarkeit" },
-    { "id": "andere-menschen", "label": "andere Menschen" },
-    { "id": "widerstandsfaehigkeit", "label": "Widerstandsfähigkeit" },
-    { "id": "alter", "label": "Alter" },
-    { "id": "vertrauen", "label": "Vertrauen" },
-    { "id": "kultur", "label": "Kultur" },
-    { "id": "stimmigkeit", "label": "Stimmigkeit" },
-    { "id": "geschlecht", "label": "Geschlecht" },
-    { "id": "bedeutsamkeit", "label": "Bedeutsamkeit" },
-    { "id": "umwelt", "label": "Umwelt" },
-    { "id": "verstehbarkeit", "label": "Verstehbarkeit" },
-    { "id": "erfahrungen", "label": "Erfahrungen" },
-    { "id": "biografie", "label": "Biografie" },
-    { "id": "kondition", "label": "Kondition" },
-    { "id": "emotion", "label": "Emotion" },
-    { "id": "zeit", "label": "Zeit" },
-    { "id": "sexualitaet", "label": "Sexualität" },
-    { "id": "ernaehrung", "label": "Ernährung" },
-    { "id": "kontakt", "label": "Kontakt" },
-    { "id": "interesse", "label": "Interesse" }
+    {
+      "id": "erwartungen",
+      "label": "Erwartungen"
+    },
+    {
+      "id": "bewaeltigbarkeit",
+      "label": "Bewältigbarkeit"
+    },
+    {
+      "id": "andere-menschen",
+      "label": "andere Menschen"
+    },
+    {
+      "id": "widerstandsfaehigkeit",
+      "label": "Widerstandsfähigkeit"
+    },
+    {
+      "id": "alter",
+      "label": "Alter"
+    },
+    {
+      "id": "vertrauen",
+      "label": "Vertrauen"
+    },
+    {
+      "id": "kultur",
+      "label": "Kultur"
+    },
+    {
+      "id": "stimmigkeit",
+      "label": "Stimmigkeit"
+    },
+    {
+      "id": "geschlecht",
+      "label": "Geschlecht"
+    },
+    {
+      "id": "bedeutsamkeit",
+      "label": "Bedeutsamkeit"
+    },
+    {
+      "id": "umwelt",
+      "label": "Umwelt"
+    },
+    {
+      "id": "verstehbarkeit",
+      "label": "Verstehbarkeit"
+    },
+    {
+      "id": "erfahrungen",
+      "label": "Erfahrungen"
+    },
+    {
+      "id": "biografie",
+      "label": "Biografie"
+    },
+    {
+      "id": "kondition",
+      "label": "Kondition"
+    },
+    {
+      "id": "emotion",
+      "label": "Emotion"
+    },
+    {
+      "id": "zeit",
+      "label": "Zeit"
+    },
+    {
+      "id": "sexualitaet",
+      "label": "Sexualität"
+    },
+    {
+      "id": "ernaehrung",
+      "label": "Ernährung"
+    },
+    {
+      "id": "kontakt",
+      "label": "Kontakt"
+    },
+    {
+      "id": "interesse",
+      "label": "Interesse"
+    }
   ],
   "bookRef": ""
 }

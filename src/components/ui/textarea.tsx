@@ -80,7 +80,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           fit();
         }}
         className={cn(
-          "w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-sm text-foreground placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-45",
+          "w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-base text-foreground placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-45",
           autoResize ? "resize-none overflow-hidden" : "resize-y",
           className,
         )}

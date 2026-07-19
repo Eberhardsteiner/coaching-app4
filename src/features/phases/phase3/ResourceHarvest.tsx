@@ -252,7 +252,7 @@ export function ResourceHarvest({
               </li>
             ))}
           </ul>
-          <p className="text-xs text-faint">
+          <p className="text-sm text-faint">
             Trifft je nach Betrachtungsweise beides zu? Dann nimm den Begriff
             über „{ownLabel}“ ein zweites Mal auf und werte ihn gegenteilig.
           </p>

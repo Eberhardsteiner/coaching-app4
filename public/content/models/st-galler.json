@@ -2,12 +2,17 @@
   "id": "st-galler",
   "name": "Neues St. Galler Managementmodell",
   "category": "ist",
-  "intro": "Betrachte dein Thema aus der Vogelperspektive eines Gesamtsystems — welche Sphären, Beteiligten und Ordnungsmuster wirken hinein?",
+  "intro": "Das St. Galler Management-Modell beschreibt eine Organisation als System aus Umweltsphären, Anspruchsgruppen, Prozessen und Ordnungsmomenten. Hier nutzt du es, um dein Thema aus der Vogelperspektive eines Gesamtsystems zu betrachten: Welche dieser Merkmale hängen mit deiner Ist-Situation zusammen? So entdeckst du Aspekte, die dir aus der eigenen Perspektive nicht eingefallen sind.",
   "terms": [
     {
       "id": "umweltsphaeren",
       "label": "Umweltsphären",
-      "subterms": ["Gesellschaft", "Natur", "Technologie", "Wirtschaft"]
+      "subterms": [
+        "Gesellschaft",
+        "Natur",
+        "Technologie",
+        "Wirtschaft"
+      ]
     },
     {
       "id": "anspruchsgruppen",
@@ -25,12 +30,20 @@
     {
       "id": "interaktionsthemen",
       "label": "Interaktionsthemen",
-      "subterms": ["Anliegen & Interessen", "Normen & Werte", "Ressourcen"]
+      "subterms": [
+        "Anliegen & Interessen",
+        "Normen & Werte",
+        "Ressourcen"
+      ]
     },
     {
       "id": "ordnungsmomente",
       "label": "Ordnungsmomente",
-      "subterms": ["Strategie", "Struktur", "Kultur"]
+      "subterms": [
+        "Strategie",
+        "Struktur",
+        "Kultur"
+      ]
     },
     {
       "id": "prozesse",
@@ -44,7 +57,10 @@
     {
       "id": "entwicklungsmodi",
       "label": "Entwicklungsmodi",
-      "subterms": ["Erneuerung", "Optimierung"]
+      "subterms": [
+        "Erneuerung",
+        "Optimierung"
+      ]
     }
   ],
   "bookRef": ""
