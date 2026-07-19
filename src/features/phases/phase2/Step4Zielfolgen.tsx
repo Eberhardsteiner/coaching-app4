@@ -353,6 +353,15 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             goodWhy="3. Person macht den Perspektivwechsel deutlich"
           />
 
+          {/* Verneinungs-Beispiel-Paar — gehört zur HANDLUNGS-Formulierung
+              und steht deshalb VOR der Cluster-Bewertung (User-Feedback). */}
+          <BeispielPaar
+            bad="„Peter geht nicht mehr als Letzter aus dem Büro nach Hause“"
+            badWhy="Verneinung — beschreibt kein Verhalten"
+            good="„Peter geht nach 8 Stunden Arbeitszeit nach Hause.“"
+            goodWhy="beobachtbares Verhalten"
+          />
+
           {/* Bewertung aus Cluster-Sicht: Hinführung + konkrete Frage am Toggle */}
           <div className="space-y-2">
             <p className="text-sm text-muted">
@@ -393,13 +402,6 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             </div>
           </div>
 
-          {/* Prüf-Hinweis als Beispiel-Paar: keine Verneinungen (VIS-2). */}
-          <BeispielPaar
-            bad="„Peter geht nicht mehr als Letzter aus dem Büro nach Hause“"
-            badWhy="Verneinung — beschreibt kein Verhalten"
-            good="„Peter geht nach 8 Stunden Arbeitszeit nach Hause.“"
-            goodWhy="beobachtbares Verhalten"
-          />
           {/* Prüf-Hinweis — sichtbar beim Abschluss des Cluster-Blocks (VOICE-1). */}
           <p className="text-sm text-muted">
             Zuletzt überprüfe nochmal, ob das, was du beschrieben hast, a)
