@@ -40,3 +40,10 @@
 :root[data-persona="frei"] .app-rail {
   display: none;
 }
+
+/* K2: Direkt-Öffnen-Links (Erkenntnisboard) können Schubladen auch in Frei
+ * öffnen — ohne sichtbare Rail dockt das Overlay-Panel am rechten Rand an
+ * (statt 80px daneben zu schweben). Auf lg+ ist das Panel static — no-op. */
+:root[data-persona="frei"] .app-drawer-panel {
+  right: 0;
+}

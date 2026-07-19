@@ -1,3 +1,4 @@
+import { CockpitButton } from "@/features/phases/phase3/CockpitButton";
 import { Step1Orientierung } from "@/features/phases/phase3/Step1Orientierung";
 import { Step2Intelligenzen } from "@/features/phases/phase3/Step2Intelligenzen";
 import { Step3MotivePE } from "@/features/phases/phase3/Step3MotivePE";
@@ -20,14 +21,37 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
  * Completing 3.10 unlocks Phase 4.
  */
 export function Phase3View({ nav }: { nav: PhaseNavigation }) {
-  if (nav.stepIndex === 0) return <Step1Orientierung nav={nav} />;
-  if (nav.stepIndex === 1) return <Step2Intelligenzen nav={nav} />;
-  if (nav.stepIndex === 2) return <Step3MotivePE nav={nav} />;
-  if (nav.stepIndex === 3) return <Step4Werte nav={nav} />;
-  if (nav.stepIndex === 4) return <Step5WerteAnderer nav={nav} />;
-  if (nav.stepIndex === 5) return <Step6ModellRessourcen nav={nav} />;
-  if (nav.stepIndex === 6) return <Step7BiografieUmfeld nav={nav} />;
-  if (nav.stepIndex === 7) return <Step8Koerpersignale nav={nav} />;
-  if (nav.stepIndex === 8) return <Step9DontMuster nav={nav} />;
-  return <Step10Abschluss nav={nav} />;
+  const step =
+    nav.stepIndex === 0 ? (
+      <Step1Orientierung nav={nav} />
+    ) : nav.stepIndex === 1 ? (
+      <Step2Intelligenzen nav={nav} />
+    ) : nav.stepIndex === 2 ? (
+      <Step3MotivePE nav={nav} />
+    ) : nav.stepIndex === 3 ? (
+      <Step4Werte nav={nav} />
+    ) : nav.stepIndex === 4 ? (
+      <Step5WerteAnderer nav={nav} />
+    ) : nav.stepIndex === 5 ? (
+      <Step6ModellRessourcen nav={nav} />
+    ) : nav.stepIndex === 6 ? (
+      <Step7BiografieUmfeld nav={nav} />
+    ) : nav.stepIndex === 7 ? (
+      <Step8Koerpersignale nav={nav} />
+    ) : nav.stepIndex === 8 ? (
+      <Step9DontMuster nav={nav} />
+    ) : (
+      <Step10Abschluss nav={nav} />
+    );
+
+  // K2: fester Cockpit-Zugriff mit Füllstand — an konsistenter Stelle über
+  // JEDEM Schritt der Phase 3 (zusätzlich zum Werkzeuge-Eintrag).
+  return (
+    <div>
+      <div className="mb-4 flex justify-end">
+        <CockpitButton />
+      </div>
+      {step}
+    </div>
+  );
 }

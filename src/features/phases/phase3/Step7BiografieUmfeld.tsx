@@ -1,6 +1,7 @@
-import { Plus, Trash2 } from "lucide-react";
+import { NotebookPen, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import { requestDrawer } from "@/components/layout/drawerBus";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
@@ -227,10 +228,21 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
         )}
       </div>
 
-      <p className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm text-muted">
-        Hast du daraus weitere Erkenntnisse? Notiere sie auf deinem
-        Erkenntnisboard (Notizbuch rechts).
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-subtle bg-surface-2 px-3 py-2">
+        <p className="text-sm text-muted">
+          Hast du daraus weitere Erkenntnisse? Notiere sie auf deinem
+          Erkenntnisboard (Notizbuch rechts).
+        </p>
+        {/* K2: Direkt-Öffnen-Link zur Erkenntnisboard-Schublade. */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => requestDrawer("notebook")}
+        >
+          <NotebookPen />
+          Erkenntnisboard öffnen
+        </Button>
+      </div>
 
       <NoPersonalDataHint />
 

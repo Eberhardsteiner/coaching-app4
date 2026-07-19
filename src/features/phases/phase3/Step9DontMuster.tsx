@@ -246,36 +246,12 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
         })}
       </div>
 
-      {/* Don't-Bereich — die eine bewusste ist-Token-Ausnahme der Phase 3. */}
-      <div className="space-y-4 rounded-xl border border-ist/40 bg-ist/5 p-4">
+      {/* Zone 3 (K2): die Muster-Kette — die eine bewusste ist-Token-Ausnahme
+          der Phase 3, mit großzügigem Abstand zwischen den Einträgen. */}
+      <div className="space-y-5 rounded-xl border border-ist/40 bg-ist/5 p-4">
         <h3 className="text-sm font-semibold text-ist">
           Bisheriges Muster — Don’t!
         </h3>
-
-        {hinderliche.length > 0 ? (
-          <div className="space-y-1.5">
-            <p className="text-xs text-muted">
-              Deine hinderlichen Ressourcen — tippe an, um sie ins
-              Ressourcen-Feld zu übernehmen:
-            </p>
-            <div
-              role="group"
-              aria-label="Hinderliche Ressourcen übernehmen"
-              className="flex flex-wrap gap-1.5"
-            >
-              {hinderliche.map((text) => (
-                <button
-                  key={text}
-                  type="button"
-                  onClick={() => takeChip(text)}
-                  className="rounded-full border border-amber-600/40 bg-amber-50 px-2.5 py-1 text-xs text-amber-900 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  {text}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
 
         {dontPattern.map((entry, index) => (
           <div
@@ -298,7 +274,7 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
             </div>
             {/* Die Muster-Kette: nummerierte, verbundene Felder in der
                 Reihenfolge des gewählten Einstiegs (VIS-2). */}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-1.5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-2.5">
               {orderedFields.map((field, index) => (
                 <Fragment key={field.key}>
                   {index > 0 ? (
@@ -345,7 +321,36 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
         </Button>
       </div>
 
-      {/* Giftschrank als Callout im ist-Ton — Volltext sichtbar (VOICE-1). */}
+      {/* Zone 4 (K2): Hilfszeile — hinderliche Ressourcen zum Übernehmen. */}
+      {hinderliche.length > 0 ? (
+        <div className="space-y-1.5">
+          <p className="text-xs font-medium uppercase tracking-wide text-faint">
+            Zum Übernehmen: deine hinderlichen Ressourcen
+          </p>
+          <div
+            role="group"
+            aria-label="Hinderliche Ressourcen übernehmen"
+            className="flex flex-wrap gap-1.5"
+          >
+            {hinderliche.map((text) => (
+              <button
+                key={text}
+                type="button"
+                onClick={() => takeChip(text)}
+                className="rounded-full border border-amber-600/40 bg-amber-50 px-2.5 py-1 text-xs text-amber-900 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-faint">
+            Tippe an — der Wert wandert ins Ressourcen-Feld deines letzten
+            Musters.
+          </p>
+        </div>
+      ) : null}
+
+      {/* Zone 5: Giftschrank als Callout im ist-Ton — Volltext sichtbar (VOICE-1). */}
       <InfoCallout
         icon={<CircleOff className="size-4" />}
         title="Der Giftschrank"

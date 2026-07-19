@@ -105,7 +105,7 @@ export function CoachConsole() {
   return (
     <aside
       aria-label="Konsole"
-      className="flex w-80 max-w-[85vw] shrink-0 flex-col overflow-y-auto border-l border-subtle bg-surface"
+      className="flex w-80 max-w-[85vw] shrink-0 flex-col overflow-y-auto border-l border-subtle bg-surface max-lg:fixed max-lg:inset-y-0 max-lg:right-20 max-lg:z-40 max-lg:max-w-[75vw] max-lg:shadow-xl"
     >
       <header className="sticky top-0 flex items-center justify-between gap-2 border-b border-subtle bg-surface px-4 py-3">
         <h2 className="font-serif text-lg text-foreground">Konsole</h2>

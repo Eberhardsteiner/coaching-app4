@@ -3,6 +3,7 @@ import { Boxes, LifeBuoy, NotebookPen, Wrench, X } from "lucide-react";
 import { Outlet } from "react-router";
 
 import { CoachConsole } from "@/components/layout/CoachConsole";
+import { onDrawerRequest } from "@/components/layout/drawerBus";
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
 import { NotebookDrawerContent } from "@/components/layout/NotebookDrawerContent";
 import { ToolsDrawerContent } from "@/components/layout/ToolsDrawerContent";
@@ -77,6 +78,10 @@ export function AppShell() {
       active = false;
     };
   }, []);
+
+  // K2: Öffnen-Anfragen aus dem Bühnen-Inhalt (z. B. „Erkenntnisboard
+  // öffnen" in 2.5/3.7) — die Schublade bleibt lokaler AppShell-Zustand.
+  useEffect(() => onDrawerRequest((id) => setOpenId(id)), []);
 
   // Esc closes the open drawer and returns focus to its tab.
   useEffect(() => {
@@ -158,7 +163,7 @@ export function AppShell() {
           role="region"
           aria-label={openDrawer.label}
           className={cn(
-            "fixed inset-y-0 right-14 z-40 flex w-80 max-w-[80vw] flex-col border-l border-subtle bg-surface shadow-xl",
+            "app-drawer-panel fixed inset-y-0 right-20 z-40 flex w-80 max-w-[75vw] flex-col border-l border-subtle bg-surface shadow-xl",
             "lg:static lg:right-auto lg:z-auto lg:w-72 lg:max-w-none lg:shadow-none",
             "motion-safe:animate-[drawer-in_180ms_ease-out]",
           )}
@@ -191,11 +196,13 @@ export function AppShell() {
         </section>
       ) : null}
 
-      {/* Rail: persistent icon tabs (hidden in the Frei persona via CSS). */}
+      {/* Rail: persistent tabs — Icon + SICHTBARES Label in allen Viewports
+          (K2: kein Icon-only mehr; das Erkenntnisboard war sonst nicht
+          auffindbar). Hidden in the Frei persona via CSS. */}
       <nav
         aria-label="Schubladen"
         data-tour="drawers"
-        className="app-rail z-50 flex w-14 shrink-0 flex-col items-center gap-1 border-l border-subtle bg-surface py-3"
+        className="app-rail z-50 flex w-20 shrink-0 flex-col items-center gap-1.5 border-l border-subtle bg-surface py-3"
       >
         {DRAWERS.map((drawer) => {
           const active = openId === drawer.id;
@@ -208,18 +215,24 @@ export function AppShell() {
               type="button"
               data-tour={drawer.id === "help" ? "help" : undefined}
               onClick={() => toggle(drawer.id)}
-              aria-label={drawer.label}
-              title={drawer.label}
+              title={
+                drawer.id === "notebook"
+                  ? "Erkenntnisboard (Notizbuch)"
+                  : drawer.label
+              }
               aria-expanded={active}
               aria-controls={`drawer-panel-${drawer.id}`}
               className={cn(
-                "flex size-10 items-center justify-center rounded-lg transition-colors",
+                "flex w-[4.25rem] flex-col items-center gap-0.5 rounded-lg px-1 py-2 transition-colors",
                 active
                   ? "bg-accent text-white"
                   : "text-muted hover:bg-surface-2 hover:text-foreground",
               )}
             >
-              <drawer.icon className="size-5" />
+              <drawer.icon className="size-5" aria-hidden />
+              <span className="w-full break-words text-center text-[10px] leading-tight [hyphens:auto]">
+                {drawer.label}
+              </span>
             </button>
           );
         })}

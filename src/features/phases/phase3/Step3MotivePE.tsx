@@ -78,67 +78,10 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
         ))}
       </div>
 
-      {loaded.status === "loading" || loaded.status === "error" ? (
-        <ContentLoadState
-          status={loaded.status}
-          error={loaded.error}
-          onRetry={loaded.retry}
-          loadingLabel="EPP-Begriffe werden geladen …"
-        />
-      ) : loaded.model ? (
-        <>
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">
-              Deine Motive
-            </h3>
-            <ResourceHarvest
-              terms={motivTerms}
-              items={motives}
-              onItemsChange={setMotives}
-              polarityQuestion="Hilft oder hindert dich dieses Motiv auf dem Weg zu deinem Ziel?"
-              ownLabel="Eigenes Motiv"
-              ownPlaceholder="z. B. ein weiteres Motiv aus deinem EPP"
-            />
-          </div>
-
-          <div className="space-y-3 border-t border-subtle pt-6">
-            <h3 className="text-sm font-semibold text-foreground">
-              Deine Persönlichkeitseigenschaften
-            </h3>
-            <ResourceHarvest
-              terms={peTerms}
-              items={personalityTraits}
-              onItemsChange={setPersonalityTraits}
-              polarityQuestion="Hilft oder hindert dich diese Eigenschaft auf dem Weg zu deinem Ziel?"
-              ownLabel="Eigene Eigenschaft"
-              ownPlaceholder="z. B. eine weitere Eigenschaft"
-            />
-          </div>
-        </>
-      ) : null}
-
-      <div className="space-y-2 rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
-        <p>
-          Auch sehr schwache Motive können Einfluss auf die Zielerreichung
-          haben: Hast du z. B. 15 Punkte bei „Status“ und musst mit sehr
-          statusorientierten Menschen arbeiten, kann der niedrige Wert
-          hinderlich sein.
-        </p>
-        <p>
-          Motive und Persönlichkeitseigenschaften ohne Bezug zu deinem Ziel
-          kannst du weglassen.
-        </p>
-      </div>
-
-      <p className="text-xs text-faint">
-        Deine übernommenen und gewerteten Einträge erscheinen in deinem
-        Ressourcen-Cockpit (Werkzeuge rechts).
-      </p>
-
-      {/* Reflexionsübung */}
+      {/* Reflexionsübung — zugeklappter Block ganz oben (K2). */}
       <details className="group rounded-xl border border-subtle bg-surface p-4">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-foreground">
-          Übung: Eigene Motive und Persönlichkeitseigenschaften reflektieren
+          Übung mit Hilfe des Motivtests EPP
           <ChevronDown
             className="size-4 text-muted motion-safe:transition-transform group-open:rotate-180"
             aria-hidden
@@ -173,6 +116,63 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
           </ol>
         </div>
       </details>
+
+      {loaded.status === "loading" || loaded.status === "error" ? (
+        <ContentLoadState
+          status={loaded.status}
+          error={loaded.error}
+          onRetry={loaded.retry}
+          loadingLabel="EPP-Begriffe werden geladen …"
+        />
+      ) : loaded.model ? (
+        <>
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              Liste mit Motiven
+            </h3>
+            <ResourceHarvest
+              terms={motivTerms}
+              items={motives}
+              onItemsChange={setMotives}
+              polarityQuestion="Hilft oder hindert dich dieses Motiv auf dem Weg zu deinem Ziel?"
+              ownLabel="Eigenes Motiv"
+              ownPlaceholder="z. B. ein weiteres Motiv aus deinem EPP"
+            />
+          </div>
+
+          <div className="space-y-3 border-t border-subtle pt-6">
+            <h3 className="text-sm font-semibold text-foreground">
+              Liste mit Persönlichkeitseigenschaften
+            </h3>
+            <ResourceHarvest
+              terms={peTerms}
+              items={personalityTraits}
+              onItemsChange={setPersonalityTraits}
+              polarityQuestion="Hilft oder hindert dich diese Eigenschaft auf dem Weg zu deinem Ziel?"
+              ownLabel="Eigene Eigenschaft"
+              ownPlaceholder="z. B. eine weitere Eigenschaft"
+            />
+          </div>
+        </>
+      ) : null}
+
+      <div className="space-y-2 rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
+        <p>
+          Auch sehr schwache Motive können Einfluss auf die Zielerreichung
+          haben: Hast du z. B. 15 Punkte bei „Status“ und musst mit sehr
+          statusorientierten Menschen arbeiten, kann der niedrige Wert
+          hinderlich sein.
+        </p>
+        <p>
+          Motive und Persönlichkeitseigenschaften ohne Bezug zu deinem Ziel
+          kannst du weglassen.
+        </p>
+      </div>
+
+      <p className="text-xs text-faint">
+        Deine übernommenen und gewerteten Einträge erscheinen in deinem
+        Ressourcen-Cockpit (Werkzeuge rechts).
+      </p>
 
       <NoPersonalDataHint />
 

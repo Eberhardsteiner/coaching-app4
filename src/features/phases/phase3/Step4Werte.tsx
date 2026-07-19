@@ -69,82 +69,162 @@ const MVWK_SCHLUSS = [
   "Deine Werte sind wichtige Ressourcen, denn sie steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten. Deshalb identifizierst du jetzt deine wichtigsten Werte.",
 ];
 
+/** Polarkoordinate um das MVWK-Zentrum (Winkel in Grad, 0° = rechts). */
+function mvwkPolar(r: number, angleDeg: number): { x: number; y: number } {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: 170 + r * Math.cos(rad), y: 150 + r * Math.sin(rad) };
+}
+
 /**
- * Decorative MVWK sketch, following the template's figure: the motives (M)
- * at the core, the values (W) as a ring around them, the context as the
- * dashed frame — and the behaviour (V) as an arrow pointing outwards.
- * aria-hidden; the text block carries the content.
+ * MVWK exakt nach dem Methodik-Modell (K2): äußerer schwarzer Kreis =
+ * Kontext (Label zweimal schräg außen) · acht graue W-Quadrate auf dem Kreis
+ * · Doppelpfeile von jedem W nach innen · dunkelblauer Kern mit vier
+ * hellblauen M-Kreisen · breiter dunkler „Verhalten"-Pfeil vom Kern schräg
+ * nach außen über den Ring. aria-hidden; der (K1-)Erklärtext daneben trägt
+ * den Inhalt.
  */
 function MvwkSketch() {
+  const wAngles = [0, 45, 90, 135, 180, 225, 270, 315];
   return (
     <svg
-      viewBox="0 0 280 160"
-      className="mx-auto h-auto w-64"
+      viewBox="0 0 340 300"
+      className="mx-auto h-auto w-72"
       aria-hidden="true"
       focusable="false"
     >
-      {/* Kontext — the dashed frame around everything */}
-      <rect
-        x={6}
-        y={6}
-        width={268}
-        height={148}
-        rx={12}
-        strokeWidth={1.25}
-        strokeDasharray="4 4"
-        className="fill-none stroke-subtle"
+      {/* Kontext — der äußere schwarze Kreis mit zwei schrägen Labels. */}
+      <circle
+        cx={170}
+        cy={150}
+        r={110}
+        strokeWidth={2}
+        className="fill-none stroke-foreground"
       />
-      <text x={16} y={24} className="fill-faint text-[10px]">
+      <text
+        transform="rotate(-45 62 60)"
+        x={62}
+        y={60}
+        textAnchor="middle"
+        className="fill-foreground text-[12px]"
+      >
+        Kontext
+      </text>
+      <text
+        transform="rotate(-45 282 244)"
+        x={282}
+        y={244}
+        textAnchor="middle"
+        className="fill-foreground text-[12px]"
+      >
         Kontext
       </text>
 
-      {/* Werte — the ring around the core */}
-      <circle
-        cx={118}
-        cy={84}
-        r={46}
-        strokeWidth={16}
-        className="fill-none stroke-accent/20"
-      />
-      <text
-        x={118}
-        y={34}
-        textAnchor="middle"
-        className="fill-accent text-[10px] font-medium"
-      >
-        Werte
-      </text>
+      {/* Acht W-Quadrate auf dem Kreis + Doppelpfeile nach innen. */}
+      {wAngles.map((angle) => {
+        const w = mvwkPolar(110, angle);
+        const from = mvwkPolar(92, angle);
+        const to = mvwkPolar(62, angle);
+        const tipIn = mvwkPolar(56, angle);
+        const tipOut = mvwkPolar(98, angle);
+        const side = mvwkPolar(1, angle + 90);
+        const sx = side.x - 170;
+        const sy = side.y - 150;
+        return (
+          <g key={angle}>
+            <line
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
+              strokeWidth={2}
+              className="stroke-foreground/70"
+            />
+            {/* Pfeilspitzen beider Richtungen (Doppelpfeil). */}
+            <polygon
+              points={`${tipIn.x},${tipIn.y} ${to.x + sx * 4},${to.y + sy * 4} ${to.x - sx * 4},${to.y - sy * 4}`}
+              className="fill-foreground/70"
+            />
+            <polygon
+              points={`${tipOut.x},${tipOut.y} ${from.x + sx * 4},${from.y + sy * 4} ${from.x - sx * 4},${from.y - sy * 4}`}
+              className="fill-foreground/70"
+            />
+            <rect
+              x={w.x - 12}
+              y={w.y - 12}
+              width={24}
+              height={24}
+              rx={3}
+              className="fill-gray-400"
+            />
+            <text
+              x={w.x}
+              y={w.y + 4}
+              textAnchor="middle"
+              className="fill-white text-[12px] font-semibold"
+            >
+              W
+            </text>
+          </g>
+        );
+      })}
 
-      {/* Motive — the core */}
-      <circle cx={118} cy={84} r={24} className="fill-accent/30" />
-      <text
-        x={118}
-        y={88}
-        textAnchor="middle"
-        className="fill-accent text-[10px] font-medium"
-      >
-        Motive
-      </text>
+      {/* Kern: dunkelblauer Kreis mit vier hellblauen M-Kreisen. */}
+      <circle cx={170} cy={150} r={44} className="fill-blue-900" />
+      {[
+        [-17, -17],
+        [17, -17],
+        [-17, 17],
+        [17, 17],
+      ].map(([dx, dy]) => (
+        <g key={`${dx}-${dy}`}>
+          <circle
+            cx={170 + dx}
+            cy={150 + dy}
+            r={12}
+            className="fill-blue-300"
+          />
+          <text
+            x={170 + dx}
+            y={150 + dy + 4}
+            textAnchor="middle"
+            className="fill-blue-950 text-[11px] font-semibold"
+          >
+            M
+          </text>
+        </g>
+      ))}
 
-      {/* Verhalten — the arrow pointing outwards */}
-      <line
-        x1={172}
-        y1={84}
-        x2={240}
-        y2={84}
-        strokeWidth={2}
-        strokeLinecap="round"
-        className="stroke-accent/60"
-      />
-      <path d="M240 78 L 252 84 L 240 90 Z" className="fill-accent/60" />
-      <text
-        x={208}
-        y={74}
-        textAnchor="middle"
-        className="fill-accent text-[10px] font-medium"
-      >
-        Verhalten
-      </text>
+      {/* Breiter dunkler „Verhalten"-Pfeil vom Kern schräg nach außen über
+          den Ring (Schaft + Spitze, radial bei -42° berechnet). */}
+      {(() => {
+        const angle = -42;
+        const a = mvwkPolar(28, angle);
+        const b = mvwkPolar(112, angle);
+        const tip = mvwkPolar(140, angle);
+        const side = mvwkPolar(1, angle + 90);
+        const sx = side.x - 170;
+        const sy = side.y - 150;
+        const shaft = 10;
+        const head = 19;
+        const mid = mvwkPolar(74, angle);
+        return (
+          <g>
+            <polygon
+              points={`${a.x + sx * shaft},${a.y + sy * shaft} ${b.x + sx * shaft},${b.y + sy * shaft} ${b.x + sx * head},${b.y + sy * head} ${tip.x},${tip.y} ${b.x - sx * head},${b.y - sy * head} ${b.x - sx * shaft},${b.y - sy * shaft} ${a.x - sx * shaft},${a.y - sy * shaft}`}
+              className="fill-blue-950"
+            />
+            <text
+              transform={`rotate(${angle} ${mid.x} ${mid.y})`}
+              x={mid.x}
+              y={mid.y + 4}
+              textAnchor="middle"
+              className="fill-white text-[11px] font-semibold"
+            >
+              Verhalten
+            </text>
+          </g>
+        );
+      })()}
     </svg>
   );
 }

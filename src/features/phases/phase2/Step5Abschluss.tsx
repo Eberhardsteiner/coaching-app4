@@ -1,3 +1,7 @@
+import { NotebookPen } from "lucide-react";
+
+import { requestDrawer } from "@/components/layout/drawerBus";
+import { Button } from "@/components/ui/button";
 import { PhaseCheck } from "@/features/phases/PhaseCheck";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
@@ -52,6 +56,17 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
             Erkenntnisboard
           </strong>{" "}
           <span className="text-sm text-faint">(Notizbuch rechts)</span>.
+        </p>
+        {/* K2: Direkt-Öffnen-Link zur Erkenntnisboard-Schublade. */}
+        <p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => requestDrawer("notebook")}
+          >
+            <NotebookPen />
+            Erkenntnisboard öffnen
+          </Button>
         </p>
         <p>
           Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
