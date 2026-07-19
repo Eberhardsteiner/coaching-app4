@@ -12,9 +12,11 @@ import type { ResourceItem } from "@/features/session/types";
 /** Stable empty default for the additive-optional personalityTraits field. */
 const NO_ITEMS: ResourceItem[] = [];
 
-/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
-const INTRO_VOLLTEXT =
-  "Wenn du einen Motivtest (EPP) gemacht hast, nimm bitte die Ergebnisse zur Hand. Identifiziere deine stärksten Motive und Persönlichkeitseigenschaften — du erkennst sie an hohen Werten. Bei Fragen zu deinem Motivtest kannst du dich jederzeit an einen unserer Coaches und EPP-Berater*innen wenden. Für eine erste Orientierung helfen dir die kurzen Beschreibungen zu den Motivwörtern.";
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: zwei Absätze. */
+const INTRO_ABSAETZE = [
+  "Wenn du einen Motivtest (EPP) gemacht hast, nimm bitte die Ergebnisse zur Hand. Identifiziere deine stärksten Motive und Persönlichkeitseigenschaften — du erkennst sie an hohen Werten.",
+  "Bei Fragen zu deinem Motivtest kannst du dich jederzeit an einen unserer Coaches und EPP-Berater*innen wenden. Für eine erste Orientierung helfen dir die kurzen Beschreibungen zu den Motivwörtern.",
+];
 
 /** Die Reflexionsübung (Methodik-Vorlage, wortgetreu gestrafft). */
 const EXERCISE_STEPS: { title: string; text: string }[] = [
@@ -70,7 +72,11 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_VOLLTEXT}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {INTRO_ABSAETZE.map((absatz) => (
+          <p key={absatz}>{absatz}</p>
+        ))}
+      </div>
 
       {loaded.status === "loading" || loaded.status === "error" ? (
         <ContentLoadState

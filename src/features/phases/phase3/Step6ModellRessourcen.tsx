@@ -10,9 +10,12 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem } from "@/features/session/types";
 
-/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
-const INTRO_VOLLTEXT =
-  "Bisher hast du dich am Kompetenzmodell orientiert und deine inneren Ressourcen befragt — auf sie kannst du immer zugreifen, denn sie liegen bereits in dir. Jetzt betrachtest du dein Thema und dein Ziel aus einer ganz anderen Warte: aus wissenschaftlicher Sicht. Zu fast allem, was dich bewegt, hat sich eine wissenschaftliche Disziplin schon einmal Gedanken gemacht und ihr Wissen in Modelle gegossen. Modelle sind kein Abbild der Wirklichkeit, aber sie bieten eine Ordnung an, um die Welt in einer bestimmten Perspektive zu verstehen. Ein Blick durch die Brille eines Modells kann neue Erkenntnisse bis hin zu Impulsen für neues Verhalten liefern.";
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: drei Absätze. */
+const INTRO_ABSAETZE = [
+  "Bisher hast du dich am Kompetenzmodell orientiert und deine inneren Ressourcen befragt — auf sie kannst du immer zugreifen, denn sie liegen bereits in dir. Jetzt betrachtest du dein Thema und dein Ziel aus einer ganz anderen Warte: aus wissenschaftlicher Sicht.",
+  "Zu fast allem, was dich bewegt, hat sich eine wissenschaftliche Disziplin schon einmal Gedanken gemacht und ihr Wissen in Modelle gegossen. Modelle sind kein Abbild der Wirklichkeit, aber sie bieten eine Ordnung an, um die Welt in einer bestimmten Perspektive zu verstehen.",
+  "Ein Blick durch die Brille eines Modells kann neue Erkenntnisse bis hin zu Impulsen für neues Verhalten liefern.",
+];
 
 /** Die vier Leitfragen (Methodik-Vorlage, wortgetreu). */
 const LEITFRAGEN = [
@@ -70,7 +73,11 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_VOLLTEXT}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {INTRO_ABSAETZE.map((absatz) => (
+          <p key={absatz}>{absatz}</p>
+        ))}
+      </div>
 
       <p className="text-sm text-muted">
         Es gibt hunderte solcher Modelle — längst nicht alle passen zu deinem

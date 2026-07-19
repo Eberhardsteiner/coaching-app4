@@ -14,7 +14,8 @@ export interface PhaseStartContent {
   phaseName: string;
   eyebrow: string;
   heading: string;
-  intro: string;
+  /** Kurzer Text ODER gesetzte Absätze (K1) — PhaseStart rendert ein <div>. */
+  intro: ReactNode;
   accent: PhaseAccent;
   ctaLabel: string;
   motif: ReactNode;
@@ -35,8 +36,21 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     phaseName: "Ist-Situation",
     eyebrow: "Phase 1 · Ist-Situation",
     heading: "Verschaffe dir einen Überblick über deine Ist-Situation",
-    intro:
-      "Nun geht es los! Verstehe die Wechselwirkungen und Zusammenhänge deiner Situation. Am Ende der Phase 1 wirst du einen strukturierten und bewerteten Überblick über deinen systemischen Kontext erarbeitet haben. Damit du zu guten Ergebnissen kommst, orientiere dich konsequent an den Fragen und schreibe alles auf, was dir zu den Fragen einfällt.",
+    // K1: zwei Absätze — Auftakt/Überblick · Arbeitsweise.
+    intro: (
+      <>
+        <p>
+          Nun geht es los! Verstehe die Wechselwirkungen und Zusammenhänge
+          deiner Situation. Am Ende der Phase 1 wirst du einen strukturierten
+          und bewerteten Überblick über deinen systemischen Kontext erarbeitet
+          haben.
+        </p>
+        <p>
+          Damit du zu guten Ergebnissen kommst, orientiere dich konsequent an
+          den Fragen und schreibe alles auf, was dir zu den Fragen einfällt.
+        </p>
+      </>
+    ),
     accent: "ist",
     ctaLabel: "Los geht’s",
     motif: <Phase1Motif />,
@@ -47,8 +61,20 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     eyebrow: "Phase 2 · Ziel",
     heading:
       "Entscheide dich für dein attraktives Ziel — und mache dir seine Folgen bewusst",
-    intro:
-      "Jede erfolgreiche Veränderung braucht eine „Hin-zu“-Orientierung. Wie soll deine Situation in Zukunft aussehen? Bitte beachte: Auch jetzt geht es noch nicht um Lösungen, sondern um den Zustand, den du anstrebst. Um dein „Wohin“. Zum „Wie“ kommst du schon noch in Phase 4 – hab ein bisschen Geduld!",
+    // K1: zwei Absätze — Hin-zu-Orientierung · noch keine Lösungen.
+    intro: (
+      <>
+        <p>
+          Jede erfolgreiche Veränderung braucht eine „Hin-zu“-Orientierung. Wie
+          soll deine Situation in Zukunft aussehen?
+        </p>
+        <p>
+          Bitte beachte: Auch jetzt geht es noch nicht um Lösungen, sondern um
+          den Zustand, den du anstrebst. Um dein „Wohin“. Zum „Wie“ kommst du
+          schon noch in Phase 4 – hab ein bisschen Geduld!
+        </p>
+      </>
+    ),
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase2Motif />,
@@ -58,8 +84,36 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     phaseName: "Ressourcen erkennen",
     eyebrow: "Phase 3 · Ressourcen",
     heading: "Identifiziere deine Ressourcen auf dem Weg zum Ziel",
-    intro:
-      "Du weißt, wo du stehst und wohin du möchtest. Was fehlt noch? Viele antworten: ‚der Weg dorthin‘. Doch eine Maßnahmenliste, die nicht berücksichtigt, welche Ressourcen du hast, bleibt leer und frustrierend — bevor ich den Weg beschreiben kann, muss ich mir einen Überblick über meine Mittel verschaffen. Will ich einen Kuchen backen, ist ein gutes Rezept super — aber finde ich im Vorratsschrank keine geeigneten Zutaten, nützt mir das schönste Rezept nichts. Deshalb bist du eingeladen, dir ein richtiges Ressourcen-Cockpit aufzubauen. Wenn du weißt, worauf du zurückgreifen kannst — und was du vielleicht noch zusätzlich brauchst —, ist der anschließende Handlungsplan ganz leicht. Und vor allem: realistisch!",
+    // K1: drei Absätze (Frage/Weg · Kuchen-Bild · Einladung/Cockpit) +
+    // Schlusszeile — Wortlaut unverändert, nur gesetzt.
+    intro: (
+      <>
+        <p>
+          Du weißt, wo du stehst und wohin du möchtest. Was fehlt noch? Viele
+          antworten: ‚der Weg dorthin‘.
+        </p>
+        <p>
+          Doch eine Maßnahmenliste, die nicht berücksichtigt, welche Ressourcen
+          du hast, bleibt leer und frustrierend — bevor ich den Weg beschreiben
+          kann, muss ich mir einen Überblick über meine Mittel verschaffen. Will
+          ich einen Kuchen backen, ist ein gutes Rezept super — aber finde ich
+          im Vorratsschrank keine geeigneten Zutaten, nützt mir das schönste
+          Rezept nichts.
+        </p>
+        <p>
+          Deshalb bist du eingeladen, dir ein richtiges{" "}
+          <strong className="font-semibold text-foreground">
+            Ressourcen-Cockpit
+          </strong>{" "}
+          aufzubauen. Wenn du weißt, worauf du zurückgreifen kannst — und was du
+          vielleicht noch zusätzlich brauchst —, ist der anschließende
+          Handlungsplan ganz leicht.
+        </p>
+        <p className="font-medium text-foreground">
+          Und vor allem: <strong className="font-semibold">realistisch!</strong>
+        </p>
+      </>
+    ),
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase3Motif />,
@@ -69,8 +123,27 @@ const PHASE_STARTS: Partial<Record<PhaseId, PhaseStartContent>> = {
     phaseName: "Handlungsplan",
     eyebrow: "Phase 4 · Maßnahmen",
     heading: "So kommst du zu deinem Handlungsplan",
-    intro:
-      "Bestimmt bist du schon voller Ungeduld, nun endlich die Maßnahmen zu beschreiben, die dich ans Ziel bringen! Damit sie wirklich tragen, ist es essenziell, dass du sie aus deinen Ressourcen heraus entwickelst. Alle stehen dir zur Verfügung: alle zielförderlichen Intelligenzen, Motive, Persönlichkeitseigenschaften und Werte, alle Erkenntnisse aus Modellen, alle Erfahrungen und äußeren Ressourcen. Geh einfach durch alle Cluster — die Reihenfolge spielt keine Rolle. Und sorge nun wieder dafür, dass dir dein Ziel stets vor Augen steht — dein Zielsatz begleitet dich deshalb durch den ganzen Schritt.",
+    // K1: drei Absätze — Ungeduld/ressourcenbasiert · alle Ressourcen ·
+    // Vorgehen + Zielsatz.
+    intro: (
+      <>
+        <p>
+          Bestimmt bist du schon voller Ungeduld, nun endlich die Maßnahmen zu
+          beschreiben, die dich ans Ziel bringen! Damit sie wirklich tragen, ist
+          es essenziell, dass du sie aus deinen Ressourcen heraus entwickelst.
+        </p>
+        <p>
+          Alle stehen dir zur Verfügung: alle zielförderlichen Intelligenzen,
+          Motive, Persönlichkeitseigenschaften und Werte, alle Erkenntnisse aus
+          Modellen, alle Erfahrungen und äußeren Ressourcen.
+        </p>
+        <p>
+          Geh einfach durch alle Cluster — die Reihenfolge spielt keine Rolle.
+          Und sorge nun wieder dafür, dass dir dein Ziel stets vor Augen steht —
+          dein Zielsatz begleitet dich deshalb durch den ganzen Schritt.
+        </p>
+      </>
+    ),
     accent: "accent",
     ctaLabel: "Los geht’s",
     motif: <Phase4Motif />,

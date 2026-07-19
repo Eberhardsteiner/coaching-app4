@@ -6,9 +6,11 @@ import { useSessionStore } from "@/features/session/sessionStore";
 import type { ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
-/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
-const INTRO_VOLLTEXT =
-  "Dein Körper ist der wichtigste und erste Signalgeber für dein Wohlbefinden. Er ist unser Seismograf für Veränderungen von außen und innen — und unsere Gefühlslandkarte, die uns mit Körpersignalen anzeigt, wenn etwas ‚nicht stimmt‘. Oft haben wir spezifische Stellen oder Bereiche, die wir als Signalgeber bereits kennen. Identifiziere, welche das bei dir sind, und notiere sie unter deinen Ressourcen.";
+/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: zwei Absätze. */
+const INTRO_ABSAETZE = [
+  "Dein Körper ist der wichtigste und erste Signalgeber für dein Wohlbefinden. Er ist unser Seismograf für Veränderungen von außen und innen — und unsere Gefühlslandkarte, die uns mit Körpersignalen anzeigt, wenn etwas ‚nicht stimmt‘.",
+  "Oft haben wir spezifische Stellen oder Bereiche, die wir als Signalgeber bereits kennen. Identifiziere, welche das bei dir sind, und notiere sie unter deinen Ressourcen.",
+];
 
 /** Anregungs-Chips (Methodik-Vorlage) — Wahrnehmung, keine Symptome. */
 const BODY_CHIPS = [
@@ -77,7 +79,11 @@ export function Step8Koerpersignale({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_VOLLTEXT}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {INTRO_ABSAETZE.map((absatz) => (
+          <p key={absatz}>{absatz}</p>
+        ))}
+      </div>
 
       <div className="space-y-2">
         <p className="text-sm font-medium text-foreground">

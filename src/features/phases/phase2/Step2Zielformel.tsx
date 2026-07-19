@@ -96,12 +96,29 @@ function MantraChip({
 }
 
 /**
- * Anmoderation (MP2-REV, wortgetreu) — sichtbarer Coaching-Absatz (VOICE-1).
- * „dem obigen Muster" ist Pflicht-Wortlaut aus der Methodik-Vorlage; die
- * Muster-Zeile wird hier direkt darunter gerendert (wie schon in MP2-REV).
+ * Anmoderation (MP2-REV, wortgetreu) — sichtbarer Coaching-Text (VOICE-1),
+ * K1: in drei Sinnabsätze + einen Handlungs-Absatz gesetzt. „dem obigen
+ * Muster" ist Pflicht-Wortlaut aus der Methodik-Vorlage; die Muster-Zeile
+ * wird direkt darunter gerendert (wie schon in MP2-REV).
  */
-const INTRO_VOLLTEXT =
-  "Du hast nun eine Vorstellung deiner positiven neuen Situation. Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht alle einfach so merken können. Deshalb geht es nun darum, dass du dir einen Satz zurechtlegst, der für dich wie eine Art Mantra dienen kann. Der in einem Satz beschreibt, wonach du strebst. Damit der Satz für dich gut funktioniert, sollen Qualitätsmerkmale unterstützen, die du leicht selbst überprüfen kannst. Bitte beginne damit, dass du dein erstrebenswertes Gefühl (als Substantiv, also z. B. „Gelassenheit“ statt „gelassen“) identifizierst. Formuliere dann bitte einen Satz, der dem obigen Muster entspricht.";
+const INTRO_ABSAETZE: ReactNode[] = [
+  "Du hast nun eine Vorstellung deiner positiven neuen Situation. Vermutlich wirst du dir die Stichworte aus deinem Brainstorming nicht alle einfach so merken können.",
+  <>
+    Deshalb geht es nun darum, dass du dir einen Satz zurechtlegst, der für dich
+    wie eine Art{" "}
+    <strong className="font-semibold text-foreground">Mantra</strong> dienen
+    kann. Der in einem Satz beschreibt, wonach du strebst.
+  </>,
+  "Damit der Satz für dich gut funktioniert, sollen Qualitätsmerkmale unterstützen, die du leicht selbst überprüfen kannst.",
+  <>
+    Bitte beginne damit, dass du dein erstrebenswertes Gefühl (als{" "}
+    <strong className="font-semibold text-foreground">Substantiv</strong>, also
+    z. B.{" "}
+    <strong className="font-semibold text-foreground">„Gelassenheit“</strong>{" "}
+    statt „gelassen“) identifizierst. Formuliere dann bitte einen Satz, der dem
+    obigen Muster entspricht.
+  </>,
+];
 
 /** Muster-Zeile (MP2-REV, wortgetreu) — sichtbar unter der Anmoderation. */
 const MUSTER =
@@ -167,7 +184,11 @@ export function Step2Zielformel({ nav }: { nav: PhaseNavigation }) {
       <div className="space-y-5">
         {/* Die vollständige Mantra-Anmoderation + Muster-Zeile — SICHTBAR
             (VOICE-1: MP2-REV-Anmoderationen sind nie zugeklappt). */}
-        <p className="text-muted">{INTRO_VOLLTEXT}</p>
+        <div className="max-w-prose space-y-2 text-muted">
+          {INTRO_ABSAETZE.map((absatz, index) => (
+            <p key={index}>{absatz}</p>
+          ))}
+        </div>
         <p className="text-sm font-medium text-foreground">{MUSTER}</p>
 
         {/* Der Zielsatz aus farbigen Bausteinen (VIS-2) — Fokus im Feld lässt

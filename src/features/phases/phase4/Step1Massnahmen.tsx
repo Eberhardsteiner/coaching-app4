@@ -7,7 +7,7 @@ import {
   Telescope,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { BeispielPaar } from "@/components/method/BeispielPaar";
 import { InfoCallout } from "@/components/method/InfoCallout";
@@ -31,13 +31,20 @@ import { cn } from "@/lib/utils";
 export const MIN_RESOURCES = 3;
 export const MAX_MEASURES = 4;
 
-/** Wirkindikator-Rahmung (Methodik-Vorlage, wortgetreu, gekürzt). */
-const WIRKINDIKATOR_TEXT =
-  "Du erinnerst dich: Bei den Folgen deines Ziels hast du beschrieben, was du aus Sicht dieses Clusters beispielhaft tun kannst, sobald du am Ziel angekommen bist. Orientiere dich bei deinen Maßnahmen in erster Linie an deinem übergeordneten Ziel — und stelle sicher, dass sie dazu beitragen, dass du diese Handlung erfolgreich umsetzen kannst. Dein neues Verhalten ist ein ‚Wirkindikator‘ dafür, dass du dein Ziel erreicht hast.";
-
-/** Ressourcen-Anleitung (Methodik-Vorlage, wortgetreu, gekürzt). */
-const RESSOURCEN_TEXT =
-  "Suche aus deinem Ressourcen-Cockpit die hilfreichen Ressourcen heraus, die zu diesem Cluster passen. Achte darauf, dass deine starken förderlichen Motive und Persönlichkeitseigenschaften vorkommen. Nach oben gibt es keine Beschränkung — mindestens 3–5 müssen es sein, damit du die Ressourcen kombinieren kannst.";
+/**
+ * Wirkindikator-Rahmung (Methodik-Vorlage, wortgetreu, gekürzt), K1: zwei
+ * Absätze — Erinnerung an 2.4 · Orientierung am Ziel + Wirkindikator.
+ */
+const WIRKINDIKATOR_ABSAETZE: ReactNode[] = [
+  "Du erinnerst dich: Bei den Folgen deines Ziels hast du beschrieben, was du aus Sicht dieses Clusters beispielhaft tun kannst, sobald du am Ziel angekommen bist.",
+  <>
+    Orientiere dich bei deinen Maßnahmen in erster Linie an deinem
+    übergeordneten Ziel — und stelle sicher, dass sie dazu beitragen, dass du
+    diese Handlung erfolgreich umsetzen kannst. Dein neues Verhalten ist ein{" "}
+    <strong className="font-semibold text-foreground">‚Wirkindikator‘</strong>{" "}
+    dafür, dass du dein Ziel erreicht hast.
+  </>,
+];
 
 /** Die vier Qualitäten wirksamer Maßnahmen (Merkkarte). */
 const QUALITIES_CARD =
@@ -281,6 +288,56 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
         ]}
       />
 
+      {/* K1: das vollständige Vorgehen als nummerierte Liste (Pflichttext —
+          die Visuals MiniFlow/Chips/BeispielPaar docken daran an; Doppelungen
+          sind ausdrücklich erlaubt). */}
+      <div className="max-w-prose space-y-2 text-muted">
+        <p className="font-medium text-foreground">
+          Gehe nun bitte folgendermaßen vor:
+        </p>
+        <ol className="ml-4 list-decimal space-y-2">
+          <li>
+            Suche aus deinem Ressourcen-Cockpit die hilfreichen Ressourcen
+            heraus, die zu diesem Cluster passen. Achte darauf, dass deine
+            starken förderlichen{" "}
+            <strong className="font-semibold text-foreground">
+              Motive und Persönlichkeitseigenschaften
+            </strong>{" "}
+            vorkommen. Nach oben gibt es keine Beschränkung —{" "}
+            <strong className="font-semibold text-foreground">
+              mindestens 3–5
+            </strong>{" "}
+            müssen es sein, damit du die Ressourcen kombinieren kannst. Trage
+            die gewählten Ressourcen hier ein.
+          </li>
+          <li>
+            Lass aus den gewählten Ressourcen konkrete Handlungen entstehen — je
+            konkreter du formulierst, desto wahrscheinlicher setzt du um.
+            Formuliere jede Maßnahme als ganzen{" "}
+            <strong className="font-semibold text-foreground">Ich-Satz</strong>{" "}
+            — Verhalten, kein Gefühl: also nicht ‚Ich bin fröhlich, wenn ich in
+            die Arbeit gehe‘, sondern ‚Ich begrüße täglich meine Kollegen
+            freundlich und frage sie, wie ich sie unterstützen kann‘. Vermeide{" "}
+            <strong className="font-semibold text-foreground">
+              Verneinungen
+            </strong>{" "}
+            — frage dich:{" "}
+            <strong className="font-semibold text-foreground">
+              „Was tue ich stattdessen?“
+            </strong>{" "}
+            Du darfst dich hier auch für deine Mühen im{" "}
+            {branch === "coached" ? "Coaching" : "Selbstcoaching"} belohnen!
+          </li>
+          <li>
+            Gehe bei allen Clustern gleich vor und{" "}
+            <strong className="font-semibold text-foreground">
+              beschränke dich auf 3–4 Maßnahmen
+            </strong>
+            .
+          </li>
+        </ol>
+      </div>
+
       {/* Cluster-Navigation */}
       <div
         role="group"
@@ -372,7 +429,13 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   />
                   Dein Wirkindikator aus Phase 2
                 </p>
-                <p className="text-xs text-muted">{WIRKINDIKATOR_TEXT}</p>
+                <div className="space-y-1.5">
+                  {WIRKINDIKATOR_ABSAETZE.map((absatz, index) => (
+                    <p key={index} className="text-xs text-muted">
+                      {absatz}
+                    </p>
+                  ))}
+                </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted">
                     An welcher konkreten Handlung von dir erkennt „{activeName}
@@ -447,7 +510,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
                   Cockpit öffnen
                 </Button>
               </div>
-              <p className="text-xs text-muted">{RESSOURCEN_TEXT}</p>
+              {/* Die Anleitung steht im nummerierten Vorgehen (Punkt 1, K1). */}
               {foerderliche.length === 0 ? (
                 <p className="text-xs text-faint">
                   Keine als förderlich markierten Ressourcen. Du kannst trotzdem
@@ -495,12 +558,7 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
               <p className="text-sm font-medium text-foreground">
                 Deine Maßnahmen (max. {MAX_MEASURES})
               </p>
-              <p className="text-xs text-muted">
-                Lass aus den gewählten Ressourcen konkrete Handlungen entstehen
-                — je konkreter du formulierst, desto wahrscheinlicher setzt du
-                um.
-              </p>
-
+              {/* Die Anleitung steht im nummerierten Vorgehen (Punkt 2, K1). */}
               {/* Kurzregel-Chips (VIS-2). */}
               <ul
                 aria-label="Regeln für wirksame Maßnahmen"

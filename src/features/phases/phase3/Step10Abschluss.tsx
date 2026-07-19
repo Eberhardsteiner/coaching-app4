@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { PhaseCheck } from "@/features/phases/PhaseCheck";
 import { countPolarities } from "@/features/phases/phase3/resourceFields";
 import { RessourcenCockpit } from "@/features/phases/phase3/RessourcenCockpit";
@@ -13,9 +15,32 @@ const EMPTY_CHECK: PhaseCheckValue = {
   transfer: "",
 };
 
-/** Abschlusstext (Methodik-Vorlage, wortgetreu, gekürzt). */
-const OUTRO =
-  "Du bist am Ende deiner Ressourcenerkundung angelangt. Du kennst deine hilfreichen und hinderlichen inneren Ressourcen, aber auch äußere Ressourcen. Du hast ein Gespür für die Werte der anderen im System und kannst dich darauf einstellen. Und du bist sicher, dass du dich verändern willst und kannst — und weißt, wo die Reise hingeht. Bevor du in Phase 4 deine Maßnahmen entwickelst, verschaffe dir noch einmal einen Überblick über dein Ressourcen-Cockpit: Deine Ressourcen sind die Bausteine, aus denen du deine Maßnahmen baust.";
+/**
+ * Abschlusstext (Methodik-Vorlage, wortgetreu, gekürzt), K1: drei Absätze —
+ * Ende der Erkundung/was du kennst · Werte der anderen/Sicherheit ·
+ * Cockpit-Überblick als Bausteine der Maßnahmen.
+ */
+const OUTRO_ABSAETZE: ReactNode[] = [
+  "Du bist am Ende deiner Ressourcenerkundung angelangt. Du kennst deine hilfreichen und hinderlichen inneren Ressourcen, aber auch äußere Ressourcen.",
+  <>
+    Du hast ein Gespür für die{" "}
+    <strong className="font-semibold text-foreground">Werte der anderen</strong>{" "}
+    im System und kannst dich darauf einstellen. Und du bist sicher, dass du
+    dich verändern willst und kannst — und weißt, wo die Reise hingeht.
+  </>,
+  <>
+    Bevor du in Phase 4 deine Maßnahmen entwickelst, verschaffe dir noch einmal
+    einen Überblick über dein{" "}
+    <strong className="font-semibold text-foreground">
+      Ressourcen-Cockpit
+    </strong>
+    : Deine Ressourcen sind die{" "}
+    <strong className="font-semibold text-foreground">
+      Bausteine, aus denen du deine Maßnahmen baust
+    </strong>
+    .
+  </>,
+];
 
 /**
  * Phase 3, Step 3.10 — Abschluss & Check. The method's closing text, the
@@ -38,7 +63,11 @@ export function Step10Abschluss({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{OUTRO}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {OUTRO_ABSAETZE.map((absatz, index) => (
+          <p key={index}>{absatz}</p>
+        ))}
+      </div>
 
       {/* Zähler */}
       <div className="flex flex-wrap gap-2 text-sm">

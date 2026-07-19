@@ -20,8 +20,8 @@ export interface PhaseStartProps {
   eyebrow: string;
   /** Large editorial headline (rendered as the page h1). */
   heading: string;
-  /** Concise explanatory text. */
-  intro: string;
+  /** Concise explanatory text — a string or typeset paragraphs (K1). */
+  intro: ReactNode;
   accent: PhaseAccent;
   /** Phase-specific artwork (decorative SVG). */
   motif: ReactNode;
@@ -132,9 +132,9 @@ export function PhaseStart({
           >
             {heading}
           </h1>
-          <p className="mt-5 max-w-prose text-base leading-relaxed text-muted sm:text-lg">
+          <div className="mt-5 max-w-prose space-y-2.5 text-base leading-relaxed text-muted sm:text-lg">
             {intro}
-          </p>
+          </div>
           <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
             <Button
               size="lg"

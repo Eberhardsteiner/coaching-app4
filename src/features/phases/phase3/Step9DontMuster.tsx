@@ -1,5 +1,5 @@
 import { ArrowRight, CircleOff, Plus, Trash2 } from "lucide-react";
-import { Fragment, useState } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 
 import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,24 @@ import { cn } from "@/lib/utils";
 
 const NO_DONTS: DontPatternEntry[] = [];
 
-/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
-const INTRO_VOLLTEXT =
-  "Dieser wichtige letzte Schritt der Ressourcenidentifikation macht dir klar, was du dazu beigetragen hast, dass du in deiner derzeitigen Lage steckst — und was du künftig vermeiden musst. Aus den vielen Ressourcen auf deinem Board trägt eine bestimmte, wiederkehrende Auswahl dazu bei, dass du in diese Situation geraten bist. Identifiziere dieses Muster, damit du dein Verhalten künftig aus einer anderen Ressourcenkombination speist. Vor allem die hinderlichen Ressourcen spielen dabei eine tragende Rolle — sieh sie dir genau an.";
+/**
+ * Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: drei Absätze;
+ * der zweite trägt den vollständigen Methodik-Satz („… die du auf deinem
+ * Ressourcenboard gesammelt hast … eine — deine — bestimmte wiederkehrende
+ * Auswahl …", zuvor verkürzt).
+ */
+const INTRO_ABSAETZE: ReactNode[] = [
+  "Dieser wichtige letzte Schritt der Ressourcenidentifikation macht dir klar, was du dazu beigetragen hast, dass du in deiner derzeitigen Lage steckst — und was du künftig vermeiden musst.",
+  <>
+    Aus den vielen Ressourcen, die du auf deinem Ressourcenboard gesammelt hast,
+    trägt eine —{" "}
+    <strong className="font-semibold text-foreground">deine</strong> — bestimmte
+    wiederkehrende Auswahl dazu bei, dass du in diese Situation geraten bist.
+    Identifiziere dieses Muster, damit du dein Verhalten künftig aus einer
+    anderen Ressourcenkombination speist.
+  </>,
+  "Vor allem die hinderlichen Ressourcen spielen dabei eine tragende Rolle — sieh sie dir genau an.",
+];
 
 /** Giftschrank — sichtbar im Callout (VOICE-1). */
 const GIFTSCHRANK_VOLLTEXT =
@@ -169,8 +184,25 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      {/* Anmoderation — sichtbar (VOICE-1). */}
-      <p className="text-muted">{INTRO_VOLLTEXT}</p>
+      {/* Anmoderation — sichtbar (VOICE-1), K1: drei Absätze. */}
+      <div className="max-w-prose space-y-2 text-muted">
+        {INTRO_ABSAETZE.map((absatz, index) => (
+          <p key={index}>{absatz}</p>
+        ))}
+      </div>
+
+      {/* K1: die zuvor fehlende Überleitung zur Einstiegswahl
+          (Methodik-Wortlaut, verbindlich). */}
+      <p className="max-w-prose text-muted">
+        <strong className="font-semibold text-foreground">
+          Du kannst entweder mit den Ressourcen oder mit deinem Verhalten
+          beginnen.
+        </strong>{" "}
+        Wichtig ist nur, dass du auf alle Bereiche blickst.{" "}
+        <strong className="font-semibold text-foreground">
+          Folge dieser Logik:
+        </strong>
+      </p>
 
       {/* Zwei Einstiegs-Logiken — zum Antippen; die Wahl bestimmt die
           Reihenfolge der Ketten-Felder (VIS-2). */}

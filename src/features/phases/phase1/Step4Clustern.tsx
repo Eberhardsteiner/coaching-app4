@@ -39,19 +39,41 @@ const PRUEFEN =
   "Bevor du loslegst, überprüfe bitte noch einmal, ob in deiner Ist-Darstellung keine „Lösungen“ oder „Maßnahmen“ stecken, sondern wirklich nur die Ist-Situation beschrieben ist. Falls du etwas entdeckst, ersetze es durch die Beschreibung des aktuellen Zustands.";
 
 const ORDNEN: ReactNode = (
+  // K1: Einleitung · drei Regel-Bullets mit fetten Grenzen · Schlusssatz —
+  // Wortlaut unverändert, nur gesetzt.
   <>
-    Nun zum Ordnen: Löse deine Karten aus der ursprünglichen Fragelogik und
-    gruppiere sie in Themenfelder — deine Cluster. Bilde bitte{" "}
-    <strong className="font-semibold text-foreground">nicht mehr als 5</strong>:
-    Du wirst deinen Handlungsplan später entlang der Cluster entwickeln, und
-    mehr als 5 entpuppt sich oft als zu viel des Guten. Differenziere trotzdem —
-    zu unterschiedliche Dinge in einem Cluster machen den späteren Handlungsplan
-    ebenso schwer. Gib jedem Cluster eine passende Überschrift: idealerweise{" "}
-    <strong className="font-semibold text-foreground">ein Begriff</strong>,
-    konkret,{" "}
-    <strong className="font-semibold text-foreground">keine Lösungen</strong>.
-    Je konkreter deine Überschrift, desto leichter geht dir die Arbeit später
-    von der Hand.
+    <p>
+      Nun zum Ordnen: Löse deine Karten aus der ursprünglichen Fragelogik und
+      gruppiere sie in Themenfelder — deine Cluster.
+    </p>
+    <ul className="ml-4 list-disc space-y-1.5">
+      <li>
+        Bilde bitte{" "}
+        <strong className="font-semibold text-foreground">
+          nicht mehr als 5
+        </strong>
+        : Du wirst deinen Handlungsplan später entlang der Cluster entwickeln,
+        und mehr als 5 entpuppt sich oft als zu viel des Guten.
+      </li>
+      <li>
+        <strong className="font-semibold text-foreground">Differenziere</strong>{" "}
+        trotzdem — zu unterschiedliche Dinge in einem Cluster machen den
+        späteren Handlungsplan ebenso schwer.
+      </li>
+      <li>
+        Gib jedem Cluster eine passende Überschrift: idealerweise{" "}
+        <strong className="font-semibold text-foreground">ein Begriff</strong>,
+        konkret,{" "}
+        <strong className="font-semibold text-foreground">
+          keine Lösungen
+        </strong>
+        .
+      </li>
+    </ul>
+    <p>
+      Je konkreter deine Überschrift, desto leichter geht dir die Arbeit später
+      von der Hand.
+    </p>
   </>
 );
 
@@ -271,7 +293,7 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
 
       {/* 2 — Ordnen */}
       <Abschnitt n={2} title="Ordnen">
-        <p className="text-muted">{ORDNEN}</p>
+        <div className="max-w-prose space-y-2 text-muted">{ORDNEN}</div>
 
         {/* Kompakte Merkzeile — Begründungen stehen im Absatz, nicht hier. */}
         <ul aria-label="Merkzeile" className="flex flex-wrap gap-2">

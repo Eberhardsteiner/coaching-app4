@@ -29,29 +29,38 @@ export function Step5Abschluss({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-5">
-      <p className="text-muted">
-        Du hast nun die wichtigen{" "}
-        <strong className="font-semibold text-foreground">
-          Koordinaten für deine Veränderungsreise
-        </strong>{" "}
-        bestimmt. Du weißt, wo du stehst, und du weißt, wo du hin möchtest. Du
-        bist dir über dein{" "}
-        <strong className="font-semibold text-foreground">
-          Veränderungsziel
-        </strong>{" "}
-        sicher, denn du hast dir seine Folgen klar gemacht und ihnen zugestimmt.
-        Wenn du Erkenntnisse aus deiner bisherigen Reflexion haben solltest,
-        dann notiere sie dir bitte auf deinem{" "}
-        <strong className="font-semibold text-foreground">
-          Erkenntnisboard
-        </strong>{" "}
-        <span className="text-sm text-faint">(Notizbuch rechts)</span>.
-        Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
-        Ergebnis gekommen bist, bevor du mit Phase 3 weitermachst – der
-        Identifikation deiner{" "}
-        <strong className="font-semibold text-foreground">Ressourcen</strong>,
-        die du auf dem Weg zu deinem Ziel brauchen wirst.
-      </p>
+      {/* K1: drei kurze Absätze — Koordinaten · Erkenntnisboard ·
+          Vergegenwärtigen + Ausblick Phase 3. Wortlaut unverändert. */}
+      <div className="max-w-prose space-y-2 text-muted">
+        <p>
+          Du hast nun die wichtigen{" "}
+          <strong className="font-semibold text-foreground">
+            Koordinaten für deine Veränderungsreise
+          </strong>{" "}
+          bestimmt. Du weißt, wo du stehst, und du weißt, wo du hin möchtest. Du
+          bist dir über dein{" "}
+          <strong className="font-semibold text-foreground">
+            Veränderungsziel
+          </strong>{" "}
+          sicher, denn du hast dir seine Folgen klar gemacht und ihnen
+          zugestimmt.
+        </p>
+        <p>
+          Wenn du Erkenntnisse aus deiner bisherigen Reflexion haben solltest,
+          dann notiere sie dir bitte auf deinem{" "}
+          <strong className="font-semibold text-foreground">
+            Erkenntnisboard
+          </strong>{" "}
+          <span className="text-sm text-faint">(Notizbuch rechts)</span>.
+        </p>
+        <p>
+          Vergegenwärtige dir bitte nochmal die Schritte, wie du zu deinem
+          Ergebnis gekommen bist, bevor du mit Phase 3 weitermachst – der
+          Identifikation deiner{" "}
+          <strong className="font-semibold text-foreground">Ressourcen</strong>,
+          die du auf dem Weg zu deinem Ziel brauchen wirst.
+        </p>
+      </div>
 
       {goalText.trim() ? (
         <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">

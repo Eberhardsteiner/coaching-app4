@@ -13,13 +13,24 @@ import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 import { cn } from "@/lib/utils";
 
-/** Brainstorming-Anmoderation (Methodik-Vorlage, wortgetreu). */
-const INTRO =
-  "Stell dir einmal vor, es würde dir mit deinem Thema und Anliegen, das du in Phase 1 beschrieben hast, richtig gut gehen — wie geht es dir dann? Wie fühlst du dich? Was ist dann anders? Was erlebst du? Welche Veränderungen nehmen andere an dir wahr? Beginne mit dem Gefühl, das du dann hast …";
+/** Die Fragen der Brainstorming-Anmoderation (Methodik-Vorlage, wortgetreu). */
+const INTRO_FRAGEN = [
+  "wie geht es dir dann?",
+  "Wie fühlst du dich?",
+  "Was ist dann anders?",
+  "Was erlebst du?",
+  "Welche Veränderungen nehmen andere an dir wahr?",
+];
 
-/** Perspektivwechsel-Text (Methodik-Vorlage, wortgetreu — Teil der Anmoderation). */
-const PERSPEKTIV_TEXT =
-  "Nimm bitte bewusst eine neue Perspektive ein. Such dir einen Platz, an dem du dich wohlfühlst. Und stell dir vor – du weißt zwar nicht wie – aber deine Probleme aus der Ist-Situation wären verschwunden. Die Dinge haben sich zum Guten gewendet. Welches Gefühl stellt sich bei dir ein? Du kannst zunächst einfach frei assoziieren und dir in einer Art Brainstorming vorstellen, wie sich deine Situation geändert hat. Verschwende erst einmal gar keinen Gedanken an das Wie, beschreibe einfach den neuen, positiven Zustand.";
+/**
+ * Perspektivwechsel-Text (Methodik-Vorlage, wortgetreu — Teil der
+ * Anmoderation), K1: in drei Sinnabsätze gesetzt.
+ */
+const PERSPEKTIV_ABSAETZE = [
+  "Nimm bitte bewusst eine neue Perspektive ein. Such dir einen Platz, an dem du dich wohlfühlst.",
+  "Und stell dir vor – du weißt zwar nicht wie – aber deine Probleme aus der Ist-Situation wären verschwunden. Die Dinge haben sich zum Guten gewendet. Welches Gefühl stellt sich bei dir ein?",
+  "Du kannst zunächst einfach frei assoziieren und dir in einer Art Brainstorming vorstellen, wie sich deine Situation geändert hat. Verschwende erst einmal gar keinen Gedanken an das Wie, beschreibe einfach den neuen, positiven Zustand.",
+];
 
 /** Liste positiver Gefühle (Methodik-Vorlage) — ohne Anspruch auf Vollständigkeit. */
 const FEELINGS = [
@@ -132,7 +143,22 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
           <span className="font-medium text-foreground">{label}</span>
         </div>
 
-        <p className="text-muted">{INTRO}</p>
+        {/* K1: Fragenreihe als Bullet-Liste, Gefühls-Aufforderung als
+            hervorgehobene Abschluss-Zeile — Wortlaut unverändert. */}
+        <div className="max-w-prose space-y-2 text-muted">
+          <p>
+            Stell dir einmal vor, es würde dir mit deinem Thema und Anliegen,
+            das du in Phase 1 beschrieben hast, richtig gut gehen —
+          </p>
+          <ul className="ml-4 list-disc space-y-1">
+            {INTRO_FRAGEN.map((frage) => (
+              <li key={frage}>{frage}</li>
+            ))}
+          </ul>
+          <p className="font-medium text-foreground">
+            Beginne mit dem Gefühl, das du dann hast …
+          </p>
+        </div>
 
         {/* Perspektivwechsel — die ganze Übung SICHTBAR im Callout
             (VOICE-1: Anmoderationen sind nie zugeklappt). */}
@@ -140,7 +166,11 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
           icon={<SunSymbol className="size-5" />}
           title="Neue Perspektive einnehmen"
         >
-          {PERSPEKTIV_TEXT}
+          <div className="space-y-2">
+            {PERSPEKTIV_ABSAETZE.map((absatz) => (
+              <p key={absatz}>{absatz}</p>
+            ))}
+          </div>
         </InfoCallout>
 
         <div className="space-y-2">
@@ -171,16 +201,25 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
             . Denn zunächst geht es um das neue, positive Gefühl, das sich
             einstellt, wenn dein neuer Zustand eingetreten ist.
           </p>
-          <p className="text-muted">
-            Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
-            Ausdruck bringt, dann kannst du dir durch die Liste helfen lassen.
-            Sie hat keinen Anspruch auf Vollständigkeit. Wenn du mehrere Gefühle
-            in dir spürst, dann nimm das{" "}
-            <strong className="font-semibold text-foreground">stärkste</strong>.{" "}
-            <strong className="font-semibold text-foreground">
-              2 Gefühle sind auch ok.
-            </strong>
-          </p>
+          {/* K1: drei kurze Zeilen — Liste hilft · kein Anspruch auf
+              Vollständigkeit · das stärkste; 2 sind ok. */}
+          <div className="max-w-prose space-y-1 text-muted">
+            <p>
+              Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
+              Ausdruck bringt, dann kannst du dir durch die Liste helfen lassen.
+            </p>
+            <p>Sie hat keinen Anspruch auf Vollständigkeit.</p>
+            <p>
+              Wenn du mehrere Gefühle in dir spürst, dann nimm das{" "}
+              <strong className="font-semibold text-foreground">
+                stärkste
+              </strong>
+              .{" "}
+              <strong className="font-semibold text-foreground">
+                2 Gefühle sind auch ok.
+              </strong>
+            </p>
+          </div>
 
           <div
             role="group"

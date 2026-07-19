@@ -17,24 +17,31 @@ const MAX_PER_COLUMN = 5;
 
 type ValueCategory = "mensch" | "funktion" | "ziel";
 
-const COLUMNS: { category: ValueCategory; title: string; guide: string }[] = [
+// K1: guide als Absatz-Array — die Spalten-Anleitungen brechen in kurze
+// Sinneinheiten statt in einen Block (Wortlaut unverändert).
+const COLUMNS: { category: ValueCategory; title: string; guide: string[] }[] = [
   {
     category: "mensch",
     title: "Was ist mir wichtig als Mensch?",
-    guide:
-      "Beginne mit den maximal 5 Werten, die dir ganz allgemein als Mensch wichtig sind — ganz gleich, in welchem Kontext du unterwegs bist. Falls dir das schwerfällt: Was würde jemand aus deinem nahen Umfeld sagen, der dich gut kennt? Du kannst auch einen Blick auf die Werteliste werfen.",
+    guide: [
+      "Beginne mit den maximal 5 Werten, die dir ganz allgemein als Mensch wichtig sind — ganz gleich, in welchem Kontext du unterwegs bist.",
+      "Falls dir das schwerfällt: Was würde jemand aus deinem nahen Umfeld sagen, der dich gut kennt? Du kannst auch einen Blick auf die Werteliste werfen.",
+    ],
   },
   {
     category: "funktion",
     title: "Was ist mir wichtig in meiner Funktion?",
-    guide:
-      "Was musst du darüber hinaus in der Funktion oder Rolle, in der du gerade im Coaching bist, wichtig nehmen? Vielleicht Compliance oder Kennzahlen als Führungskraft. Oder Fürsorge als pflegende*r Angehörige*r. Ohne Doppelungen mit Spalte 1.",
+    guide: [
+      "Was musst du darüber hinaus in der Funktion oder Rolle, in der du gerade im Coaching bist, wichtig nehmen? Vielleicht Compliance oder Kennzahlen als Führungskraft. Oder Fürsorge als pflegende*r Angehörige*r.",
+      "Ohne Doppelungen mit Spalte 1.",
+    ],
   },
   {
     category: "ziel",
     title: "Was ist mir im Hinblick auf mein Ziel wichtig?",
-    guide:
+    guide: [
       "Was musst du darüber hinaus wichtig nehmen, damit du dein Ziel erreichst?",
+    ],
   },
 ];
 
@@ -44,9 +51,23 @@ const COLUMN_SHORT: Record<ValueCategory, string> = {
   ziel: "Ziel",
 };
 
-/** MVWK-Erklärtext (Methodik-Vorlage, gestrafft; Sinn vollständig). */
-const MVWK_TEXT =
-  "Das MVWK-Modell (Motiv–Verhalten–Wert–Kontext) zeigt vereinfacht, dass wir mit unseren Motiven (M) und den Werten (W) im Kontext (K) interagieren — und unser Verhalten (V) von beidem beeinflusst wird. Während unsere Motive unsere grundsätzliche emotionale Ausrichtung festlegen, wählen wir unsere Werte aktiv. Werte sind im Handeln beobachtbar: Ich zeige in meinem Verhalten, was ich wichtig nehme — wer Genauigkeit wichtig nimmt, verhält sich anders als wer Schnelligkeit wichtig nimmt. Nicht immer stimmen geäußerte Werte mit den Werten aus unserem Verhalten überein. Motiv: ‚Was treibt mich an?‘ — Werte: ‚Was nehme ich wichtig?‘ / aus dem Kontext: ‚Was ist hier wichtig?‘ Passen Motive und Werte gut zusammen, kann unser Verhalten frei fließen und wir fühlen uns wohl. Deine Werte sind wichtige Ressourcen, denn sie steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten. Deshalb identifizierst du jetzt deine wichtigsten Werte.";
+/**
+ * MVWK-Erklärtext (Methodik-Vorlage, gestrafft; Sinn vollständig), K1: in
+ * Sinnabsätze gesetzt — die Merkfragen als eigene abgesetzte Zeile.
+ */
+const MVWK_ABSAETZE = [
+  "Das MVWK-Modell (Motiv–Verhalten–Wert–Kontext) zeigt vereinfacht, dass wir mit unseren Motiven (M) und den Werten (W) im Kontext (K) interagieren — und unser Verhalten (V) von beidem beeinflusst wird. Während unsere Motive unsere grundsätzliche emotionale Ausrichtung festlegen, wählen wir unsere Werte aktiv.",
+  "Werte sind im Handeln beobachtbar: Ich zeige in meinem Verhalten, was ich wichtig nehme — wer Genauigkeit wichtig nimmt, verhält sich anders als wer Schnelligkeit wichtig nimmt. Nicht immer stimmen geäußerte Werte mit den Werten aus unserem Verhalten überein.",
+];
+
+/** Die drei Merkfragen des Modells (abgesetzte Zeile). */
+const MVWK_MERKFRAGEN =
+  "Motiv: ‚Was treibt mich an?‘ — Werte: ‚Was nehme ich wichtig?‘ / aus dem Kontext: ‚Was ist hier wichtig?‘";
+
+const MVWK_SCHLUSS = [
+  "Passen Motive und Werte gut zusammen, kann unser Verhalten frei fließen und wir fühlen uns wohl.",
+  "Deine Werte sind wichtige Ressourcen, denn sie steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten. Deshalb identifizierst du jetzt deine wichtigsten Werte.",
+];
 
 /**
  * Decorative MVWK sketch, following the template's figure: the motives (M)
@@ -204,7 +225,17 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         </summary>
         <div className="mt-3 space-y-3">
           <MvwkSketch />
-          <p className="text-sm text-muted">{MVWK_TEXT}</p>
+          <div className="max-w-prose space-y-2 text-sm text-muted">
+            {MVWK_ABSAETZE.map((absatz) => (
+              <p key={absatz}>{absatz}</p>
+            ))}
+            <p className="border-l-2 border-accent/40 pl-3 italic">
+              {MVWK_MERKFRAGEN}
+            </p>
+            {MVWK_SCHLUSS.map((absatz) => (
+              <p key={absatz}>{absatz}</p>
+            ))}
+          </div>
         </div>
       </details>
 
@@ -223,7 +254,11 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                 <h3 className="text-sm font-semibold text-foreground">
                   {column.title}
                 </h3>
-                <p className="mt-1 text-xs text-muted">{column.guide}</p>
+                <div className="mt-1 space-y-1 text-xs text-muted">
+                  {column.guide.map((absatz) => (
+                    <p key={absatz}>{absatz}</p>
+                  ))}
+                </div>
               </div>
 
               <ul className="space-y-1.5">

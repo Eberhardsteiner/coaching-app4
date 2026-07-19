@@ -185,40 +185,63 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
   return (
     <div>
       <div className="space-y-6">
-        {/* Anmoderation — vollständig sichtbar (VOICE-1, MP2-REV-Wortlaut). */}
-        <p className="text-muted">
-          Hast du schon einmal bemerkt, dass Veränderungen, die wir persönlich
-          großartig finden, in unserem Umfeld manchmal nicht auf Gegenliebe
-          stoßen? Andererseits wünschen sich vielleicht unsere Nächsten, dass
-          wir uns verändern und würden uns dabei liebend gern unterstützen. Für
-          deinen Weg zum Ziel kann es entscheidend sein zu berücksichtigen,
-          woher du{" "}
-          <strong className="font-semibold text-foreground">Rückenwind</strong>{" "}
-          und woher{" "}
-          <strong className="font-semibold text-foreground">Gegenwind</strong>{" "}
-          zu erwarten hast. Nun geht es darum, dass du herausfindest, welche
-          Auswirkungen dein Ziel auf dein Umfeld hat und wie die Beteiligten
-          dazu stehen. Dann kannst du für dich überprüfen, ob du zu deinem Ziel
-          stehen kannst. Und später kannst du bei deinen Maßnahmen die
-          Einstellungen deines Umfelds gezielt berücksichtigen.{" "}
-          <strong className="font-semibold text-foreground">
-            Bitte gehe dabei durch alle deine Cluster.
-          </strong>
+        {/* Anmoderation — vollständig sichtbar (VOICE-1, MP2-REV-Wortlaut),
+            K1: drei Sinnabsätze + abgesetzte Merkzeile. */}
+        <div className="max-w-prose space-y-2 text-muted">
+          <p>
+            Hast du schon einmal bemerkt, dass Veränderungen, die wir persönlich
+            großartig finden, in unserem Umfeld manchmal nicht auf Gegenliebe
+            stoßen? Andererseits wünschen sich vielleicht unsere Nächsten, dass
+            wir uns verändern und würden uns dabei liebend gern unterstützen.
+          </p>
+          <p>
+            Für deinen Weg zum Ziel kann es entscheidend sein zu
+            berücksichtigen, woher du{" "}
+            <strong className="font-semibold text-foreground">
+              Rückenwind
+            </strong>{" "}
+            und woher{" "}
+            <strong className="font-semibold text-foreground">Gegenwind</strong>{" "}
+            zu erwarten hast. Nun geht es darum, dass du herausfindest, welche
+            Auswirkungen dein Ziel auf dein Umfeld hat und wie die Beteiligten
+            dazu stehen.
+          </p>
+          <p>
+            Dann kannst du für dich überprüfen, ob du zu deinem Ziel stehen
+            kannst. Und später kannst du bei deinen Maßnahmen die Einstellungen
+            deines Umfelds gezielt berücksichtigen.
+          </p>
+        </div>
+        <p className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm font-medium text-foreground">
+          Bitte gehe dabei durch alle deine Cluster.
         </p>
 
-        {/* Perspektiv-Übung als Callout — die ganze Übung SICHTBAR (VOICE-1). */}
+        {/* Perspektiv-Übung als Callout — die ganze Übung SICHTBAR (VOICE-1),
+            K1: zwei Absätze, die Zitat-Frage abgesetzt. */}
         <InfoCallout
           icon={<SunSymbol className="size-5" />}
           title="Stell dir vor, dein Ziel ist Realität"
         >
-          Stelle dir bitte vor, du hast dein Ziel erreicht. Ganz gleich, wie du
-          es geschafft hast, dein Ziel ist Realität. Du kannst dich nun anders
-          verhalten als Stand heute. Dass du dein Ziel erreicht hast, ist nicht
-          nur ein Gefühl, sondern zeigt sich an deinem veränderten Verhalten in
-          deinem Kontext. Betrachte dich nun aus der Perspektive, mit den Augen
-          deiner Cluster. „An welchem konkreten Verhalten von dir erkennt dein
-          Cluster (z. B. die Personen darin), dass du dein Ziel erreicht hast?“
-          Was kannst du dann tun, was du heute noch nicht machen kannst?
+          <div className="space-y-2">
+            <p>
+              Stelle dir bitte vor, du hast dein Ziel erreicht. Ganz gleich, wie
+              du es geschafft hast, dein Ziel ist Realität. Du kannst dich nun
+              anders verhalten als Stand heute.
+            </p>
+            <p>
+              Dass du dein Ziel erreicht hast, ist nicht nur ein Gefühl, sondern
+              zeigt sich an deinem veränderten Verhalten in deinem Kontext.
+              Betrachte dich nun aus der Perspektive, mit den Augen deiner
+              Cluster.
+            </p>
+            <p className="border-l-2 border-accent/40 pl-3 italic">
+              „An welchem konkreten Verhalten von dir erkennt dein Cluster (z.
+              B. die Personen darin), dass du dein Ziel erreicht hast?“
+            </p>
+            <p>
+              Was kannst du dann tun, was du heute noch nicht machen kannst?
+            </p>
+          </div>
         </InfoCallout>
 
         {/* F2 — Cluster-Navigation (Kernthema zuerst, dann nach Gewicht) */}

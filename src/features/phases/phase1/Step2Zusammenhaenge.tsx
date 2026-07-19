@@ -17,7 +17,9 @@ import { cn } from "@/lib/utils";
 /** Intro (verbatim, three paragraphs). */
 const INTRO_PARAGRAPHS = [
   "Du weißt nun, wie du dich bezogen auf dein Thema hauptsächlich fühlst und hast das aufgeschrieben.",
-  "Nun geht es darum, dass du einmal alles herunterschreibst, wer oder was damit zusammenhängt. Bitte beachte dabei, dass du deine Ist-Situation so klar wie möglich darstellst. Und das geht am besten, wenn du alles weglässt, was vielleicht Lösungen in der Zukunft sein könnten. Wenn dir eine Lösung einfällt, dann frage dich bitte: ‚Wie ist es denn aktuell wirklich?‘, denn das beschreibt deine aktuelle Ist-Situation.",
+  // K1: der lange Absatz in zwei Sinnabsätze gesetzt (Wortlaut unverändert).
+  "Nun geht es darum, dass du einmal alles herunterschreibst, wer oder was damit zusammenhängt. Bitte beachte dabei, dass du deine Ist-Situation so klar wie möglich darstellst.",
+  "Und das geht am besten, wenn du alles weglässt, was vielleicht Lösungen in der Zukunft sein könnten. Wenn dir eine Lösung einfällt, dann frage dich bitte: ‚Wie ist es denn aktuell wirklich?‘, denn das beschreibt deine aktuelle Ist-Situation.",
   "Bitte gehe konsequent durch diese Fragen, ausgehend von deinem Gefühl:",
 ];
 

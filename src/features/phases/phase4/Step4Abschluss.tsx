@@ -11,9 +11,11 @@ const EMPTY_CHECK: PhaseCheckValue = {
   transfer: "",
 };
 
-/** Outro (Methodik-Vorlage, wortgetreu, gekürzt). */
-const OUTRO =
-  "Deine Phase 4 ist mit dem Handlungsplan abgeschlossen. Du weißt, wo du hinwillst, kennst deine Ressourcen und hast aus deinen förderlichen Ressourcen einen Maßnahmenplan geschmiedet. Auch wenn dich dein innerer Prozess in Bewegung versetzt hat: In der äußeren Welt hast du noch nichts verändert. Es geht nun darum, deinen Plan wirklich werden zu lassen — die letzte, kurze Phase 5 unterstützt dich genau darin.";
+/** Outro (Methodik-Vorlage, wortgetreu, gekürzt), K1: zwei Absätze. */
+const OUTRO_ABSAETZE = [
+  "Deine Phase 4 ist mit dem Handlungsplan abgeschlossen. Du weißt, wo du hinwillst, kennst deine Ressourcen und hast aus deinen förderlichen Ressourcen einen Maßnahmenplan geschmiedet.",
+  "Auch wenn dich dein innerer Prozess in Bewegung versetzt hat: In der äußeren Welt hast du noch nichts verändert. Es geht nun darum, deinen Plan wirklich werden zu lassen — die letzte, kurze Phase 5 unterstützt dich genau darin.",
+];
 
 /** Format an ISO date (yyyy-mm-dd) as a German date without timezone shifts. */
 function formatGermanDate(iso: string): string {
@@ -63,7 +65,11 @@ export function Step4Abschluss({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{OUTRO}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {OUTRO_ABSAETZE.map((absatz) => (
+          <p key={absatz}>{absatz}</p>
+        ))}
+      </div>
 
       {/* Kompakte Plan-Übersicht */}
       {groups.length > 0 ? (

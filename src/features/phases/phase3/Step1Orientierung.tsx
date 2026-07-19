@@ -9,9 +9,14 @@ import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
 
-/** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut). */
-const INTRO_VOLLTEXT =
-  "Im Coaching sind Ressourcen immer zuallererst deine inneren Ressourcen — alles, was du an Fähigkeiten und Kompetenzen in dir trägst. Aber auch die Motive und Werte, die dich als Persönlichkeit ausmachen und deinen inneren Kompass steuern. Als Orientierungshilfe findest du hier unser Kompetenzmodell, das der Ressourcenanalyse zugrunde liegt. Sieh es dir einmal an. Du beginnst von innen nach außen. Bitte halte deinen Zielsatz bereit — du brauchst ihn als Bewertungsmaßstab.";
+/**
+ * Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: zwei Absätze;
+ * die zwei Kern-Anweisungen stehen darunter als abgesetzte Merkzeilen.
+ */
+const INTRO_ABSAETZE = [
+  "Im Coaching sind Ressourcen immer zuallererst deine inneren Ressourcen — alles, was du an Fähigkeiten und Kompetenzen in dir trägst. Aber auch die Motive und Werte, die dich als Persönlichkeit ausmachen und deinen inneren Kompass steuern.",
+  "Als Orientierungshilfe findest du hier unser Kompetenzmodell, das der Ressourcenanalyse zugrunde liegt. Sieh es dir einmal an.",
+];
 
 /**
  * Decorative onion sketch — the competence model reads from the inside out.
@@ -57,7 +62,22 @@ export function Step1Orientierung({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-muted">{INTRO_VOLLTEXT}</p>
+      <div className="max-w-prose space-y-2 text-muted">
+        {INTRO_ABSAETZE.map((absatz) => (
+          <p key={absatz}>{absatz}</p>
+        ))}
+        <p className="font-medium text-foreground">
+          <strong className="font-semibold">
+            Du beginnst von innen nach außen.
+          </strong>
+        </p>
+        <p className="font-medium text-foreground">
+          <strong className="font-semibold">
+            Bitte halte deinen Zielsatz bereit
+          </strong>{" "}
+          — du brauchst ihn als Bewertungsmaßstab.
+        </p>
+      </div>
 
       {/* Der Zielsatz — durchgehender Bewertungsmaßstab dieser Phase. */}
       {goalText.trim() ? (
