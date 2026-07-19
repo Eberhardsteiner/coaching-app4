@@ -50,6 +50,21 @@
       "hint": "Anwendungswissen in Branchen und Kontexten"
     },
     {
+      "id": "reflektierte-erfahrung",
+      "label": "Reflektierte Erfahrung",
+      "hint": "Ausgewertetes Erleben — Erfahrungen, aus denen du bewusst Schlüsse gezogen hast"
+    },
+    {
+      "id": "sozial-kommunikative-kompetenz",
+      "label": "Sozial-kommunikative Kompetenz",
+      "hint": "Wirksam mit anderen in Kontakt, Austausch und Beziehung treten"
+    },
+    {
+      "id": "fach-methodenkompetenz",
+      "label": "Fach- & Methodenkompetenz",
+      "hint": "Erlerntes Fachwissen und Methoden, auf die du zurückgreifen kannst"
+    },
+    {
       "id": "handlungskompetenz",
       "label": "Handlungskompetenz/Selbstorganisation",
       "hint": "Alles, was wir in verschiedenen Kontexten konkret abrufen können; beobachtbares Handeln"

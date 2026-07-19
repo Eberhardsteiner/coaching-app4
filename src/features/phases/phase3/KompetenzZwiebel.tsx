@@ -1,49 +1,102 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { ModelTerm } from "@/features/content/contentTypes";
 import { cn } from "@/lib/utils";
 
 /**
- * Layout der Zwiebel (K2): Position und Form je Modell-Element. Die TEXTE
- * kommen weiter aus kompetenzmodell.json (nichts hart codiert) — hier steht
- * nur, WO ein Element sitzt. Ring-Beschriftungen ohne eigenen JSON-Begriff
- * (Reflektierte Erfahrung, Sozial-kommunikative Kompetenz, Fach- &
- * Methodenkompetenz) sind dekorative Ringtexte (aria-hidden).
+ * Layout der Zwiebel (K2, Nachschärfung nach Nutzer-Feedback): Position und
+ * Form je Modell-Element. Die TEXTE kommen weiter aus kompetenzmodell.json
+ * (nichts hart codiert) — hier steht nur, WO ein Element sitzt. Alle
+ * Ring-Beschriftungen laufen GEBOGEN auf ihrem Ring (<textPath>, wie in der
+ * Original-Grafik der Methodik) — dadurch kollidiert kein Label mehr mit den
+ * weißen Kreisen, und jedes Label ist ein interaktives Modell-Element.
  */
 const CENTER = 260;
 
-/** Die drei weißen Kreise um den SOMA-Kern (auf dem dunkelblauen Innenring). */
+/** Die drei weißen Kreise um den SOMA-Kern (Anordnung wie im Original:
+ *  Motive oben, Persönlichkeitseigenschaften links, Intelligenzen rechts). */
 const INNER_CIRCLES: { id: string; angle: number; short: string }[] = [
   { id: "motive", angle: -90, short: "Motive" },
-  { id: "intelligenzen", angle: 150, short: "Intelligenzen" },
   {
     id: "persoenlichkeitseigenschaften",
-    angle: 30,
+    angle: 150,
     short: "Persönlichkeits­eigenschaften",
+  },
+  { id: "intelligenzen", angle: 30, short: "Intelligenzen" },
+];
+
+/**
+ * Gebogene Ring-Labels: Ring-Radius, Bogen (oben/unten — unten läuft der
+ * Pfad gegen den Uhrzeigersinn, damit der Text nicht kopfsteht) und die
+ * Position auf dem Bogen (startOffset in %; 50 = Bogenmitte).
+ */
+const RING_LABELS: {
+  id: string;
+  ring: "aussen" | "mitte" | "innen";
+  arc: "oben" | "unten";
+  offset: number;
+  size: number;
+  short?: string;
+}[] = [
+  // Äußerster Ring (Limette): der eine Modell-Begriff mit zwei Ankern.
+  {
+    id: "handlungskompetenz",
+    ring: "aussen",
+    arc: "oben",
+    offset: 50,
+    size: 24,
+  },
+  // Zweiter Ring (Olivgrün).
+  {
+    id: "fach-methodenkompetenz",
+    ring: "mitte",
+    arc: "oben",
+    offset: 50,
+    size: 15,
+  },
+  { id: "feldkompetenz", ring: "mitte", arc: "unten", offset: 12, size: 15 },
+  // Dunkelblauer Ring — oben die drei inneren Prägungen …
+  { id: "innere-antreiber", ring: "innen", arc: "oben", offset: 22, size: 12 },
+  {
+    id: "denk-bewertungsstrukturen",
+    ring: "innen",
+    arc: "oben",
+    offset: 54,
+    size: 12,
+    short: "Denk- & Bewertungsstrukturen",
+  },
+  { id: "glaubenssaetze", ring: "innen", arc: "oben", offset: 84, size: 12 },
+  // … unten die drei erworbenen Kompetenzen.
+  {
+    id: "reflektierte-erfahrung",
+    ring: "innen",
+    arc: "unten",
+    offset: 16,
+    size: 12,
+  },
+  {
+    id: "leitwerte",
+    ring: "innen",
+    arc: "unten",
+    offset: 50,
+    size: 12,
+    short: "Persönliche Leitwerte",
+  },
+  {
+    id: "sozial-kommunikative-kompetenz",
+    ring: "innen",
+    arc: "unten",
+    offset: 83,
+    size: 12,
   },
 ];
 
-/** Interaktive Ring-Labels (Begriffe aus dem JSON) — Radius + Winkel. */
-const RING_LABELS: { id: string; r: number; angle: number; short?: string }[] =
-  [
-    { id: "innere-antreiber", r: 148, angle: -90 },
-    { id: "glaubenssaetze", r: 148, angle: 150 },
-    {
-      id: "denk-bewertungsstrukturen",
-      r: 148,
-      angle: 30,
-      short: "Denk- & Bewertungsstrukturen",
-    },
-    { id: "leitwerte", r: 193, angle: -30, short: "Persönliche Leitwerte" },
-    { id: "feldkompetenz", r: 238, angle: -140 },
-  ];
-
-/** Dekorative Ring-Beschriftungen ohne eigenen Modell-Begriff. */
-const DECOR_LABELS: { text: string; r: number; angle: number }[] = [
-  { text: "Reflektierte Erfahrung", r: 193, angle: -150 },
-  { text: "Sozial-kommunikative Kompetenz", r: 193, angle: 90 },
-  { text: "Fach- & Methodenkompetenz", r: 238, angle: -40 },
-];
+/** Ring-Radien (Textlinie) je Ring-Id. */
+const RING_RADIUS: Record<"aussen" | "mitte" | "innen", number> = {
+  aussen: 234,
+  mitte: 189,
+  innen: 144,
+};
 
 /** Polarkoordinate um den Mittelpunkt (Winkel in Grad, 0° = rechts). */
 function polar(r: number, angleDeg: number): { x: number; y: number } {
@@ -51,19 +104,30 @@ function polar(r: number, angleDeg: number): { x: number; y: number } {
   return { x: CENTER + r * Math.cos(rad), y: CENTER + r * Math.sin(rad) };
 }
 
+/** Halbkreis-Pfad für gebogene Labels (oben im, unten gegen den Uhrzeigersinn). */
+function arcPath(r: number, arc: "oben" | "unten"): string {
+  const left = CENTER - r;
+  const right = CENTER + r;
+  return arc === "oben"
+    ? `M ${left} ${CENTER} A ${r} ${r} 0 0 1 ${right} ${CENTER}`
+    : `M ${left} ${CENTER} A ${r} ${r} 0 0 0 ${right} ${CENTER}`;
+}
+
 /**
- * K2 — das Kompetenzmodell als interaktive Zwiebel-Grafik: SOMA-Kern (accent),
- * drei weiße Kreise (Motive · Persönlichkeitseigenschaften · Intelligenzen)
- * auf dem dunkelblauen Innenring, zwei weitere Ringe mit Beschriftungen,
- * außen Handlungskompetenz (oben) / Selbstorganisation (unten). Jedes Element
- * mit eigenem JSON-Begriff ist fokussierbar (role="button", Hover/Tap/Fokus)
- * und zeigt seine Beschreibung in der aria-live-Erklärkarte darunter
- * (aria-describedby) — das mobile-taugliche Flyover-Muster der Rubikon-Szene.
+ * K2 — das Kompetenzmodell als interaktive Zwiebel-Grafik nach der
+ * Original-Vorlage: SOMA-Kern (oliv), drei weiße Kreise (Motive ·
+ * Persönlichkeitseigenschaften · Intelligenzen), dunkelblauer Begriffs-Ring,
+ * olivgrüner und limettengrüner Außenring — alle Ring-Beschriftungen gebogen
+ * (textPath) und interaktiv. Hover/Tap/Fokus zeigt die Beschreibung in der
+ * aria-live-Erklärkarte darunter (aria-describedby); „Selbstorganisation"
+ * (unten) gehört zum Begriff Handlungskompetenz/Selbstorganisation.
  */
 export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
   const byId = new Map(terms.map((t) => [t.id, t]));
   const [activeId, setActiveId] = useState("soma");
   const active = byId.get(activeId) ?? byId.get("soma");
+  const uid = useId();
+  const pathId = (ring: string, arc: string) => `${uid}-${ring}-${arc}`;
 
   /** Interaktions-Props eines Elements (Hover + Tap/Klick + Tastatur-Fokus). */
   const interactive = (id: string) => ({
@@ -87,6 +151,16 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
   /** Sichtbarer Aktiv-/Fokus-Zustand eines Elements. */
   const isActive = (id: string) => activeId === id;
 
+  /** Schriftfarbe je Ring (Original: dunkelblau auf grün, weiß auf blau). */
+  const ringTextFill = (ring: "aussen" | "mitte" | "innen", act: boolean) =>
+    ring === "innen"
+      ? act
+        ? "fill-white underline"
+        : "fill-white/90"
+      : act
+        ? "fill-blue-950 underline"
+        : "fill-blue-950/90";
+
   return (
     <div className="space-y-3">
       <svg
@@ -95,108 +169,76 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
         aria-label="Kompetenzmodell — Zwiebel von innen nach außen"
         className="mx-auto h-auto w-full max-w-md"
       >
-        {/* Äußerste Beschriftung: Handlungskompetenz (oben) /
-            Selbstorganisation (unten) — EIN Modell-Begriff, zwei Anker. */}
-        <g {...interactive("handlungskompetenz")}>
-          <text
-            x={CENTER}
-            y={22}
-            textAnchor="middle"
-            className={cn(
-              "text-[15px] font-semibold",
-              isActive("handlungskompetenz")
-                ? "fill-accent"
-                : "fill-foreground",
-            )}
-          >
-            Handlungskompetenz
-          </text>
-          <text
-            x={CENTER}
-            y={510}
-            textAnchor="middle"
-            className={cn(
-              "text-[15px] font-semibold",
-              isActive("handlungskompetenz")
-                ? "fill-accent"
-                : "fill-foreground",
-            )}
-          >
-            Selbstorganisation
-          </text>
-        </g>
+        <defs>
+          {(["aussen", "mitte", "innen"] as const).map((ring) =>
+            (["oben", "unten"] as const).map((arc) => (
+              <path
+                key={`${ring}-${arc}`}
+                id={pathId(ring, arc)}
+                d={arcPath(RING_RADIUS[ring], arc)}
+                fill="none"
+              />
+            )),
+          )}
+        </defs>
 
-        {/* Ringe von außen nach innen: hellgrün · dunkel · dunkelblau. */}
+        {/* Ringe von außen nach innen: Limette · Olivgrün · Dunkelblau
+            (Original-Farbwelt), plus die dunkelblaue Innenfläche mit dünnem
+            Trennkreis um die weißen Kreise. */}
+        <circle cx={CENTER} cy={CENTER} r={260} className="fill-lime-300/80" />
+        <circle cx={CENTER} cy={CENTER} r={212} className="fill-lime-600/90" />
+        <circle cx={CENTER} cy={CENTER} r={167} className="fill-blue-950" />
         <circle
           cx={CENTER}
           cy={CENTER}
-          r={238}
-          strokeWidth={44}
-          className="fill-none stroke-green-200/70"
+          r={121}
+          strokeWidth={1.25}
+          className="fill-blue-950 stroke-lime-200/70"
         />
-        <circle
-          cx={CENTER}
-          cy={CENTER}
-          r={193}
-          strokeWidth={44}
-          className="fill-none stroke-blue-900/80"
-        />
-        <circle
-          cx={CENTER}
-          cy={CENTER}
-          r={148}
-          strokeWidth={44}
-          className="fill-none stroke-blue-950"
-        />
-        {/* Innenfläche, auf der die drei weißen Kreise liegen. */}
-        <circle cx={CENTER} cy={CENTER} r={126} className="fill-blue-900" />
 
-        {/* Dekorative Ring-Beschriftungen (kein eigener Modell-Begriff). */}
-        {DECOR_LABELS.map((label) => {
-          const p = polar(label.r, label.angle);
-          return (
-            <text
-              key={label.text}
-              x={p.x}
-              y={p.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              aria-hidden
-              className={cn(
-                "text-[11px]",
-                label.r === 238 ? "fill-green-950" : "fill-white/90",
-              )}
-            >
-              {label.text}
-            </text>
-          );
-        })}
-
-        {/* Interaktive Ring-Labels (Begriffe aus dem JSON). */}
+        {/* Gebogene Ring-Labels — jedes ein interaktives Modell-Element. */}
         {RING_LABELS.map((label) => {
           const term = byId.get(label.id);
           if (!term) return null;
-          const p = polar(label.r, label.angle);
+          const isSelbstorgAnchor = label.id === "handlungskompetenz";
           return (
             <g key={label.id} {...interactive(label.id)}>
               <text
-                x={p.x}
-                y={p.y}
-                textAnchor="middle"
-                dominantBaseline="middle"
+                style={{ fontSize: label.size }}
                 className={cn(
-                  "text-[11px] font-medium",
-                  label.r === 238
-                    ? isActive(label.id)
-                      ? "fill-green-950 underline"
-                      : "fill-green-950"
-                    : isActive(label.id)
-                      ? "fill-white underline"
-                      : "fill-white/90",
+                  "font-semibold",
+                  ringTextFill(label.ring, isActive(label.id)),
                 )}
               >
-                {label.short ?? term.label}
+                <textPath
+                  href={`#${pathId(label.ring, label.arc)}`}
+                  startOffset={`${label.offset}%`}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {label.short ?? term.label.split("/")[0]}
+                </textPath>
               </text>
+              {/* Der zweite Anker des Doppel-Begriffs: Selbstorganisation
+                  läuft gebogen auf dem unteren Außenring. */}
+              {isSelbstorgAnchor ? (
+                <text
+                  style={{ fontSize: label.size }}
+                  className={cn(
+                    "font-semibold",
+                    ringTextFill("aussen", isActive(label.id)),
+                  )}
+                >
+                  <textPath
+                    href={`#${pathId("aussen", "unten")}`}
+                    startOffset="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    Selbstorganisation
+                  </textPath>
+                </text>
+              ) : null}
             </g>
           );
         })}
@@ -205,7 +247,7 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
         {INNER_CIRCLES.map((circle) => {
           const term = byId.get(circle.id);
           if (!term) return null;
-          const p = polar(78, circle.angle);
+          const p = polar(74, circle.angle);
           const lines = circle.short.split("­");
           return (
             <g key={circle.id} {...interactive(circle.id)}>
@@ -215,9 +257,9 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
                 r={40}
                 className={cn(
                   "fill-white",
-                  isActive(circle.id) ? "stroke-accent" : "stroke-blue-950/40",
+                  isActive(circle.id) ? "stroke-accent" : "stroke-blue-950/30",
                 )}
-                strokeWidth={isActive(circle.id) ? 3 : 1.5}
+                strokeWidth={isActive(circle.id) ? 3 : 1}
               />
               {lines.length > 1 ? (
                 <>
@@ -252,12 +294,12 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
           );
         })}
 
-        {/* Der Kern: SOMA. */}
+        {/* Der Kern: SOMA (oliv, wie im Original). */}
         <g {...interactive("soma")}>
           <circle
             cx={CENTER}
             cy={CENTER}
-            r={30}
+            r={32}
             className={cn(
               "fill-accent",
               isActive("soma") ? "stroke-foreground" : "stroke-transparent",
@@ -268,7 +310,7 @@ export function KompetenzZwiebel({ terms }: { terms: ModelTerm[] }) {
             x={CENTER}
             y={CENTER + 4}
             textAnchor="middle"
-            className="fill-white text-[12px] font-semibold"
+            className="fill-white text-[13px] font-semibold"
           >
             SOMA
           </text>
