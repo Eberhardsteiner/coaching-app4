@@ -38,8 +38,6 @@ export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase0: { ...s.phase0, topicSketch: value } }));
   }
 
-  const hasTopic = topicSketch.trim().length > 0;
-
   return (
     <div>
       <div className="space-y-6">
@@ -114,7 +112,7 @@ export function Step04Thema({ nav }: { nav: PhaseNavigation }) {
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={hasTopic}
+        canNext
       />
     </div>
   );

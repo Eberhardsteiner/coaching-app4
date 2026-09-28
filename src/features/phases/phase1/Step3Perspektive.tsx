@@ -1,13 +1,16 @@
 import {
   Building2,
+  Check,
   ChevronDown,
   HeartPulse,
   Info,
   LayoutGrid,
+  Plus,
   Swords,
 } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { CoachCardBoard } from "@/features/cards/CoachCardBoard";
 import { ContentLoadState } from "@/features/content/ContentLoadState";
 import type { ModelTerm } from "@/features/content/contentTypes";
@@ -598,30 +601,13 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                 Begriffe durchgehen
               </h3>
               <p className="mt-1 text-sm text-muted">{INTRO_TERMS}</p>
-              {/* Legende: die Farbe zeigt sich selbst — keine Farbnamen. */}
-              <div
-                role="list"
-                aria-label="Legende der Kartentypen"
-                className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5"
-              >
-                {STAGE_ADDS.map((stage) => (
-                  <span
-                    key={stage.colorId}
-                    role="listitem"
-                    className="inline-flex items-center gap-1.5 text-xs text-muted"
-                  >
-                    <span
-                      aria-hidden
-                      className={cn("size-3 rounded-full", stage.swatch)}
-                    />
-                    {stage.label}
-                  </span>
-                ))}
-              </div>
+              {/* B2: pro Begriff nur noch „Übernehmen“. Die Karte wird als
+                  Zusammenhang angelegt und trägt die Kennzeichnung „aus dem
+                  Modell“. */}
               <p className="mt-1.5 text-sm text-faint">
-                Die Kreis-Buttons legen den Begriff als farbige Karte auf dein
-                Karten-Feld unten — gefüllte Kreise am Begriff zeigen, was du
-                dort schon erfasst hast.
+                „Übernehmen“ legt den Begriff als Zusammenhang-Karte auf dein
+                Karten-Feld unten. Karten aus dem Modell sind dort mit „aus dem
+                Modell“ gekennzeichnet.
               </p>
 
               {loaded.model.terms.length > 0 ? (
@@ -645,40 +631,23 @@ export function Step3Perspektive({ nav }: { nav: PhaseNavigation }) {
                           </p>
                         ) : null}
                       </div>
-                      <div className="flex shrink-0 flex-wrap gap-1.5">
-                        {STAGE_ADDS.map((stage) => {
-                          // Erfassungsstand: gibt es zu diesem Begriff schon
-                          // eine Karte dieses Typs? Gefüllt = erfasst.
-                          const captured = cards.some(
-                            (card) =>
-                              card.modelTerm === term.id &&
-                              card.color === stage.colorId,
-                          );
-                          return (
-                            <button
-                              key={stage.colorId}
-                              type="button"
-                              onClick={() => addTermCard(term, stage.colorId)}
-                              aria-label={`„${term.label}“ als ${stage.label} ergänzen${captured ? " (bereits erfasst)" : ""}`}
-                              title={`Als ${stage.label} ergänzen${captured ? " — bereits erfasst" : ""}`}
-                              className="flex size-7 items-center justify-center rounded-md border border-subtle bg-surface transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                            >
-                              <span
-                                aria-hidden
-                                className={cn(
-                                  "size-3 rounded-full",
-                                  captured
-                                    ? stage.swatch
-                                    : cn(
-                                        "border-2 bg-transparent",
-                                        stage.outline,
-                                      ),
-                                )}
-                              />
-                            </button>
-                          );
-                        })}
-                      </div>
+                      {(() => {
+                        const taken = cards.some(
+                          (card) => card.modelTerm === term.id,
+                        );
+                        return (
+                          <Button
+                            variant={taken ? "ghost" : "outline"}
+                            size="sm"
+                            className="shrink-0"
+                            onClick={() => addTermCard(term, "zusammenhang")}
+                            aria-label={`„${term.label}“ als Zusammenhang übernehmen${taken ? " (bereits übernommen)" : ""}`}
+                          >
+                            {taken ? <Check /> : <Plus />}
+                            {taken ? "Übernommen" : "Übernehmen"}
+                          </Button>
+                        );
+                      })()}
                     </li>
                   ))}
                 </ul>

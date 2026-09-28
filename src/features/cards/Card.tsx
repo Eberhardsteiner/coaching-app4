@@ -6,7 +6,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { GripVertical, Trash2 } from "lucide-react";
+import { Copy, GripVertical, Trash2 } from "lucide-react";
 
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -45,6 +45,8 @@ type CardProps = {
   clusterSelect?: ReactNode;
   onChange: (card: CardModel) => void;
   onDelete: (id: string) => void;
+  /** B3: Karte duplizieren (nur beim Clustern angeboten). */
+  onDuplicate?: (id: string) => void;
 };
 
 /**
@@ -62,6 +64,7 @@ export function Card({
   clusterSelect,
   onChange,
   onDelete,
+  onDuplicate,
 }: CardProps) {
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const startRef = useRef<{
@@ -161,6 +164,8 @@ export function Card({
       className={cn(
         "absolute flex flex-col gap-1 rounded-lg border p-2 shadow-sm",
         coachOnly ? "border-dashed border-muted" : "border-subtle",
+        // B2: Karten aus einem Modell sind erkennbar gekennzeichnet.
+        card.modelTerm && "border-l-4 border-l-blue-700",
         color.surface,
         drag ? "z-10 shadow-md" : "",
       )}
@@ -204,6 +209,18 @@ export function Card({
               )}
             />
           </button>
+          {onDuplicate ? (
+            <button
+              type="button"
+              onClick={() => onDuplicate(card.id)}
+              disabled={readOnly}
+              aria-label="Karte duplizieren"
+              title="Duplizieren"
+              className="flex size-6 items-center justify-center rounded text-current/60 hover:bg-black/5 hover:text-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <Copy className="size-3.5" />
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => onDelete(card.id)}
@@ -235,6 +252,11 @@ export function Card({
         aria-label="Kartentext"
         className="min-h-0 rounded border-0 bg-transparent px-1 py-0.5 text-sm break-words text-current placeholder:text-current/50"
       />
+      {card.modelTerm ? (
+        <span className="self-start rounded bg-blue-700/10 px-1.5 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-blue-900">
+          aus dem Modell
+        </span>
+      ) : null}
       {clusterSelect}
     </div>
   );

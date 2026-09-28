@@ -39,6 +39,8 @@ type ClusterBoardProps = {
 
 /* Layout constants (card height mirrors Card.tsx). */
 const CARD_H = 88;
+/** Kartenbreite (wie in Card.tsx) — für die Platzierung von Duplikaten. */
+const CARD_W = 152;
 const OVAL_W = 230;
 const OVAL_H = 44;
 const KEY_STEP = 16;
@@ -128,6 +130,31 @@ export function ClusterBoard({
 
   function deleteCard(id: string) {
     onCardsChange(cards.filter((c) => c.id !== id));
+  }
+
+  /**
+   * B3: Karte duplizieren. Die Kopie hat denselben Text, ist eigenständig
+   * (neue Kennung) und noch keinem Cluster zugeordnet, damit sie in ein
+   * anderes Cluster gezogen werden kann. Sie liegt leicht versetzt daneben.
+   */
+  function duplicateCard(id: string) {
+    const index = cards.findIndex((c) => c.id === id);
+    if (index < 0) return;
+    const source = cards[index];
+    const rect = boardRef.current?.getBoundingClientRect();
+    const maxX = rect ? Math.max(0, rect.width - CARD_W) : Infinity;
+    const copy: CardModel = {
+      ...source,
+      id: crypto.randomUUID(),
+      clusterId: undefined,
+      x: Math.min((source.x ?? 16) + 28, maxX),
+      y: (source.y ?? 16) + 28,
+    };
+    onCardsChange([
+      ...cards.slice(0, index + 1),
+      copy,
+      ...cards.slice(index + 1),
+    ]);
   }
 
   /* Cluster CRUD ---------------------------------------------------------- */
@@ -434,6 +461,7 @@ export function ClusterBoard({
               clusterSelect={cardClusterSelect(card)}
               onChange={handleCardChange}
               onDelete={deleteCard}
+              onDuplicate={readOnly ? undefined : duplicateCard}
             />
           ))}
 

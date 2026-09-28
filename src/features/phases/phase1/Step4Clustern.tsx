@@ -248,9 +248,6 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, istWord: text } }));
   }
 
-  const namedClusters = clusters.filter((c) => c.name.trim() !== "");
-  const canNext = namedClusters.length >= 1;
-
   return (
     <div className="space-y-6">
       {/* Gefühls-Anker aus 1.1 — der Bezugspunkt der Bewertung. */}
@@ -321,6 +318,12 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
         <p className="text-sm text-faint">
           {clusters.length} von 5 Clustern angelegt.
         </p>
+        {/* B3: Hinweis auf das Duplizieren. */}
+        <p className="text-sm text-faint">
+          Passt eine Karte in zwei Cluster, kopierst du sie mit dem
+          Kopier-Symbol auf der Karte und ordnest die Kopie dem zweiten Cluster
+          zu.
+        </p>
 
         <CoachCardBoard
           cards={cards}
@@ -355,17 +358,11 @@ export function Step4Clustern({ nav }: { nav: PhaseNavigation }) {
         )}
       </Abschnitt>
 
-      {!canNext ? (
-        <p className="text-sm text-faint">
-          Lege mindestens ein benanntes Cluster an, um fortzufahren.
-        </p>
-      ) : null}
-
       <StepNav
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={canNext}
+        canNext
       />
     </div>
   );
