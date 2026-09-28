@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { SunSymbol } from "@/components/icons/PhaseSymbols";
 import { InfoCallout } from "@/components/method/InfoCallout";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import {
-  coreThemeLabel,
-  useCoreTheme,
-} from "@/features/phases/phase2/useCoreTheme";
+import { withBausteine } from "@/features/phases/phase2/zielsatz";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -61,112 +59,55 @@ function splitGefuehl(gefuehl: string): string[] {
 }
 
 /**
- * Phase 2, Step 2.1 — Was strebe ich an? Two sections following the method:
- * (1) free brainstorming of the positive future state (phase2.vision, ungated),
- * (2) pulling out the feeling words — pick ONE positive feeling (two are ok,
- * max 2) from the list or a custom noun; the choice writes phase2.gefuehl
- * ("A und B" when two). Forward is gated on at least one feeling. No AI here.
+ * Phase 2, Step 2.1 — Was strebe ich an? Brainstorming des positiven
+ * Zukunftszustands (phase2.vision), danach D3 in zwei Stufen: (1) die
+ * Gefühlswörter aus dem Text herausschreiben (phase2.gefuehlWoerter),
+ * (2) das eine Gefühl benennen, das du fühlen willst (phase2.gefuehl, belegt
+ * den Zielsatz in 2.2 vor). Die Gefühlsliste ist eingeklappt und nur für den
+ * Fall gedacht, dass nichts einfällt; ein Klick setzt das Gefühl in Stufe 2
+ * ein (höchstens zwei). D1: kein Kernthema-Kasten mehr, der Nutzer soll nicht
+ * vorgeprägt werden. Keine Pflichteingabe.
  */
 export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
   const vision = useSessionStore((s) => s.session?.phase2.vision ?? "");
   const gefuehl = useSessionStore((s) => s.session?.phase2.gefuehl ?? "");
-  const patch = useSessionStore((s) => s.patch);
-  const core = useCoreTheme();
-
-  // Mirror the persisted value back into the UI: list words become chips, the
-  // rest is the custom entry (kept in local state so typing a list word does
-  // not "jump" out of the input mid-edit).
-  const parts = splitGefuehl(gefuehl);
-  const chipParts = parts.filter((part) => FEELINGS.includes(part));
-  const [custom, setCustom] = useState(() =>
-    parts.filter((part) => !FEELINGS.includes(part)).join(" und "),
+  const gefuehlWoerter = useSessionStore(
+    (s) => s.session?.phase2.gefuehlWoerter ?? "",
   );
+  const patch = useSessionStore((s) => s.patch);
 
-  const count = chipParts.length + (custom.trim() ? 1 : 0);
-  const canAddMore = count < MAX_FEELINGS;
+  const parts = splitGefuehl(gefuehl);
+  const canAddMore = parts.length < MAX_FEELINGS;
 
   function setVision(value: string) {
     patch((s) => ({ ...s, phase2: { ...s.phase2, vision: value } }));
   }
 
-  /** Persist the combined choice ("A und B" when two feelings). */
-  function persistGefuehl(chips: string[], customValue: string) {
-    const next = [...chips, customValue.trim()].filter(Boolean).join(" und ");
-    patch((s) => ({ ...s, phase2: { ...s.phase2, gefuehl: next } }));
+  function setGefuehlWoerter(value: string) {
+    patch((s) => ({ ...s, phase2: { ...s.phase2, gefuehlWoerter: value } }));
   }
 
-  function toggleChip(feeling: string) {
-    const isSelected = chipParts.includes(feeling);
-    if (!isSelected && !canAddMore) return; // gesperrt bis eine Abwahl erfolgt
-    const nextChips = isSelected
-      ? chipParts.filter((part) => part !== feeling)
-      : [...chipParts, feeling];
-    persistGefuehl(nextChips, custom);
+  /** Stufe 2: das Gefühl setzen und den Zielsatz mitziehen (D3/D4). */
+  function setGefuehl(value: string) {
+    patch((s) => ({
+      ...s,
+      phase2: withBausteine(s.phase2, { gefuehl: value }),
+    }));
   }
 
-  function changeCustom(value: string) {
-    setCustom(value);
-    persistGefuehl(chipParts, value);
-  }
-
-  /**
-   * P4: ein Wort im Brainstorming-Text an-/abtippen. Listen-Wörter laufen
-   * über die Chip-Auswahl, freie Wörter über das Eigene-Gefühl-Feld — die
-   * Zwei-Gefühle-Grenze gilt unverändert.
-   */
-  function toggleTextWord(word: string) {
-    const listMatch = FEELINGS.find(
-      (feeling) => feeling.toLowerCase() === word.toLowerCase(),
-    );
-    if (listMatch) {
-      toggleChip(listMatch);
+  /** Listen-Klick: Gefühl in Stufe 2 einsetzen oder wieder herausnehmen. */
+  function toggleFeeling(feeling: string) {
+    if (parts.includes(feeling)) {
+      setGefuehl(parts.filter((part) => part !== feeling).join(" und "));
       return;
     }
-    const isCurrentCustom = custom.trim().toLowerCase() === word.toLowerCase();
-    if (isCurrentCustom) {
-      changeCustom("");
-      return;
-    }
-    // Neues freies Wort: belegt den Eigenes-Gefühl-Platz (ersetzt dessen
-    // Inhalt); gesperrt nur, wenn beide Plätze durch Chips belegt sind.
-    if (chipParts.length >= MAX_FEELINGS) return;
-    changeCustom(word);
+    if (!canAddMore) return;
+    setGefuehl([...parts, feeling].join(" und "));
   }
-
-  // Exceptional: no core theme (gating should prevent this).
-  if (!core) {
-    return (
-      <div>
-        <div className="rounded-xl border border-subtle bg-surface-2 p-5">
-          <p className="text-sm text-foreground">
-            Für diese Phase fehlt dein Kernthema aus Phase 1. Geh kurz zurück
-            und lege dort ein gewichtetes Cluster als Kernthema fest.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-3"
-            onClick={() => nav.goToPhase(1)}
-          >
-            Zurück zu Phase 1
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const label = coreThemeLabel(core);
-  const customLocked = !canAddMore && !custom.trim();
 
   return (
     <div>
       <div className="space-y-6">
-        {/* C1 — Brainstorming des positiven Zukunftszustands */}
-        <div className="rounded-lg border border-subtle bg-surface-2 px-3 py-2 text-sm">
-          <span className="text-muted">Dein Kernthema aus Phase 1: </span>
-          <span className="font-medium text-foreground">{label}</span>
-        </div>
-
         {/* K1: Fragenreihe als Bullet-Liste, Gefühls-Aufforderung als
             hervorgehobene Abschluss-Zeile — Wortlaut unverändert. */}
         <div className="max-w-prose space-y-2 text-muted">
@@ -204,77 +145,61 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
           >
             Dein Brainstorming
           </label>
-          <textarea
+          <Textarea
             id="phase2-vision"
             value={vision}
             rows={8}
             onChange={(event) => setVision(event.target.value)}
             placeholder="Wenn alles gut läuft, dann …"
-            className="w-full resize-y rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           />
           <NoPersonalDataHint />
         </div>
 
-        {/* C2 — Gefühlswörter herausziehen (Auswahl → phase2.gefuehl) */}
-        <div className="space-y-4 border-t border-subtle pt-6">
-          {/* P4: Anleitung passt zur Bedienung — Wörter sind antippbar. */}
-          <p className="text-muted">
-            Tippe die{" "}
-            <strong className="font-semibold text-foreground">
-              Gefühlswörter
-            </strong>{" "}
-            in deinem Text an — sie werden unterstrichen und als dein Zielgefühl
-            übernommen. Denn zunächst geht es um das neue, positive Gefühl, das
-            sich einstellt, wenn dein neuer Zustand eingetreten ist.
+        {/* D3: die Gefühle in zwei Stufen herausarbeiten. */}
+        <div className="space-y-5 border-t border-subtle pt-6">
+          <p className="max-w-prose text-muted">
+            Denn zunächst geht es um das neue, positive Gefühl, das sich
+            einstellt, wenn dein neuer Zustand eingetreten ist.
           </p>
 
-          {/* P4: der eingegebene Text, Wort für Wort antippbar. */}
-          {vision.trim() ? (
-            <div className="rounded-xl border border-subtle bg-surface p-4">
-              <p className="text-sm font-medium text-foreground">
-                Dein Text — tippe die Gefühlswörter an:
-              </p>
-              <p className="mt-2 leading-relaxed text-muted">
-                {vision.split(/(\s+)/).map((token, index) => {
-                  const cleaned = token.replace(
-                    /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,
-                    "",
-                  );
-                  if (!cleaned || /^\s*$/.test(token)) {
-                    return <span key={index}>{token}</span>;
-                  }
-                  const marked = parts.some(
-                    (part) => part.toLowerCase() === cleaned.toLowerCase(),
-                  );
-                  return (
-                    <button
-                      key={index}
-                      type="button"
-                      aria-pressed={marked}
-                      onClick={() => toggleTextWord(cleaned)}
-                      className={cn(
-                        "rounded px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                        marked
-                          ? "font-medium text-foreground underline decoration-accent decoration-2 underline-offset-4"
-                          : "hover:bg-accent/10 hover:text-foreground",
-                      )}
-                    >
-                      {token}
-                    </button>
-                  );
-                })}
-              </p>
-            </div>
-          ) : null}
-          {/* K1: drei kurze Zeilen — Liste hilft · kein Anspruch auf
-              Vollständigkeit · das stärkste; 2 sind ok. */}
-          <div className="max-w-prose space-y-1 text-muted">
-            <p>
-              Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
-              Ausdruck bringt, dann kannst du dir durch die Liste helfen lassen.
+          {/* Stufe 1 */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="phase2-gefuehlswoerter"
+              className="block font-medium text-foreground"
+            >
+              Welche Gefühlswörter kommen in deinem Text vor? Schreib sie
+              heraus.
+            </label>
+            <Textarea
+              id="phase2-gefuehlswoerter"
+              autoResize
+              rows={2}
+              value={gefuehlWoerter}
+              onChange={(event) => setGefuehlWoerter(event.target.value)}
+              placeholder="z. B. entspannt, erleichtert"
+            />
+          </div>
+
+          {/* Stufe 2 */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="phase2-gefuehl"
+              className="block font-medium text-foreground"
+            >
+              Welches Gefühl ist es genau? Was willst du fühlen?
+            </label>
+            <Input
+              id="phase2-gefuehl"
+              value={gefuehl}
+              onChange={(event) => setGefuehl(event.target.value)}
+              placeholder="z. B. Gelassenheit"
+            />
+            <p className="text-sm text-faint">
+              Schreib es als Substantiv, also „Gelassenheit“ statt „gelassen“.
+              Dieses Gefühl steht anschließend in deinem Zielsatz.
             </p>
-            <p>Sie hat keinen Anspruch auf Vollständigkeit.</p>
-            <p>
+            <p className="text-sm text-muted">
               Wenn du mehrere Gefühle in dir spürst, dann nimm das{" "}
               <strong className="font-semibold text-foreground">
                 stärkste
@@ -286,72 +211,53 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
             </p>
           </div>
 
-          <div
-            role="group"
-            aria-label="Positive Gefühle (höchstens zwei wählen)"
-            className="flex flex-wrap gap-2"
-          >
-            {FEELINGS.map((feeling) => {
-              const selected = chipParts.includes(feeling);
-              const locked = !selected && !canAddMore;
-              return (
-                <button
-                  key={feeling}
-                  type="button"
-                  aria-pressed={selected}
-                  disabled={locked}
-                  onClick={() => toggleChip(feeling)}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                    selected
-                      ? "border-accent bg-accent text-white"
-                      : "border-subtle bg-surface text-muted hover:text-foreground",
-                    locked && "cursor-not-allowed opacity-45 hover:text-muted",
-                  )}
-                >
-                  {feeling}
-                </button>
-              );
-            })}
-          </div>
-          <div className="max-w-sm space-y-1.5">
-            <label
-              htmlFor="phase2-custom-gefuehl"
-              className="block text-sm font-medium text-foreground"
-            >
-              Eigenes Gefühl
-            </label>
-            <input
-              id="phase2-custom-gefuehl"
-              type="text"
-              value={custom}
-              disabled={customLocked}
-              onChange={(event) => changeCustom(event.target.value)}
-              placeholder="z. B. Klarheit"
-              className={cn(
-                "w-full rounded-lg border border-subtle bg-surface px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                customLocked && "cursor-not-allowed opacity-45",
-              )}
-            />
-            <p className="text-sm text-faint">
-              Als Substantiv — z. B. „Gelassenheit“ statt „gelassen“. Zählt mit
-              in die Zwei-Gefühle-Grenze.
-            </p>
-          </div>
-
-          {gefuehl.trim() ? (
-            <div className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm">
-              <span className="text-muted">Dein Zielgefühl: </span>
-              <span className="font-medium text-foreground">
-                {gefuehl.trim()}
-              </span>
+          {/* Die Liste nur für den Fall, dass nichts einfällt (eingeklappt). */}
+          <details className="group rounded-xl border border-subtle bg-surface p-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-medium text-foreground">
+              Dir fällt nichts ein? Wähle ein Gefühl aus der Liste
+              <ChevronDown
+                className="size-4 shrink-0 text-muted motion-safe:transition-transform group-open:rotate-180"
+                aria-hidden
+              />
+            </summary>
+            <div className="mt-2 max-w-prose space-y-1 text-sm text-muted">
+              <p>
+                Wenn du nach einem Wort suchst, das dein Gefühl am besten zum
+                Ausdruck bringt, dann kannst du dir durch die Liste helfen
+                lassen.
+              </p>
+              <p>Sie hat keinen Anspruch auf Vollständigkeit.</p>
             </div>
-          ) : (
-            <p className="text-sm text-faint">
-              „Weiter“ öffnet sich, sobald du mindestens ein Gefühl gewählt
-              hast.
-            </p>
-          )}
+            <div
+              role="group"
+              aria-label="Positive Gefühle (höchstens zwei wählen)"
+              className="mt-3 flex flex-wrap gap-2"
+            >
+              {FEELINGS.map((feeling) => {
+                const selected = parts.includes(feeling);
+                const locked = !selected && !canAddMore;
+                return (
+                  <button
+                    key={feeling}
+                    type="button"
+                    aria-pressed={selected}
+                    disabled={locked}
+                    onClick={() => toggleFeeling(feeling)}
+                    className={cn(
+                      "rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                      selected
+                        ? "border-accent bg-accent text-white"
+                        : "border-subtle bg-surface text-muted hover:text-foreground",
+                      locked &&
+                        "cursor-not-allowed opacity-45 hover:text-muted",
+                    )}
+                  >
+                    {feeling}
+                  </button>
+                );
+              })}
+            </div>
+          </details>
         </div>
       </div>
 
@@ -359,7 +265,7 @@ export function Step1Vision({ nav }: { nav: PhaseNavigation }) {
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={gefuehl.trim().length > 0}
+        canNext
       />
     </div>
   );

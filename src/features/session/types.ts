@@ -128,6 +128,22 @@ export interface Phase2 {
   datum?: string;
   rolle?: string;
   gefuehl?: string;
+  /** D3 (additiv): die aus dem Brainstorming herausgeschriebenen Gefühlswörter. */
+  gefuehlWoerter?: string;
+  /** D4 (additiv): Satzanfang vor dem Datum, z. B. „Ab dem“ oder „Am Abend des“. */
+  satzanfang?: string;
+  /** D4 (additiv): der frei formulierte Bezug („in Bezug auf …“). */
+  bezug?: string;
+  /**
+   * D4 (additiv): true, sobald der Zielsatz von Hand bearbeitet wurde. Dann
+   * überschreiben Änderungen an den Bausteinen den Satz nicht mehr.
+   */
+  goalTextManuell?: boolean;
+  /**
+   * D2 (additiv): Antwort auf „Bezieht sich dein Ziel auf dieses Cluster?“
+   * (das höchstbewertete Cluster aus Phase 1). undefined = unbeantwortet.
+   */
+  zielClusterBezug?: boolean;
   clusterRef?: string;
   components: GoalComponents;
   consequences: Consequence[];

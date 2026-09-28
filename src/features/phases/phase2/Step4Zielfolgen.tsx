@@ -180,7 +180,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
   const activeName = clusterName(active, activeIndex);
   const activeConsequence = byCluster.get(active.id);
   const doneCount = sorted.filter((c) => isComplete(c.id)).length;
-  const canNext = doneCount === sorted.length;
+  const allesBeantwortet = doneCount === sorted.length;
 
   return (
     <div>
@@ -565,10 +565,10 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
           </Button>
         </div>
 
-        {!canNext ? (
+        {!allesBeantwortet ? (
           <p className="text-sm text-faint">
-            „Weiter“ öffnet sich, wenn du für jedes Cluster eine Handlung
-            beschrieben und eine Bewertung gesetzt hast.
+            Empfehlung: Beschreibe für jedes Cluster eine Handlung und setze
+            eine Bewertung, bevor du weitergehst.
           </p>
         ) : null}
       </div>
@@ -577,7 +577,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={canNext}
+        canNext
       />
     </div>
   );

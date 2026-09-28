@@ -31,6 +31,8 @@ const BOOL_CRITERIA: {
   key: BoolComponentKey;
   number: number;
   label: string;
+  /** D5: sichtbare Kurzerklärung direkt am Kriterium (optional). */
+  short?: string;
   explanation: ReactNode;
 }[] = [
   {
@@ -81,6 +83,8 @@ const BOOL_CRITERIA: {
     key: "futurII",
     number: 6,
     label: "Futur II",
+    short:
+      "Futur II heißt, du beschreibst dein Ziel so, als hättest du es bereits erreicht. Dein Satz endet deshalb mit „erreicht haben“.",
     explanation: (
       <>
         Wenn du die Satzstruktur übernommen hast, dann steckt das „Futur II“
@@ -122,7 +126,7 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
   }
 
   const { emotionalAttraktiv, selbstErreichbar } = components;
-  const canNext = emotionalAttraktiv === 10 && selbstErreichbar === 10;
+  const beideZehn = emotionalAttraktiv === 10 && selbstErreichbar === 10;
 
   // Status-Board (VIS-2): der Zustand aller sechs Kriterien in Kachel-Reihenfolge.
   const doneFlags = [
@@ -287,6 +291,9 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
               title={item.label}
               done={checked}
             >
+              {item.short ? (
+                <p className="text-sm text-muted">{item.short}</p>
+              ) : null}
               <label
                 htmlFor={`comp-${item.key}`}
                 className="flex cursor-pointer items-start gap-3"
@@ -321,10 +328,10 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
           );
         })}
 
-        {!canNext ? (
+        {!beideZehn ? (
           <p className="text-sm text-faint">
-            „Weiter“ öffnet sich, wenn beide Skalen auf 10 stehen — ein Ziel,
-            das dich wirklich zieht und das du selbst erreichen kannst.
+            Empfehlung: Geh erst weiter, wenn beide Skalen auf 10 stehen. Dann
+            zieht dich dein Ziel wirklich, und du kannst es selbst erreichen.
           </p>
         ) : null}
 
@@ -341,7 +348,7 @@ export function Step3Zielpruefung({ nav }: { nav: PhaseNavigation }) {
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={canNext}
+        canNext
       />
     </div>
   );
