@@ -266,35 +266,48 @@ export function SessionSummary({ session }: { session: Session }) {
   const notebook = (session.notebook ?? "").trim();
 
   // Handlungsplan — Maßnahmenplan-Tabelle (MP4): Cluster | Maßnahme |
-  // Bis wann | Hindernisse | Alternativen, plus kompakte Qualitäts-Häkchen.
-  const measureQualityMark = (m: (typeof phase4.plans)[0]["measures"][0]) => {
+  // Bis wann | Hindernisse | Alternativen. F3/F4: je Cluster die gewählten
+  // Ressourcen und die Qualitäts-Häkchen (in der ersten Zeile des Clusters),
+  // je Maßnahme die Antwort „Ressourcen eingesetzt“.
+  const planQualityMark = (plan: (typeof phase4.plans)[0] | undefined) => {
     const answers = [
-      m.quality?.zielbeitrag,
-      m.quality?.ressourcenbasiert,
-      m.quality?.ichSatz,
-      m.quality?.neu,
+      plan?.quality?.zielbeitrag,
+      plan?.quality?.ressourcenbasiert,
+      plan?.quality?.ichSatz,
+      plan?.quality?.neu,
     ];
     if (answers.every((a) => a === undefined)) return "";
     const yes = answers.filter((a) => a === true).length;
     return `${yes}/4 ✓`;
   };
+  const planRowsOf = (
+    plan: (typeof phase4.plans)[0] | undefined,
+    cluster: string,
+  ) =>
+    (plan?.measures ?? [])
+      .filter((m) => m.text.trim())
+      .map((m, index) => ({
+        id: m.id,
+        cluster,
+        measure: m,
+        clusterResources:
+          index === 0
+            ? (plan?.resourcesUsed ?? [])
+                .filter((id) => resById.has(id))
+                .map(resText)
+            : [],
+        quality: index === 0 ? planQualityMark(plan) : "",
+      }));
   const planRows = [
     ...clustersSorted.flatMap((cluster) =>
-      (phase4.plans.find((p) => p.clusterId === cluster.id)?.measures ?? [])
-        .filter((m) => m.text.trim())
-        .map((m) => ({
-          id: m.id,
-          cluster: cluster.name.trim() || "Cluster",
-          measure: m,
-        })),
+      planRowsOf(
+        phase4.plans.find((p) => p.clusterId === cluster.id),
+        cluster.name.trim() || "Cluster",
+      ),
     ),
     ...phase4.plans
       .filter((p) => !phase1.clusters.some((c) => c.id === p.clusterId))
-      .flatMap((p) =>
-        p.measures
-          .filter((m) => m.text.trim())
-          .map((m) => ({ id: m.id, cluster: "Weitere", measure: m })),
-      ),
+      .flatMap((p) => planRowsOf(p, "Weitere")),
   ];
   const preMortem = (phase4.preMortem ?? [])
     .map((i) => i.text.trim())
@@ -688,6 +701,16 @@ export function SessionSummary({ session }: { session: Session }) {
                     >
                       <td className="py-1.5 pr-3 break-words text-muted">
                         {row.cluster}
+                        {row.clusterResources.length > 0 ? (
+                          <span className="block text-xs">
+                            Ressourcen: {row.clusterResources.join(" · ")}
+                          </span>
+                        ) : null}
+                        {row.quality ? (
+                          <span className="block text-xs">
+                            Qualität: {row.quality}
+                          </span>
+                        ) : null}
                       </td>
                       <td className="py-1.5 pr-3 break-words text-foreground">
                         {row.measure.text.trim()}
@@ -706,16 +729,15 @@ export function SessionSummary({ session }: { session: Session }) {
                             </span>
                           ) : null;
                         })()}
-                        {measureQualityMark(row.measure) ? (
+                        {row.measure.resourcesConfirmed !== undefined ? (
                           <span className="block text-xs text-muted">
-                            Qualität: {measureQualityMark(row.measure)}
+                            Ressourcen eingesetzt:{" "}
+                            {row.measure.resourcesConfirmed ? "ja" : "nein"}
                           </span>
                         ) : null}
                       </td>
                       <td className="py-1.5 pr-3 text-muted">
-                        {row.measure.dueDate
-                          ? formatDate(row.measure.dueDate)
-                          : "—"}
+                        {row.measure.dueText?.trim() || "—"}
                       </td>
                       <td className="py-1.5 pr-3 break-words text-muted">
                         {row.measure.obstacles?.trim() || "—"}

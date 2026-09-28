@@ -41,6 +41,62 @@ function splitPolarity(item: unknown): unknown {
   return rest;
 }
 
+const isRecord = (value: unknown): value is RawRecord =>
+  typeof value === "object" && value !== null;
+
+const QUALITY_KEYS = ["zielbeitrag", "ressourcenbasiert", "ichSatz", "neu"];
+
+/**
+ * F4: Qualität je Maßnahme → je Cluster. Je Kriterium über alle Maßnahmen mit
+ * Text: ein Nein ergibt Nein, alle Ja ergibt Ja, sonst bleibt es offen.
+ */
+function aggregateQuality(measures: unknown[]): RawRecord | undefined {
+  const rated = measures.filter(
+    (m): m is RawRecord =>
+      isRecord(m) && typeof m.text === "string" && m.text.trim() !== "",
+  );
+  if (!rated.some((m) => isRecord(m.quality))) return undefined;
+  const out: RawRecord = {};
+  for (const key of QUALITY_KEYS) {
+    const answers = rated.map((m) =>
+      isRecord(m.quality) ? m.quality[key] : undefined,
+    );
+    if (answers.some((a) => a === false)) out[key] = false;
+    else if (answers.every((a) => a === true)) out[key] = true;
+  }
+  return out;
+}
+
+/** F5: ISO-Datum (yyyy-mm-dd) → „tt.mm.jjjj“, anderes bleibt wie es ist. */
+function isoToGerman(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+}
+
+/** v3 → v4 für einen Maßnahmenplan (F4 Qualität je Cluster, F5 Termintext). */
+function migratePlanV3(plan: unknown): unknown {
+  if (!isRecord(plan)) return plan;
+  const measures = Array.isArray(plan.measures) ? plan.measures : [];
+  const nextMeasures = measures.map((measure) => {
+    if (!isRecord(measure)) return measure;
+    const { dueDate, ...rest } = measure;
+    if (typeof dueDate === "string" && dueDate.trim() !== "") {
+      return typeof rest.dueText === "string" && rest.dueText.trim() !== ""
+        ? rest
+        : { ...rest, dueText: isoToGerman(dueDate) };
+    }
+    return rest;
+  });
+  const quality = isRecord(plan.quality)
+    ? plan.quality
+    : aggregateQuality(measures);
+  return {
+    ...plan,
+    measures: nextMeasures,
+    ...(quality ? { quality } : {}),
+  };
+}
+
 /** Migration chain, keyed by the version being upgraded FROM. */
 const MIGRATIONS: Record<number, Migration> = {
   /** v1 → v2: introduce the navigation/progress field (start at phase 0). */
@@ -61,6 +117,19 @@ const MIGRATIONS: Record<number, Migration> = {
       if (Array.isArray(list)) next[key] = list.map(splitPolarity);
     }
     return { ...session, phase3: next };
+  },
+  /**
+   * v3 → v4 (F4, F5): die Qualitätsprüfung wandert von der Maßnahme zum
+   * Cluster, der Termin wird vom Datum zum freien Text.
+   */
+  3: (raw) => {
+    const session = raw as RawRecord;
+    const phase4 = (session.phase4 ?? {}) as RawRecord;
+    if (!Array.isArray(phase4.plans)) return session;
+    return {
+      ...session,
+      phase4: { ...phase4, plans: phase4.plans.map(migratePlanV3) },
+    };
   },
 };
 

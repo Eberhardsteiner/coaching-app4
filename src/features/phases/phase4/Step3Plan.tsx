@@ -21,7 +21,10 @@ type UpdateMeasure = (
   partial: Partial<Measure>,
 ) => void;
 
-/** „Bis wann" — date input bound to measure.dueDate. */
+/**
+ * „Bis wann“ — F5: freies Textfeld (measure.dueText), weil nicht jede
+ * Maßnahme auf einen Tag terminierbar ist (z. B. „Q4 2026“).
+ */
 function DueField({
   row,
   onUpdate,
@@ -31,14 +34,15 @@ function DueField({
 }) {
   return (
     <Input
-      type="date"
+      type="text"
       aria-label={`Bis wann: ${row.measure.text.slice(0, 40)}`}
-      value={row.measure.dueDate ?? ""}
+      value={row.measure.dueText ?? ""}
       onChange={(event) =>
         onUpdate(row.clusterId, row.measure.id, {
-          dueDate: event.target.value || undefined,
+          dueText: event.target.value,
         })
       }
+      placeholder="z. B. Q4 2026"
       className="px-2 py-1.5"
     />
   );
@@ -98,7 +102,7 @@ function AlternativesField({
  * Phase 4, Step 4.3 — Maßnahmenplan (MP4, neu). The template's table:
  * Handlungsfeld (Cluster) | Maßnahme | Bis wann | Mögliche Hindernisse |
  * Ressourcen & Alternativen (Plan B). Cluster + measure are read-only (from
- * 4.1/4.2); dueDate/obstacles/alternatives are edited here (additive Measure
+ * 4.1/4.2); dueText/obstacles/alternatives are edited here (additive Measure
  * fields). Responsive: a real table on md+, stacked cards below. Legacy
  * preMortem entries stay visible below (editable/deletable) with a hint to
  * carry them over. No gate — Termine/Plan B sind empfohlen, nicht erzwungen.
@@ -199,10 +203,9 @@ export function Step3Plan({ nav }: { nav: PhaseNavigation }) {
               </caption>
               <thead>
                 <tr className="border-b border-subtle text-left">
-                  {/* table-fixed: „Bis wann" braucht eine feste Breite (das
-                      native Datumsfeld schneidet sonst ab); die beiden
-                      Textspalten ohne Breite teilen sich den Rest — sie
-                      dominieren (K3). */}
+                  {/* table-fixed: „Bis wann“ hat eine feste Breite; die
+                      beiden Textspalten ohne Breite teilen sich den Rest —
+                      sie dominieren (K3). */}
                   <th className="w-[14%] py-2 pr-3 font-medium text-foreground">
                     Handlungsfeld
                   </th>

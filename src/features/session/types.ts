@@ -9,7 +9,7 @@ import type { CoachingBranch } from "@/config/constants";
 import type { Persona } from "@/app/theme-context";
 
 /** Bump when the persisted shape changes; enables future migrations. */
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 /** Coaching branch — re-used from config/constants (single source of truth). */
 export type Branch = CoachingBranch;
@@ -239,8 +239,9 @@ export interface Phase3 {
 /* Phase 4 — Handlungsplan ------------------------------------------------- */
 
 /**
- * Quality check of one measure (MP4, 4.2): the four criteria for effective
- * measures. `undefined` = not yet checked, `false` = deliberately answered no.
+ * Quality check (4.2): the four criteria for effective measures. `undefined` =
+ * not yet checked, `false` = deliberately answered no. F4: checked once per
+ * cluster (ClusterPlan.quality), no longer per measure.
  */
 export interface MeasureQuality {
   zielbeitrag?: boolean;
@@ -256,21 +257,35 @@ export interface Measure {
    *  Sitzungen bleiben lesbar (UI/Summary lesen beide Felder). */
   basedOnResource?: string;
   /**
-   * P13 (additiv-optional): MEHRERE Ressourcen je Maßnahme (Checkbox-Liste
-   * der förderlichen Ressourcen). Beim ersten Ändern hebt die UI den alten
-   * Einzelwert in dieses Array — kein Schema-Bump nötig.
+   * @deprecated F3: die Ankreuzliste je Maßnahme entfällt (Ressourcen werden
+   * nur noch oben je Cluster gewählt, `ClusterPlan.resourcesUsed`). Alte Werte
+   * bleiben in den Daten und werden nur noch angezeigt.
    */
   basedOnResources?: string[];
+  /**
+   * F3: „Hast du deine Ressourcen eingesetzt?“ je Maßnahme. `undefined` =
+   * noch nicht beantwortet.
+   */
+  resourcesConfirmed?: boolean;
   /** Legacy (pre-MP4): no longer collected — the Wirkindikator now comes from
    *  phase2.consequences. Existing values are tolerated read-only. */
   recognitionSignal?: string;
-  /** MP4 (additive): „Bis wann" — ISO date (yyyy-mm-dd). */
+  /**
+   * @deprecated F5: ersetzt durch `dueText`. Die Umwandlung v3 → v4 macht aus
+   * dem ISO-Datum (yyyy-mm-dd) einen Text „tt.mm.jjjj“.
+   */
   dueDate?: string;
+  /** F5: „Bis wann“ als freier Text, z. B. „Q4 2026“ oder „31.12.2026“. */
+  dueText?: string;
   /** MP4 (additive): „Mögliche Hindernisse". */
   obstacles?: string;
   /** MP4 (additive): „Ressourcen & Alternativen" (Plan B). */
   alternatives?: string;
-  /** MP4 (additive): the four-criteria quality check. */
+  /**
+   * @deprecated F4: die Prüfung läuft je Cluster (`ClusterPlan.quality`). Die
+   * Umwandlung v3 → v4 fasst alte Werte je Cluster zusammen, die Einzelwerte
+   * bleiben unangetastet in den Daten.
+   */
   quality?: MeasureQuality;
 }
 
@@ -278,6 +293,8 @@ export interface ClusterPlan {
   clusterId: string;
   resourcesUsed: string[];
   measures: Measure[];
+  /** F4: die vier Kriterien, einmal je Cluster geprüft (4.2). */
+  quality?: MeasureQuality;
 }
 
 export interface Phase4 {

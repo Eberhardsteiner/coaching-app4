@@ -17,15 +17,9 @@ const OUTRO_ABSAETZE = [
   "Auch wenn dich dein innerer Prozess in Bewegung versetzt hat: In der äußeren Welt hast du noch nichts verändert. Es geht nun darum, deinen Plan wirklich werden zu lassen — die letzte, kurze Phase 5 unterstützt dich genau darin.",
 ];
 
-/** Format an ISO date (yyyy-mm-dd) as a German date without timezone shifts. */
-function formatGermanDate(iso: string): string {
-  const [y, m, d] = iso.split("-");
-  return y && m && d ? `${d}.${m}.${y}` : iso;
-}
-
 /**
  * Phase 4, Step 4.4 — Abschluss & Check. The method's outro, a compact plan
- * overview (per cluster: measures with due-date badges) and the shared
+ * overview (per cluster: measures with „bis …“ badges, F5 free text) and the shared
  * four-part check. "Phase abschließen" completes Phase 4 → unlocks Phase 5.
  */
 export function Step4Abschluss({ nav }: { nav: PhaseNavigation }) {
@@ -95,9 +89,9 @@ export function Step4Abschluss({ nav }: { nav: PhaseNavigation }) {
                       className="flex flex-wrap items-baseline gap-2 text-sm text-foreground"
                     >
                       <span className="min-w-0">{measure.text.trim()}</span>
-                      {measure.dueDate ? (
-                        <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
-                          bis {formatGermanDate(measure.dueDate)}
+                      {measure.dueText?.trim() ? (
+                        <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs break-words text-accent">
+                          bis {measure.dueText.trim()}
                         </span>
                       ) : null}
                     </li>

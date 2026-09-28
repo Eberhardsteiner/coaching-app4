@@ -182,7 +182,8 @@ export const PHASES: PhaseDef[] = [
       {
         id: "4.2",
         title: "Qualitätsprüfung",
-        intro: "Vier Kriterien für wirksame Maßnahmen — prüfe jede einzelne.",
+        intro:
+          "Vier Kriterien für wirksame Maßnahmen, einmal je Cluster geprüft.",
       },
       {
         id: "4.3",
