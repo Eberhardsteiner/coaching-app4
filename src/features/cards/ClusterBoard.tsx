@@ -17,6 +17,7 @@ import { MAX_CLUSTERS } from "@/features/cards/clusters";
 import { useFullWidthBoard } from "@/features/cards/useFullWidthBoard";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 type ClusterBoardProps = {
@@ -309,18 +310,24 @@ export function ClusterBoard({
                 {anchorCard.label ?? "IST-Zustand"}
               </p>
               {anchorCard.onTextChange && !readOnly ? (
-                <input
-                  type="text"
+                <Textarea
+                  autoResize
+                  rows={1}
                   value={anchorCard.text}
                   onChange={(event) =>
-                    anchorCard.onTextChange?.(event.target.value)
+                    anchorCard.onTextChange?.(
+                      event.target.value.replace(/\n/g, " "),
+                    )
                   }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.preventDefault();
+                  }}
                   aria-label="Ausgangsgefühl bearbeiten"
                   placeholder="—"
-                  className="mt-0.5 w-full rounded bg-transparent text-center text-sm font-semibold text-ist placeholder:text-ist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist"
+                  className="mt-0.5 min-h-0 rounded border-0 bg-transparent px-0 py-0 text-center text-sm font-semibold break-words text-ist placeholder:text-ist/40 focus-visible:ring-ist"
                 />
               ) : (
-                <p className="mt-0.5 truncate text-sm font-semibold text-ist">
+                <p className="mt-0.5 break-words text-sm font-semibold text-ist">
                   {anchorCard.text || "—"}
                 </p>
               )}
@@ -339,7 +346,7 @@ export function ClusterBoard({
                 className={cn("absolute", live ? "z-20" : "z-10")}
               >
                 <div className="flex items-center gap-1.5">
-                  <div className="flex min-w-0 flex-1 items-center rounded-full border border-blue-600/40 bg-blue-50 py-1 pl-1 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-600">
+                  <div className="flex min-w-0 flex-1 items-center rounded-2xl border border-blue-600/40 bg-blue-50 py-1 pl-1 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-600">
                     <button
                       type="button"
                       aria-label={`Cluster „${cluster.name.trim() || index + 1}“ verschieben (Pfeiltasten)`}
@@ -361,16 +368,22 @@ export function ClusterBoard({
                     >
                       Name für Cluster {index + 1}
                     </label>
-                    <input
+                    <Textarea
                       id={`cluster-name-${cluster.id}`}
-                      type="text"
+                      autoResize
+                      rows={1}
                       value={cluster.name}
                       readOnly={readOnly}
                       onChange={(event) =>
-                        updateCluster(cluster.id, { name: event.target.value })
+                        updateCluster(cluster.id, {
+                          name: event.target.value.replace(/\n/g, " "),
+                        })
                       }
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") event.preventDefault();
+                      }}
                       placeholder={`Cluster ${index + 1}`}
-                      className="w-full min-w-0 bg-transparent text-sm font-medium text-blue-900 placeholder:text-blue-900/45 focus-visible:outline-none"
+                      className="min-h-0 min-w-0 rounded border-0 bg-transparent px-0 py-0 text-sm font-medium break-words text-blue-900 placeholder:text-blue-900/45 focus-visible:ring-0"
                     />
                   </div>
 

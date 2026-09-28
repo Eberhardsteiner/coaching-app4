@@ -10,7 +10,8 @@ const FADE_MS = 900; // Dauer des Ausblendens
  * Kurze Überleitung von Schritt 1 zu Schritt 2 im Look der Startseite:
  * ruhiger Hero-Gradient mit dezenten, pulsierenden Kreisen, Serif-Headline und
  * drei, vier Sätzen. Blendet nach READ_MS über FADE_MS aus und gibt Schritt 2
- * frei; „Überspringen" blendet sofort aus. onDone() entfernt den Schirm.
+ * frei; „Weiter" blendet sofort aus (A3: die Sequenz läuft ohnehin in
+ * Schritt 2 weiter, es wird nichts übersprungen). onDone() entfernt den Schirm.
  */
 export function Step2Intro({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
@@ -34,7 +35,7 @@ export function Step2Intro({ onDone }: { onDone: () => void }) {
       aria-live="polite"
       style={{ transitionDuration: `${FADE_MS}ms` }}
       className={cn(
-        "fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-hero-gradient px-6 text-white transition-opacity ease-out",
+        "fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-hero-gradient px-6 text-white transition-opacity ease-out",
         leaving ? "pointer-events-none opacity-0" : "opacity-100",
       )}
     >
@@ -54,7 +55,7 @@ export function Step2Intro({ onDone }: { onDone: () => void }) {
         />
       </div>
 
-      <div className="relative max-w-xl space-y-5 text-center">
+      <div className="relative my-auto max-w-xl space-y-5 py-6 text-center">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-teal-100">
           Weiter zur Ist-Analyse
         </p>
@@ -74,7 +75,7 @@ export function Step2Intro({ onDone }: { onDone: () => void }) {
             onClick={() => setLeaving(true)}
             className="text-blue-100 hover:bg-white/10 hover:text-white"
           >
-            Überspringen
+            Weiter
           </Button>
         </div>
       </div>

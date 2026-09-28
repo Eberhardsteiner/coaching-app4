@@ -8,6 +8,7 @@ import { DEFAULT_CARD_COLOR, getCardColor } from "@/features/cards/cardColors";
 import { useFullWidthBoard } from "@/features/cards/useFullWidthBoard";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import type { Card as CardModel, Cluster } from "@/features/session/types";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 /** A colour-coded "add card" affordance: a new card takes this stage's colour. */
@@ -149,18 +150,24 @@ export function CardBoard({
             {anchorCard.label ?? "IST-Zustand"}
           </p>
           {anchorCard.onTextChange && !readOnly ? (
-            <input
-              type="text"
+            <Textarea
+              autoResize
+              rows={1}
               value={anchorCard.text}
               onChange={(event) =>
-                anchorCard.onTextChange?.(event.target.value)
+                anchorCard.onTextChange?.(
+                  event.target.value.replace(/\n/g, " "),
+                )
               }
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.preventDefault();
+              }}
               aria-label="Ausgangsgefühl bearbeiten"
               placeholder="—"
-              className="mt-0.5 w-full rounded bg-transparent text-center text-base font-semibold text-ist placeholder:text-ist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist"
+              className="mt-0.5 min-h-0 rounded border-0 bg-transparent px-0 py-0 text-center text-base font-semibold break-words text-ist placeholder:text-ist/40 focus-visible:ring-ist"
             />
           ) : (
-            <p className="mt-0.5 truncate text-base font-semibold text-ist">
+            <p className="mt-0.5 break-words text-base font-semibold text-ist">
               {anchorCard.text || "—"}
             </p>
           )}

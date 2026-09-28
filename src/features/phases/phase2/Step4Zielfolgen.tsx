@@ -517,7 +517,7 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
                   key={cluster.id}
                   className="flex items-center justify-between gap-3 text-sm"
                 >
-                  <span className="min-w-0 truncate text-foreground">
+                  <span className="min-w-0 break-words text-foreground">
                     {clusterName(cluster, index)}
                     {cluster.isCore ? (
                       <span className="text-faint"> (Kernthema)</span>

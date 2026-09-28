@@ -15,10 +15,14 @@ export function TopBar() {
   const compact = session?.meta.branch === "coached";
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-subtle bg-surface/80 px-4 py-2.5 backdrop-blur">
-      <PhaseBar compact={compact} />
+    <header className="flex items-center justify-between gap-2 border-b border-subtle bg-surface/80 px-3 py-2.5 backdrop-blur sm:gap-4 sm:px-4">
+      {/* Mobil darf die Phasenleiste seitlich scrollen, damit die Symbole
+          rechts nie unter die Schubladen-Leiste rutschen (A1). */}
+      <div className="min-w-0 overflow-x-auto">
+        <PhaseBar compact={compact} />
+      </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
         {/* Export the active session as a JSON file. */}
         <button
           type="button"

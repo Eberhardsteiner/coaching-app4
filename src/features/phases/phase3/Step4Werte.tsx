@@ -87,8 +87,8 @@ function MvwkSketch() {
   const wAngles = [0, 45, 90, 135, 180, 225, 270, 315];
   return (
     <svg
-      viewBox="0 0 340 300"
-      className="mx-auto h-auto w-72"
+      viewBox="30 20 280 260"
+      className="mx-auto block h-auto w-full max-w-72"
       aria-hidden="true"
       focusable="false"
     >
@@ -394,7 +394,9 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
             aria-hidden
           />
         </summary>
-        <div className="mt-3 space-y-3">
+        {/* A5: Grafik und Text teilen dieselbe Spalte, damit die Grafik
+            über dem Text mittig steht. */}
+        <div className="mx-auto mt-3 max-w-prose space-y-3">
           <MvwkSketch />
           <div className="max-w-prose space-y-2 text-sm text-muted">
             {MVWK_ABSAETZE.map((absatz) => (

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { GripVertical, Trash2 } from "lucide-react";
 
+import { Textarea } from "@/components/ui/textarea";
 import {
   CARD_COLORS,
   getCardColor,
@@ -215,15 +216,24 @@ export function Card({
           </button>
         </div>
       </div>
-      <input
-        type="text"
+      {/* A4: Die Karte behält ihre Breite, bricht den Text um und wächst
+          nach unten. Der Text bleibt logisch einzeilig (Enter wird nicht
+          übernommen), damit Export und Zusammenfassung sauber bleiben. */}
+      <Textarea
+        autoResize
+        rows={1}
         value={card.text}
         autoFocus={autoFocus}
         readOnly={readOnly}
-        onChange={(event) => onChange({ ...card, text: event.target.value })}
+        onChange={(event) =>
+          onChange({ ...card, text: event.target.value.replace(/\n/g, " ") })
+        }
+        onKeyDown={(event) => {
+          if (event.key === "Enter") event.preventDefault();
+        }}
         placeholder="ein Wort …"
         aria-label="Kartentext"
-        className="w-full rounded bg-transparent px-1 py-0.5 text-sm text-current placeholder:text-current/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="min-h-0 rounded border-0 bg-transparent px-1 py-0.5 text-sm break-words text-current placeholder:text-current/50"
       />
       {clusterSelect}
     </div>

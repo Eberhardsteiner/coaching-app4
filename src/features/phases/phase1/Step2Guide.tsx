@@ -89,7 +89,7 @@ export function Step2Guide({ open, onClose }: Step2GuideProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/45 p-4"
       onClick={close}
     >
       <div
@@ -97,75 +97,78 @@ export function Step2Guide({ open, onClose }: Step2GuideProps) {
         aria-modal="true"
         aria-label="Anleitung: Zusammenhänge Schritt für Schritt"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-subtle bg-background p-5 shadow-xl motion-safe:animate-[fade-in_140ms_ease-out]"
+        className="my-auto flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col rounded-2xl border border-subtle bg-background shadow-xl motion-safe:animate-[fade-in_140ms_ease-out]"
       >
-        <div className="flex items-center gap-3">
-          <span
-            className={cn(
-              "flex size-10 shrink-0 items-center justify-center rounded-lg",
-              current.swatch ? current.swatch : "bg-accent/10 text-accent",
-            )}
-          >
-            {current.swatch ? (
-              <span className="text-sm font-bold text-foreground/70">
-                {step}
-              </span>
-            ) : (
-              <Sparkles className="size-5" aria-hidden />
-            )}
-          </span>
-          <h2 className="font-serif text-lg text-foreground">
-            {current.title}
-          </h2>
-        </div>
-
-        {current.swatchLabel ? (
-          <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
+        {/* A1: Inhalt scrollt, die Buttonleiste bleibt immer im Bild. */}
+        <div className="min-h-0 flex-1 overflow-y-auto p-5 pb-0">
+          <div className="flex items-center gap-3">
             <span
-              aria-hidden
-              className={cn("size-4 shrink-0 rounded-full", current.swatch)}
-            />
-            <span className="text-sm font-medium text-foreground">
-              {current.swatchLabel}
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center rounded-lg",
+                current.swatch ? current.swatch : "bg-accent/10 text-accent",
+              )}
+            >
+              {current.swatch ? (
+                <span className="text-sm font-bold text-foreground/70">
+                  {step}
+                </span>
+              ) : (
+                <Sparkles className="size-5" aria-hidden />
+              )}
+            </span>
+            <h2 className="font-serif text-lg text-foreground">
+              {current.title}
+            </h2>
+          </div>
+
+          {current.swatchLabel ? (
+            <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
+              <span
+                aria-hidden
+                className={cn("size-4 shrink-0 rounded-full", current.swatch)}
+              />
+              <span className="text-sm font-medium text-foreground">
+                {current.swatchLabel}
+              </span>
+            </div>
+          ) : null}
+
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            {current.text}
+          </p>
+
+          {current.howto ? (
+            <p className="mt-2 text-sm leading-relaxed text-foreground">
+              {current.howto}
+            </p>
+          ) : null}
+
+          {current.warning ? (
+            <div className="mt-3 flex items-start gap-2 rounded-lg border border-ist/30 bg-ist/5 p-3">
+              <Info className="mt-0.5 size-4 shrink-0 text-ist" aria-hidden />
+              <p className="text-sm font-medium text-ist">{current.warning}</p>
+            </div>
+          ) : null}
+
+          <div className="mt-4 flex items-center gap-2">
+            <ol className="flex items-center gap-1.5" aria-hidden>
+              {SLIDES.map((s, index) => (
+                <li
+                  key={s.title}
+                  className={cn(
+                    "h-1.5 rounded-full transition-colors",
+                    index === step ? "w-5 bg-accent" : "w-1.5 bg-subtle",
+                  )}
+                />
+              ))}
+            </ol>
+            <span className="text-sm text-faint">
+              Schritt {step + 1} von {SLIDES.length}
             </span>
           </div>
-        ) : null}
-
-        <p className="mt-3 text-sm leading-relaxed text-muted">
-          {current.text}
-        </p>
-
-        {current.howto ? (
-          <p className="mt-2 text-sm leading-relaxed text-foreground">
-            {current.howto}
-          </p>
-        ) : null}
-
-        {current.warning ? (
-          <div className="mt-3 flex items-start gap-2 rounded-lg border border-ist/30 bg-ist/5 p-3">
-            <Info className="mt-0.5 size-4 shrink-0 text-ist" aria-hidden />
-            <p className="text-sm font-medium text-ist">{current.warning}</p>
-          </div>
-        ) : null}
-
-        <div className="mt-4 flex items-center gap-2">
-          <ol className="flex items-center gap-1.5" aria-hidden>
-            {SLIDES.map((s, index) => (
-              <li
-                key={s.title}
-                className={cn(
-                  "h-1.5 rounded-full transition-colors",
-                  index === step ? "w-5 bg-accent" : "w-1.5 bg-subtle",
-                )}
-              />
-            ))}
-          </ol>
-          <span className="text-sm text-faint">
-            Schritt {step + 1} von {SLIDES.length}
-          </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-3">
+        <div className="mt-3 flex shrink-0 items-center justify-between gap-3 border-t border-subtle p-4 pt-3">
           <Button variant="ghost" size="sm" onClick={close}>
             Schließen
           </Button>

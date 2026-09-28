@@ -44,7 +44,7 @@ export function SkalaBar({
     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
       <span className="flex w-28 shrink-0 items-center gap-1.5 sm:w-36">
         {leadingIcon}
-        <span className="truncate text-sm text-foreground">{label}</span>
+        <span className="break-words text-sm text-foreground">{label}</span>
       </span>
       <div
         role="group"

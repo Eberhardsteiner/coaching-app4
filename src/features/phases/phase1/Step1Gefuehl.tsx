@@ -126,8 +126,14 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
     patch((s) => ({ ...s, phase1: { ...s.phase1, istBurden: value } }));
   }
 
-  /** Forward to Schritt 2 — arm the 1 → 2 transition intro first. */
+  /**
+   * Forward to Schritt 2 — arm the 1 → 2 transition intro first. A2: ein
+   * getippter, noch nicht übernommener Freitext geht NICHT mehr verloren, er
+   * wird vor dem Weitergehen gespeichert.
+   */
   function goNext() {
+    const draft = customFeeling.trim();
+    if (draft && draft !== istWord.trim()) setIstWord(draft);
     armStep2Intro();
     nav.advance();
   }
@@ -138,10 +144,13 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
     setIstWord(feeling);
   }
 
-  /** Click on a list feeling: keyboard (detail 0) commits; mouse/touch marks. */
-  function onFeelingClick(feeling: string, detail: number) {
-    if (detail === 0) commitFromList(feeling);
-    else setSelected(feeling);
+  /**
+   * A2 (Ursache): Ein einfacher Klick/Tap hat die Wahl früher nur MARKIERT —
+   * übernommen wurde erst per Doppelklick oder über einen Button unter der
+   * Liste. Jetzt übernimmt jeder Klick direkt (die Liste ist vorgeprüft).
+   */
+  function onFeelingClick(feeling: string) {
+    commitFromList(feeling);
   }
 
   const customTrimmed = customFeeling.trim();
@@ -214,9 +223,8 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
             <h3 className="text-sm font-medium text-foreground">
               Wähle ein Gefühl
             </h3>
-            <p className="mt-0.5 text-xs text-faint">
-              Ein Klick markiert — Doppelklick, Enter oder „Übernehmen“ wählt es
-              aus.
+            <p className="mt-0.5 text-sm text-faint">
+              Ein Klick übernimmt das Gefühl.
             </p>
           </div>
           <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -228,8 +236,7 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
                   <button
                     type="button"
                     aria-pressed={isSelected}
-                    onClick={(event) => onFeelingClick(feeling, event.detail)}
-                    onDoubleClick={() => commitFromList(feeling)}
+                    onClick={() => onFeelingClick(feeling)}
                     className={cn(
                       "flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist",
                       isSelected
@@ -246,11 +253,6 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
               );
             })}
           </ul>
-          {selected && selected !== trimmedIst ? (
-            <Button onClick={() => commitFromList(selected)}>
-              „{selected}“ übernehmen
-            </Button>
-          ) : null}
         </div>
 
         {/* Free-text feeling (the "…" path) — quality-checked before it counts. */}
@@ -267,6 +269,12 @@ export function Step1Gefuehl({ nav }: { nav: PhaseNavigation }) {
               type="text"
               value={customFeeling}
               onChange={(event) => setCustomFeeling(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  onCustomSubmit();
+                }
+              }}
               placeholder="Dein eigenes Gefühl …"
               className="w-full rounded-md border border-subtle bg-surface px-3 py-2.5 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ist"
             />

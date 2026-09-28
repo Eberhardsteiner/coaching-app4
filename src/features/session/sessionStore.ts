@@ -28,6 +28,9 @@ interface SessionState {
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
+/** Holt ein noch ausstehendes (verzögertes) Speichern sofort nach. */
+let flushPendingSave: (() => void) | null = null;
+
 export const useSessionStore = create<SessionState>()((set, get) => {
   function cancelPendingSave() {
     if (saveTimer !== null) {
@@ -35,6 +38,12 @@ export const useSessionStore = create<SessionState>()((set, get) => {
       saveTimer = null;
     }
   }
+
+  flushPendingSave = () => {
+    if (saveTimer === null) return;
+    cancelPendingSave();
+    void flushSave();
+  };
 
   async function flushSave() {
     saveTimer = null;
@@ -100,3 +109,13 @@ export const useSessionStore = create<SessionState>()((set, get) => {
     },
   };
 });
+
+// A2: Das Speichern läuft 400 ms verzögert. Wird der Tab in dieser Zeit
+// verborgen oder geschlossen (mobil: App-Wechsel), ging die letzte Eingabe
+// bisher verloren. Jetzt wird das ausstehende Speichern sofort nachgeholt.
+if (typeof window !== "undefined") {
+  window.addEventListener("pagehide", () => flushPendingSave?.());
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushPendingSave?.();
+  });
+}
