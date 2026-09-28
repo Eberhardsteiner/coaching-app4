@@ -14,7 +14,10 @@ import { InfoCallout } from "@/components/method/InfoCallout";
 import { MiniFlow } from "@/components/method/MiniFlow";
 import { Button } from "@/components/ui/button";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
+import {
+  collectSortableResources,
+  isHelpful,
+} from "@/features/phases/phase3/resourceFields";
 import { RessourcenCockpitOverlay } from "@/features/phases/phase3/RessourcenCockpit";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
@@ -103,7 +106,13 @@ export function Step1Massnahmen({ nav }: { nav: PhaseNavigation }) {
   );
   const foerderliche = phase3
     ? collectSortableResources(phase3)
-        .filter((entry) => entry.item.polarity === "foerderlich")
+        // E2: hilfreich markiert (auch wenn zusätzlich hinderlich). E4:
+        // Körpersignale haben keine Bewertung mehr und bleiben wählbar.
+        .filter(
+          (entry) =>
+            isHelpful(entry.item) ||
+            (entry.field === "somaticMarkers" && entry.item.text.trim() !== ""),
+        )
         .map((entry) => ({ id: entry.item.id, text: entry.item.text }))
     : [];
   const foerderlichIds = new Set(foerderliche.map((r) => r.id));

@@ -18,6 +18,10 @@ const INTRO_ABSAETZE = [
   "Bei Fragen zu deinem Motivtest kannst du dich jederzeit an einen unserer Coaches und EPP-Berater*innen wenden. Für eine erste Orientierung helfen dir die kurzen Beschreibungen zu den Motivwörtern.",
 ];
 
+/** E1: Hinweis zum Motivtest. Neuer Text, zur fachlichen Prüfung. */
+const EPP_HINWEIS =
+  "EPP steht für Emotional Performance Profile. Das ist ein kostenpflichtiger Motivtest eines externen Anbieters. Wenn du den Test gemacht hast, nimm deine Ergebnisse zur Hand.";
+
 /** Die Reflexionsübung (Methodik-Vorlage, wortgetreu gestrafft). */
 const EXERCISE_STEPS: { title: string; text: string }[] = [
   {
@@ -76,6 +80,11 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
         {INTRO_ABSAETZE.map((absatz) => (
           <p key={absatz}>{absatz}</p>
         ))}
+      </div>
+
+      {/* E1: Hinweis zum EPP (zur fachlichen Prüfung gekennzeichnet). */}
+      <div className="rounded-xl border border-subtle bg-surface-2 p-4 text-sm text-muted">
+        <p>{EPP_HINWEIS}</p>
       </div>
 
       {/* Reflexionsübung — zugeklappter Block ganz oben (K2). */}

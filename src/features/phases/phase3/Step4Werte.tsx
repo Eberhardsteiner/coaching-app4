@@ -4,7 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
+import {
+  RatingComment,
+  RatingToggle,
+  type RatingPatch,
+} from "@/features/phases/phase3/ResourceHarvest";
 import { WertelisteReferenz } from "@/features/phases/phase3/WertelisteReferenz";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
@@ -275,8 +279,9 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         text: trimmed,
         category,
         categories: [category],
-        // Regel der Methodik: Ziel-Werte sind per Definition förderlich.
-        ...(category === "ziel" ? { polarity: "foerderlich" as const } : {}),
+        // Methodik: Ziel-Werte sind förderlich. E2: nur vorbelegt, beide
+        // Schalter bleiben frei wählbar (eine Ressource kann beides sein).
+        ...(category === "ziel" ? { helpful: true } : {}),
       },
     ]);
   }
@@ -303,32 +308,23 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
         const next = has
           ? current.filter((c) => c !== category)
           : [...current, category];
-        // Ziel-Markierung erzwingt förderlich (Methodik-Regel). Wird „ziel"
-        // wieder ABGEWÄHLT, geht die Wertung auf „offen" zurück — die
-        // erzwungene förderlich-Wertung darf nicht als Nutzerwahl
-        // stehenbleiben (Review-Finding: stiller Falschwert).
-        const zielVorher = current.includes("ziel");
-        const zielNachher = next.includes("ziel");
+        // Methodik: Ziel-Werte sind förderlich. E2: Wird „ziel“ neu markiert,
+        // wird „hilfreich“ vorbelegt; beide Schalter bleiben frei wählbar.
+        const zielNeu = next.includes("ziel") && !current.includes("ziel");
         return {
           ...item,
           categories: next,
           category: next[0],
-          ...(zielNachher
-            ? { polarity: "foerderlich" as const }
-            : zielVorher
-              ? { polarity: undefined }
-              : {}),
+          ...(zielNeu ? { helpful: true, polarity: undefined } : {}),
         };
       }),
     );
   }
 
-  function setPolarity(
-    id: string,
-    polarity: "foerderlich" | "hinderlich" | undefined,
-  ) {
+  /** E2: Bewertung oder Notiz eines Werts ändern. */
+  function rate(id: string, patch: RatingPatch) {
     setValues(
-      values.map((item) => (item.id === id ? { ...item, polarity } : item)),
+      values.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     );
   }
 
@@ -438,7 +434,6 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
 
               <ul className="space-y-2">
                 {entries.map((item) => {
-                  const zielMarkiert = categoriesOf(item).includes("ziel");
                   return (
                     /* P8a: Text horizontal lesbar in voller Breite; Chips
                        und Wertung DARUNTER — nie über dem Text. */
@@ -463,20 +458,21 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         <span className="text-sm text-faint">Wichtig als:</span>
                         {renderCategoryChips(item)}
-                        {zielMarkiert ? (
-                          <span className="rounded-full bg-green-600/10 px-2 py-0.5 text-sm font-medium text-green-600">
-                            förderlich
-                          </span>
-                        ) : (
-                          <PolarityToggle
-                            value={item.polarity}
-                            onChange={(next) => setPolarity(item.id, next)}
-                            helpLabel="zielförderlich"
-                            hinderLabel="zielhinderlich"
-                            ariaContext={`„${item.text}“`}
-                          />
-                        )}
                       </div>
+                      {/* E2: beide Schalter an jedem Wert, auch in der
+                          Ziel-Säule (dort ist „hilfreich“ vorbelegt). */}
+                      <RatingToggle
+                        item={item}
+                        onChange={(patch) => rate(item.id, patch)}
+                        helpLabel="zielförderlich"
+                        hinderLabel="zielhinderlich"
+                        ariaContext={`„${item.text}“`}
+                      />
+                      <RatingComment
+                        item={item}
+                        onChange={(patch) => rate(item.id, patch)}
+                        ariaContext={`„${item.text}“`}
+                      />
                     </li>
                   );
                 })}
@@ -556,19 +552,12 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
             {legacy.map((item) => (
               <li
                 key={item.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-subtle bg-surface px-2.5 py-1.5"
+                className="space-y-2 rounded-lg border border-subtle bg-surface px-2.5 py-1.5"
               >
-                <span className="min-w-0 flex-1 text-sm break-words text-foreground">
-                  {item.text || "—"}
-                </span>
-                <span className="flex shrink-0 items-center gap-1.5">
-                  <PolarityToggle
-                    value={item.polarity}
-                    onChange={(next) => setPolarity(item.id, next)}
-                    helpLabel="zielförderlich"
-                    hinderLabel="zielhinderlich"
-                    ariaContext={`„${item.text || "Eintrag"}“`}
-                  />
+                <div className="flex items-start justify-between gap-2">
+                  <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                    {item.text || "—"}
+                  </span>
                   <button
                     type="button"
                     onClick={() => remove(item.id)}
@@ -578,7 +567,14 @@ export function Step4Werte({ nav }: { nav: PhaseNavigation }) {
                   >
                     <Trash2 className="size-4" />
                   </button>
-                </span>
+                </div>
+                <RatingToggle
+                  item={item}
+                  onChange={(patch) => rate(item.id, patch)}
+                  helpLabel="zielförderlich"
+                  hinderLabel="zielhinderlich"
+                  ariaContext={`„${item.text || "Eintrag"}“`}
+                />
               </li>
             ))}
           </ul>

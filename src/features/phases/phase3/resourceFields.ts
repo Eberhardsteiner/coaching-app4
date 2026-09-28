@@ -51,22 +51,68 @@ export function collectSortableResources(
   );
 }
 
-/** Counts of förderlich / hinderlich / still-open across the own resources. */
+/**
+ * E2: die Bewertung einer Ressource — hilfreich und hinderlich sind
+ * UNABHÄNGIG (beides, eins oder keins). Rückfall auf die Altform `polarity`,
+ * falls ein Eintrag noch nicht umgewandelt wurde (z. B. read-only-Pfade).
+ */
+export function ratingOf(item: ResourceItem): {
+  helpful: boolean;
+  hindering: boolean;
+} {
+  if (item.helpful !== undefined || item.hindering !== undefined) {
+    return {
+      helpful: item.helpful === true,
+      hindering: item.hindering === true,
+    };
+  }
+  return {
+    helpful: item.polarity === "foerderlich",
+    hindering: item.polarity === "hinderlich",
+  };
+}
+
+export const isHelpful = (item: ResourceItem): boolean =>
+  ratingOf(item).helpful;
+export const isHindering = (item: ResourceItem): boolean =>
+  ratingOf(item).hindering;
+
+/**
+ * E4: Körpersignale haben keine Bewertung mehr. Alte Werte bleiben in den
+ * Daten, zählen aber nirgends mehr als hilfreich oder hinderlich.
+ */
+export const isRatedField = (field: SortableResourceField): boolean =>
+  field !== "somaticMarkers";
+
+/**
+ * Einträge ohne Bewertungsschalter: Ableitungen (3.7, dritter Anker) sind
+ * Erkenntnisse, Körpersignale (3.8, E4) Signalgeber — beide zählen nie als
+ * „noch offen“.
+ */
+function isUnratable(field: SortableResourceField, item: ResourceItem) {
+  return field === "somaticMarkers" || item.category === "ableitung";
+}
+
+/**
+ * Zähler hilfreich / hinderlich / noch offen über die eigenen Ressourcen.
+ * Eine Ressource, die beides ist, zählt in beiden Spalten.
+ */
 export function countPolarities(phase3: Phase3): {
   foerderlich: number;
   hinderlich: number;
   offen: number;
   total: number;
 } {
-  const items = collectSortableResources(phase3).map((entry) => entry.item);
+  const all = collectSortableResources(phase3);
+  const entries = all.filter((e) => isRatedField(e.field));
   return {
-    foerderlich: items.filter((i) => i.polarity === "foerderlich").length,
-    hinderlich: items.filter((i) => i.polarity === "hinderlich").length,
-    // Ableitungen (3.7, dritter Anker) sind Erkenntnisse ohne Wertung — die
-    // UI bietet für sie bewusst keinen Toggle an, also zählen sie nie als
-    // "noch offen".
-    offen: items.filter((i) => !i.polarity && i.category !== "ableitung")
-      .length,
-    total: items.length,
+    foerderlich: entries.filter((e) => isHelpful(e.item)).length,
+    hinderlich: entries.filter((e) => isHindering(e.item)).length,
+    offen: entries.filter((e) => {
+      if (isUnratable(e.field, e.item)) return false;
+      const r = ratingOf(e.item);
+      return !r.helpful && !r.hindering;
+    }).length,
+    total: all.length,
   };
 }

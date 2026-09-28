@@ -39,9 +39,9 @@ function clusterName(cluster: Cluster, index: number): string {
  * clusters (core theme first, then by weight — the Phase-2.4 pattern). Per
  * cluster: a "Wer?" field (ONE othersValues entry with category "wer"), up to
  * three values (entries without category, linked via clusterId) and a
- * deliberate skip (persisted as a category "skip" entry, so the soft gate
- * survives reloads). Below: the comparison of own vs. others' values →
- * phase3.othersValuesInsight. Gate: every cluster has ≥1 value OR is skipped.
+ * deliberate skip (persisted as a category "skip" entry, so it survives
+ * reloads). Below: the comparison of own vs. others' values →
+ * phase3.othersValuesInsight. No gate: „Weiter“ always works (rule 7).
  */
 export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
   const othersValues = useSessionStore(
@@ -210,6 +210,12 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
             Zurück zu Phase 1
           </Button>
         </div>
+        <StepNav
+          onBack={nav.goPrevStep}
+          canBack={nav.canGoBack}
+          onNext={nav.advance}
+          canNext
+        />
       </div>
     );
   }
@@ -224,7 +230,6 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
   const activePersons = personsOf(active.id);
   const activeUnassigned = unassignedOf(active.id);
   const handled = sorted.filter((c) => isDone(c.id) || isSkipped(c.id)).length;
-  const canNext = handled === sorted.length;
 
   return (
     <div className="space-y-6">
@@ -672,18 +677,11 @@ export function Step5WerteAnderer({ nav }: { nav: PhaseNavigation }) {
         </div>
       ) : null}
 
-      {!canNext ? (
-        <p className="text-sm text-faint">
-          „Weiter“ öffnet sich, wenn du jedes Cluster bearbeitet oder bewusst
-          übersprungen hast.
-        </p>
-      ) : null}
-
       <StepNav
         onBack={nav.goPrevStep}
         canBack={nav.canGoBack}
         onNext={nav.advance}
-        canNext={canNext}
+        canNext
       />
     </div>
   );

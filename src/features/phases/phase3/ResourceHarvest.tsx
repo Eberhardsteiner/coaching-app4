@@ -3,68 +3,97 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import type { ModelTerm } from "@/features/content/contentTypes";
+import { ratingOf } from "@/features/phases/phase3/resourceFields";
 import type { ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
-type Polarity = "foerderlich" | "hinderlich";
+/** Die Felder, die eine Bewertung an einer Ressource ändert (E2). */
+export type RatingPatch = Pick<
+  ResourceItem,
+  "helpful" | "hindering" | "comment" | "polarity"
+>;
 
 /**
- * Two-button polarity rating (sets `polarity` on a ResourceItem). The UI
- * labels vary by step (hilfreich/hinderlich vs. zielförderlich/zielhinderlich)
- * while the persisted value stays "foerderlich" | "hinderlich" (contract).
- * Clicking the active rating again clears it (offen).
+ * E2: zwei UNABHÄNGIGE Schalter „hilfreich“ und „hinderlich“ — beide, einer
+ * oder keiner. Jeder Klick schaltet nur seinen Wert um. Beim Schreiben wird
+ * die Altform `polarity` entfernt. Die Beschriftung variiert je Schritt
+ * (hilfreich / zielförderlich …).
  */
-export function PolarityToggle({
-  value,
+export function RatingToggle({
+  item,
   onChange,
   helpLabel = "hilfreich",
   hinderLabel = "hinderlich",
   ariaContext,
 }: {
-  value?: Polarity;
-  onChange: (next: Polarity | undefined) => void;
+  item: ResourceItem;
+  onChange: (patch: RatingPatch) => void;
   helpLabel?: string;
   hinderLabel?: string;
   ariaContext: string;
 }) {
+  const { helpful, hindering } = ratingOf(item);
+  const chip = (active: boolean, activeClass: string) =>
+    cn(
+      "inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+      active
+        ? activeClass
+        : "border-subtle bg-surface text-muted hover:text-foreground",
+    );
   return (
     <div
       role="group"
-      aria-label={`Wertung für ${ariaContext}`}
-      className="inline-flex shrink-0 overflow-hidden rounded-lg border border-subtle"
+      aria-label={`Wertung für ${ariaContext}, beides ist möglich`}
+      className="inline-flex shrink-0 flex-wrap gap-1.5"
     >
       <button
         type="button"
-        aria-pressed={value === "foerderlich"}
+        aria-pressed={helpful}
         onClick={() =>
-          onChange(value === "foerderlich" ? undefined : "foerderlich")
+          onChange({ helpful: !helpful, hindering, polarity: undefined })
         }
-        className={cn(
-          "px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
-          value === "foerderlich"
-            ? "bg-green-600 text-white"
-            : "bg-surface text-muted hover:text-foreground",
-        )}
+        className={chip(helpful, "border-green-600 bg-green-600 text-white")}
       >
+        {helpful ? <Check className="size-3.5" aria-hidden /> : null}
         {helpLabel}
       </button>
       <button
         type="button"
-        aria-pressed={value === "hinderlich"}
+        aria-pressed={hindering}
         onClick={() =>
-          onChange(value === "hinderlich" ? undefined : "hinderlich")
+          onChange({ helpful, hindering: !hindering, polarity: undefined })
         }
-        className={cn(
-          "border-l border-subtle px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
-          value === "hinderlich"
-            ? "bg-amber-600 text-white"
-            : "bg-surface text-muted hover:text-foreground",
-        )}
+        className={chip(hindering, "border-amber-600 bg-amber-600 text-white")}
       >
+        {hindering ? <Check className="size-3.5" aria-hidden /> : null}
         {hinderLabel}
       </button>
     </div>
+  );
+}
+
+/** E2: kurzes Notizfeld je Ressource „Warum hilfreich, warum hinderlich?“. */
+export function RatingComment({
+  item,
+  onChange,
+  ariaContext,
+}: {
+  item: ResourceItem;
+  onChange: (patch: RatingPatch) => void;
+  ariaContext: string;
+}) {
+  return (
+    <Textarea
+      autoResize
+      rows={1}
+      value={item.comment ?? ""}
+      onChange={(event) => onChange({ comment: event.target.value })}
+      aria-label={`Notiz zu ${ariaContext}`}
+      placeholder="Warum hilfreich, warum hinderlich?"
+      className="py-1.5 text-sm"
+    />
   );
 }
 
@@ -123,9 +152,10 @@ export function ResourceHarvest({
     setOwn("");
   }
 
-  function setPolarity(id: string, polarity: Polarity | undefined) {
+  /** E2: Bewertung oder Notiz eines Eintrags ändern. */
+  function rate(id: string, patch: RatingPatch) {
     onItemsChange(
-      items.map((item) => (item.id === id ? { ...item, polarity } : item)),
+      items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     );
   }
 
@@ -226,19 +256,12 @@ export function ResourceHarvest({
             {items.map((item) => (
               <li
                 key={item.id}
-                className="flex flex-col gap-2 rounded-lg border border-subtle bg-surface px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                className="space-y-2 rounded-lg border border-subtle bg-surface px-3 py-2"
               >
-                <span className="min-w-0 text-sm text-foreground">
-                  {item.text || "—"}
-                </span>
-                <span className="flex shrink-0 items-center gap-1.5">
-                  <PolarityToggle
-                    value={item.polarity}
-                    onChange={(next) => setPolarity(item.id, next)}
-                    helpLabel={helpLabel}
-                    hinderLabel={hinderLabel}
-                    ariaContext={`„${item.text || "Eintrag"}“`}
-                  />
+                <div className="flex items-start justify-between gap-2">
+                  <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                    {item.text || "—"}
+                  </span>
                   <button
                     type="button"
                     onClick={() => remove(item.id)}
@@ -248,13 +271,24 @@ export function ResourceHarvest({
                   >
                     <Trash2 className="size-4" />
                   </button>
-                </span>
+                </div>
+                <RatingToggle
+                  item={item}
+                  onChange={(patch) => rate(item.id, patch)}
+                  helpLabel={helpLabel}
+                  hinderLabel={hinderLabel}
+                  ariaContext={`„${item.text || "Eintrag"}“`}
+                />
+                <RatingComment
+                  item={item}
+                  onChange={(patch) => rate(item.id, patch)}
+                  ariaContext={`„${item.text || "Eintrag"}“`}
+                />
               </li>
             ))}
           </ul>
           <p className="text-sm text-faint">
-            Trifft je nach Betrachtungsweise beides zu? Dann nimm den Begriff
-            über „{ownLabel}“ ein zweites Mal auf und werte ihn gegenteilig.
+            Trifft je nach Betrachtungsweise beides zu? Dann markiere beides.
           </p>
         </div>
       ) : null}

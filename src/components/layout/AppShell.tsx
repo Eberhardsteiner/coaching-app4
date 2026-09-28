@@ -5,6 +5,7 @@ import { Outlet } from "react-router";
 import { CoachConsole } from "@/components/layout/CoachConsole";
 import { onDrawerRequest } from "@/components/layout/drawerBus";
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
+import { ModelleDrawerContent } from "@/components/layout/ModelleDrawerContent";
 import { NotebookDrawerContent } from "@/components/layout/NotebookDrawerContent";
 import { ToolsDrawerContent } from "@/components/layout/ToolsDrawerContent";
 import { TopBar } from "@/components/layout/TopBar";
@@ -40,7 +41,6 @@ const DRAWERS: DrawerDef[] = [
     id: "models",
     label: "Modelle",
     icon: Boxes,
-    body: "Kurze Erklärungen zu den verwendeten systemischen Modellen.",
   },
   { id: "help", label: "Hilfe", icon: LifeBuoy },
 ];
@@ -189,6 +189,8 @@ export function AppShell() {
               <ToolsDrawerContent />
             ) : openDrawer.id === "notebook" ? (
               <NotebookDrawerContent />
+            ) : openDrawer.id === "models" ? (
+              <ModelleDrawerContent />
             ) : (
               <p className="text-sm text-muted">{openDrawer.body}</p>
             )}

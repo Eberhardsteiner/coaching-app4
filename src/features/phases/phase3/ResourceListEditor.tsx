@@ -3,7 +3,10 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
+import {
+  RatingComment,
+  RatingToggle,
+} from "@/features/phases/phase3/ResourceHarvest";
 import type { ResourceItem } from "@/features/session/types";
 
 type ResourceListEditorProps = {
@@ -25,9 +28,9 @@ type ResourceListEditorProps = {
   noteLabel?: string;
   notePlaceholder?: string;
   /**
-   * When true, each row gets a förderlich/hinderlich toggle bound to
-   * `item.polarity` — MP3 rates directly in each step (3.6/3.8), so these
-   * entries stay reachable for the counters and the Phase-4/5 pickers.
+   * When true, each row gets the two independent toggles förderlich /
+   * hinderlich (E2: beides, eins oder keins) plus the note field „Warum
+   * hilfreich, warum hinderlich?“ — MP3 rates directly in each step.
    */
   withPolarity?: boolean;
   /**
@@ -79,44 +82,62 @@ export function ResourceListEditor({
       ) : null}
 
       {items.map((item, index) => (
-        <div key={item.id} className="flex items-center gap-2">
-          {noteLabel ? (
+        <div
+          key={item.id}
+          className={
+            withPolarity
+              ? "space-y-2 rounded-lg border border-subtle bg-surface p-2.5"
+              : undefined
+          }
+        >
+          <div className="flex items-center gap-2">
+            {noteLabel ? (
+              <Input
+                value={item.note ?? ""}
+                aria-label={`${noteLabel} für ${itemLabel} ${index + 1}`}
+                onChange={(event) =>
+                  update(item.id, { note: event.target.value })
+                }
+                placeholder={notePlaceholder ?? noteLabel}
+                className="w-32 shrink-0 sm:w-44"
+              />
+            ) : null}
             <Input
-              value={item.note ?? ""}
-              aria-label={`${noteLabel} für ${itemLabel} ${index + 1}`}
+              value={item.text}
+              autoFocus={item.id === focusId}
+              aria-label={`${itemLabel} ${index + 1}`}
               onChange={(event) =>
-                update(item.id, { note: event.target.value })
+                update(item.id, { text: event.target.value })
               }
-              placeholder={notePlaceholder ?? noteLabel}
-              className="w-32 shrink-0 sm:w-44"
+              placeholder={placeholder}
+              className="min-w-0 flex-1"
             />
-          ) : null}
-          <Input
-            value={item.text}
-            autoFocus={item.id === focusId}
-            aria-label={`${itemLabel} ${index + 1}`}
-            onChange={(event) => update(item.id, { text: event.target.value })}
-            placeholder={placeholder}
-            className="min-w-0 flex-1"
-          />
+            <button
+              type="button"
+              onClick={() => remove(item.id)}
+              aria-label={`${itemLabel} ${index + 1} löschen`}
+              title="Löschen"
+              className="flex size-8 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          </div>
           {withPolarity ? (
-            <PolarityToggle
-              value={item.polarity}
-              onChange={(next) => update(item.id, { polarity: next })}
-              helpLabel="förderlich"
-              hinderLabel="hinderlich"
-              ariaContext={`${itemLabel} ${index + 1}`}
-            />
+            <>
+              <RatingToggle
+                item={item}
+                onChange={(patch) => update(item.id, patch)}
+                helpLabel="förderlich"
+                hinderLabel="hinderlich"
+                ariaContext={`${itemLabel} ${index + 1}`}
+              />
+              <RatingComment
+                item={item}
+                onChange={(patch) => update(item.id, patch)}
+                ariaContext={`${itemLabel} ${index + 1}`}
+              />
+            </>
           ) : null}
-          <button
-            type="button"
-            onClick={() => remove(item.id)}
-            aria-label={`${itemLabel} ${index + 1} löschen`}
-            title="Löschen"
-            className="flex size-8 shrink-0 items-center justify-center rounded text-muted hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <Trash2 className="size-4" />
-          </button>
         </div>
       ))}
 

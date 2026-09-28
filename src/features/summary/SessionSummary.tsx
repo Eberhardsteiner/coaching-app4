@@ -10,7 +10,11 @@ import {
 import { BRANCH_LABELS } from "@/config/constants";
 import { BRANDING } from "@/config/branding";
 import { PHASES } from "@/features/phases/phaseConfig";
-import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
+import {
+  collectSortableResources,
+  isHelpful,
+  isHindering,
+} from "@/features/phases/phase3/resourceFields";
 import type {
   PhaseCheck,
   ResourceItem,
@@ -94,12 +98,17 @@ export function SessionSummary({ session }: { session: Session }) {
   const sortable = collectSortableResources(phase3);
   const resById = new Map(sortable.map((e) => [e.item.id, e.item]));
   const resText = (id: string) => resById.get(id)?.text.trim() || "—";
-  const polarityMark = (item: ResourceItem): string =>
-    item.polarity === "foerderlich"
-      ? " (förderlich)"
-      : item.polarity === "hinderlich"
-        ? " (hinderlich)"
-        : "";
+  // E2: hilfreich und hinderlich sind unabhängig, dazu die Notiz.
+  const polarityMark = (item: ResourceItem): string => {
+    const labels = [
+      isHelpful(item) ? "förderlich" : "",
+      isHindering(item) ? "hinderlich" : "",
+    ].filter(Boolean);
+    const comment = item.comment?.trim() ?? "";
+    if (labels.length === 0 && !comment) return "";
+    const head = labels.length > 0 ? labels.join(" und ") : "Notiz";
+    return comment ? ` (${head}: ${comment})` : ` (${head})`;
+  };
   const listWithPolarity = (items: ResourceItem[]): string =>
     items
       .filter((i) => i.text.trim())

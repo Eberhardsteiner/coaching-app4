@@ -11,6 +11,10 @@ import {
 import { useEffect, useRef, type ReactNode } from "react";
 
 import { SuitcaseSymbol } from "@/components/icons/PhaseSymbols";
+import {
+  isHelpful,
+  isHindering,
+} from "@/features/phases/phase3/resourceFields";
 import { useSessionStore } from "@/features/session/sessionStore";
 import type { DontPatternEntry, ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
@@ -19,13 +23,28 @@ import { cn } from "@/lib/utils";
 const NO_ITEMS: ResourceItem[] = [];
 const NO_DONTS: DontPatternEntry[] = [];
 
-/** Split a list into hilfreich / hinderlich / offen. */
+/**
+ * Split a list into hilfreich / hinderlich / offen (E2: ein Eintrag, der
+ * beides ist, steht in beiden Spalten).
+ */
 function splitByPolarity(items: ResourceItem[]) {
   return {
-    hilfreich: items.filter((i) => i.polarity === "foerderlich"),
-    hinderlich: items.filter((i) => i.polarity === "hinderlich"),
-    offen: items.filter((i) => !i.polarity),
+    hilfreich: items.filter((i) => isHelpful(i)),
+    hinderlich: items.filter((i) => isHindering(i)),
+    offen: items.filter((i) => !isHelpful(i) && !isHindering(i)),
   };
+}
+
+/** Ein Eintrag im Cockpit, mit Notiz (E2), falls vorhanden. */
+function EntryText({ item }: { item: ResourceItem }) {
+  return (
+    <>
+      {item.text || "—"}
+      {item.comment?.trim() ? (
+        <span className="block text-xs text-muted">{item.comment.trim()}</span>
+      ) : null}
+    </>
+  );
 }
 
 /**
@@ -116,7 +135,9 @@ function PolaritySplit({ items }: { items: ResourceItem[] }) {
           </p>
           <ul className="mt-1 space-y-0.5 text-sm text-foreground">
             {hilfreich.map((i) => (
-              <li key={i.id}>{i.text || "—"}</li>
+              <li key={i.id}>
+                <EntryText item={i} />
+              </li>
             ))}
             {hilfreich.length === 0 ? (
               <li className="text-sm text-faint">—</li>
@@ -129,7 +150,9 @@ function PolaritySplit({ items }: { items: ResourceItem[] }) {
           </p>
           <ul className="mt-1 space-y-0.5 text-sm text-foreground">
             {hinderlich.map((i) => (
-              <li key={i.id}>{i.text || "—"}</li>
+              <li key={i.id}>
+                <EntryText item={i} />
+              </li>
             ))}
             {hinderlich.length === 0 ? (
               <li className="text-sm text-faint">—</li>
@@ -146,16 +169,19 @@ function PolaritySplit({ items }: { items: ResourceItem[] }) {
   );
 }
 
-/** Small polarity dot in front of a value entry. */
-function PolarityDot({ polarity }: { polarity?: string }) {
+/** Small rating dot in front of a value entry (E2: beides = zweifarbig). */
+function PolarityDot({ item }: { item: ResourceItem }) {
+  const helpful = isHelpful(item);
+  const hindering = isHindering(item);
   return (
     <span
       aria-hidden
       className={cn(
         "mt-1.5 size-2 shrink-0 rounded-full",
-        polarity === "foerderlich" && "bg-green-600",
-        polarity === "hinderlich" && "bg-amber-600",
-        !polarity && "border border-faint",
+        helpful && hindering && "bg-gradient-to-r from-green-600 to-amber-600",
+        helpful && !hindering && "bg-green-600",
+        hindering && !helpful && "bg-amber-600",
+        !helpful && !hindering && "border border-faint",
       )}
     />
   );
@@ -293,8 +319,10 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
                 <ul className="mt-1 space-y-1">
                   {entries.map((i) => (
                     <li key={i.id} className="flex items-start gap-2 text-sm">
-                      <PolarityDot polarity={i.polarity} />
-                      <span className="text-foreground">{i.text}</span>
+                      <PolarityDot item={i} />
+                      <span className="text-foreground">
+                        <EntryText item={i} />
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -311,8 +339,10 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
                   .filter((i) => !i.category && i.text.trim())
                   .map((i) => (
                     <li key={i.id} className="flex items-start gap-2 text-sm">
-                      <PolarityDot polarity={i.polarity} />
-                      <span className="text-foreground">{i.text}</span>
+                      <PolarityDot item={i} />
+                      <span className="text-foreground">
+                        <EntryText item={i} />
+                      </span>
                     </li>
                   ))}
               </ul>
@@ -377,13 +407,19 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
       >
         <ul className="space-y-1.5">
           {modelResources.map((i) => (
-            <li key={i.id} className="text-sm text-foreground">
-              {i.note?.trim() ? (
-                <span className="mr-1.5 rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
-                  {i.note.trim()}
-                </span>
-              ) : null}
-              {i.text}
+            <li
+              key={i.id}
+              className="flex items-start gap-2 text-sm text-foreground"
+            >
+              <PolarityDot item={i} />
+              <span className="min-w-0">
+                {i.note?.trim() ? (
+                  <span className="mr-1.5 rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
+                    {i.note.trim()}
+                  </span>
+                ) : null}
+                <EntryText item={i} />
+              </span>
             </li>
           ))}
         </ul>
@@ -409,7 +445,12 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
               </p>
               <ul className="mt-1 space-y-0.5 text-sm text-foreground">
                 {erfahrungen.map((i) => (
-                  <li key={i.id}>{i.text}</li>
+                  <li key={i.id} className="flex items-start gap-2">
+                    <PolarityDot item={i} />
+                    <span className="min-w-0">
+                      <EntryText item={i} />
+                    </span>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -421,7 +462,12 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
               </p>
               <ul className="mt-1 space-y-0.5 text-sm text-foreground">
                 {aussen.map((i) => (
-                  <li key={i.id}>{i.text}</li>
+                  <li key={i.id} className="flex items-start gap-2">
+                    <PolarityDot item={i} />
+                    <span className="min-w-0">
+                      <EntryText item={i} />
+                    </span>
+                  </li>
                 ))}
               </ul>
             </div>

@@ -123,7 +123,6 @@ export function Step8Koerpersignale({ nav }: { nav: PhaseNavigation }) {
         placeholder="z. B. Druck im Nacken, wenn es eng wird"
         itemLabel="Körpersignal"
         emptyHint="Noch nichts erfasst."
-        withPolarity
       />
 
       <NoPersonalDataHint />

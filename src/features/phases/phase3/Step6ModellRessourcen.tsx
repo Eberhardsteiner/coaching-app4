@@ -1,10 +1,15 @@
 import { KiImpuls } from "@/features/ai/KiImpuls";
+import {
+  useRessourcenModelle,
+  type RessourcenModell,
+} from "@/features/content/ressourcenModelle";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
 import {
   coreThemeLabel,
   useCoreTheme,
 } from "@/features/phases/phase2/useCoreTheme";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
+import { RessourcenModellListe } from "@/features/phases/phase3/RessourcenModellListe";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -25,14 +30,35 @@ const LEITFRAGEN = [
   "Ist etwas aus dem Modell — oder das ganze Modell — eine Ressource für mein Ziel? Schreibe auf!",
 ];
 
+/** E3: die Modellliste als nummerierter Block für den Prompt. */
+function modellBlock(modelle: RessourcenModell[]): string {
+  return modelle
+    .map((modell, index) => {
+      const teile = [
+        modell.kurzbeschreibung
+          ? `${index + 1}. ${modell.name}: ${modell.kurzbeschreibung}`
+          : `${index + 1}. ${modell.name}.`,
+      ];
+      if (modell.ressourcen.length > 0) {
+        teile.push(
+          `Ressourcen aus dem Modell: ${modell.ressourcen.join(", ")}.`,
+        );
+      }
+      return teile.join(" ");
+    })
+    .join("\n");
+}
+
 /**
- * Copyable prompt asking for at most five fitting scientific models —
- * explicitly without interpreting the person and without advice.
+ * Copyable prompt asking for at most five fitting models. E3: nur aus der
+ * Modellliste der Datendatei, ausdrücklich ohne andere Modelle, ohne Deutung
+ * der Person und ohne Ratschläge.
  */
 function buildPrompt(
   coreLabel: string,
   goalText: string,
   vision: string,
+  modelle: RessourcenModell[],
 ): string {
   const goal = goalText.trim() || "(noch offen)";
   const visionPart = vision.trim()
@@ -41,12 +67,14 @@ function buildPrompt(
   return (
     `Ich arbeite in einem Selbstcoaching an einem persönlichen Ziel und suche ` +
     `wissenschaftliche Modelle als neue Perspektive. Mein Kernthema: ` +
-    `«${coreLabel}». Mein Zielsatz: «${goal}».${visionPart} Bitte schlage mir ` +
-    `maximal 5 passende wissenschaftliche Modelle oder Theorien vor, die zu ` +
-    `Thema und Ziel passen — mit je 1–2 Sätzen Erklärung, worum es in dem ` +
-    `Modell geht. Wichtig: keine Deutung meiner Person, keine Ratschläge und ` +
-    `keine Lösungen — nur Modelle mit kurzer, neutraler Erklärung. Antworte ` +
-    `auf Deutsch.`
+    `«${coreLabel}». Mein Zielsatz: «${goal}».${visionPart}\n\n` +
+    `Verwende ausschließlich die folgenden Modelle und schlage keine anderen ` +
+    `vor:\n${modellBlock(modelle)}\n\n` +
+    `Bitte wähle aus dieser Liste maximal 5 Modelle aus, die zu Thema und Ziel ` +
+    `passen — mit je 1–2 Sätzen Erklärung, worum es in dem Modell geht. Passt ` +
+    `keines, sag mir das offen. Wichtig: keine Deutung meiner Person, keine ` +
+    `Ratschläge und keine Lösungen — nur Modelle mit kurzer, neutraler ` +
+    `Erklärung. Antworte auf Deutsch.`
   );
 }
 
@@ -66,6 +94,15 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
   const patch = useSessionStore((s) => s.patch);
   const core = useCoreTheme();
   const label = coreThemeLabel(core);
+  const modelle = useRessourcenModelle();
+  // E3: ohne geladene Modellliste gibt es keinen Prompt (sonst schlüge das
+  // Sprachmodell wieder beliebige Modelle vor).
+  const promptText =
+    modelle.status === "ready" && modelle.modelle.length > 0
+      ? buildPrompt(label, goalText, vision, modelle.modelle)
+      : modelle.status === "loading"
+        ? "Die Modellliste wird geladen …"
+        : "Die Modellliste ist gerade nicht verfügbar. Lade sie oben erneut, dann erscheint hier dein Prompt.";
 
   function setHypotheses(next: ResourceItem[]) {
     patch((s) => ({ ...s, phase3: { ...s.phase3, hypotheses: next } }));
@@ -84,6 +121,19 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
         Thema. Deshalb bekommst du maximal 5 Vorschläge; unpassende legst du
         einfach beiseite.
       </p>
+
+      {/* E3: Modellübersicht aus der Datendatei (dieselbe Quelle wie der
+          Prompt und die Schublade „Modelle“). */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-foreground">
+          Die Modelle für diesen Schritt
+        </h3>
+        <p className="text-sm text-muted">
+          Tippe ein Modell an, um die Kurzbeschreibung und seine Ressourcen zu
+          sehen.
+        </p>
+        <RessourcenModellListe loaded={modelle} />
+      </div>
 
       {/* Die vier Leitfragen */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
@@ -123,7 +173,7 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
       ) : (
         <div className="space-y-3">
           <KiImpuls
-            promptText={buildPrompt(label, goalText, vision)}
+            promptText={promptText}
             items={hypotheses}
             onItemsChange={setHypotheses}
             captureLabel="Erkenntnis / Ressource"

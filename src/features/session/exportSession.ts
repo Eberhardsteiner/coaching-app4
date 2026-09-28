@@ -27,7 +27,10 @@ export interface SessionExportEnvelope {
 export function buildExportEnvelope(session: Session): SessionExportEnvelope {
   return {
     format: EXPORT_FORMAT,
-    schemaVersion: CURRENT_SCHEMA_VERSION,
+    // Die Version der SITZUNG, nicht der App: eine nie geöffnete (nicht
+    // umgewandelte) ältere Sitzung darf nicht als aktuell markiert werden,
+    // sonst übersprünge der spätere Import die Umwandlung.
+    schemaVersion: session.meta.schemaVersion ?? CURRENT_SCHEMA_VERSION,
     exportedAt: new Date().toISOString(),
     appVersion: __APP_VERSION__,
     privacyNote: EXPORT_PRIVACY_NOTE,

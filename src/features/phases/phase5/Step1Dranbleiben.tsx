@@ -18,7 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
+import {
+  collectSortableResources,
+  isHelpful,
+  isRatedField,
+} from "@/features/phases/phase3/resourceFields";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -97,7 +101,7 @@ export function Step1Dranbleiben({ nav }: { nav: PhaseNavigation }) {
     .filter((t): t is string => Boolean(t && t.trim()));
   const foerderlicheTexts = phase3
     ? collectSortableResources(phase3)
-        .filter((e) => e.item.polarity === "foerderlich")
+        .filter((e) => isRatedField(e.field) && isHelpful(e.item))
         .map((e) => e.item.text)
         .filter((t) => t.trim())
     : [];

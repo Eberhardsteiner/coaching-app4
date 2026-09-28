@@ -12,6 +12,35 @@ import { CURRENT_SCHEMA_VERSION, type Session } from "@/features/session/types";
 /** Upgrades a raw session object by exactly one schema version. */
 type Migration = (raw: unknown) => unknown;
 
+/** Phase-3-Listen, deren Einträge eine Bewertung tragen können. */
+const PHASE3_LISTS = [
+  "motives",
+  "values",
+  "intelligences",
+  "innerResources",
+  "othersValues",
+  "hypotheses",
+  "experiential",
+  "pastPatterns",
+  "somaticMarkers",
+  "personalityTraits",
+] as const;
+
+type RawRecord = Record<string, unknown>;
+
+/**
+ * E2: EINE Wertung („foerderlich“ | „hinderlich“) → zwei unabhängige Werte.
+ * foerderlich → helpful, hinderlich → hindering. Idempotent: Einträge ohne
+ * `polarity` bleiben unverändert.
+ */
+function splitPolarity(item: unknown): unknown {
+  if (!item || typeof item !== "object") return item;
+  const { polarity, ...rest } = item as RawRecord;
+  if (polarity === "foerderlich") return { ...rest, helpful: true };
+  if (polarity === "hinderlich") return { ...rest, hindering: true };
+  return rest;
+}
+
 /** Migration chain, keyed by the version being upgraded FROM. */
 const MIGRATIONS: Record<number, Migration> = {
   /** v1 → v2: introduce the navigation/progress field (start at phase 0). */
@@ -19,6 +48,20 @@ const MIGRATIONS: Record<number, Migration> = {
     ...(raw as Record<string, unknown>),
     progress: { phase: 0, step: 0, completedPhases: [] },
   }),
+  /**
+   * v2 → v3 (E2): die Bewertung „förderlich ODER hinderlich“ wird zu zwei
+   * unabhängigen Werten helpful / hindering, in allen Phase-3-Listen.
+   */
+  2: (raw) => {
+    const session = raw as RawRecord;
+    const phase3 = (session.phase3 ?? {}) as RawRecord;
+    const next: RawRecord = { ...phase3 };
+    for (const key of PHASE3_LISTS) {
+      const list = phase3[key];
+      if (Array.isArray(list)) next[key] = list.map(splitPolarity);
+    }
+    return { ...session, phase3: next };
+  },
 };
 
 /*

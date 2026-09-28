@@ -9,7 +9,7 @@ import type { CoachingBranch } from "@/config/constants";
 import type { Persona } from "@/app/theme-context";
 
 /** Bump when the persisted shape changes; enables future migrations. */
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 /** Coaching branch — re-used from config/constants (single source of truth). */
 export type Branch = CoachingBranch;
@@ -156,7 +156,18 @@ export interface ResourceItem {
   id: string;
   text: string;
   note?: string;
+  /**
+   * @deprecated Altform (bis Datenversion 2): EINE Wertung. Seit Version 3
+   * wird sie beim Laden in helpful/hindering umgewandelt (migrations.ts).
+   * Nur noch als Lese-Rückfall über ratingOf() (resourceFields.ts).
+   */
   polarity?: "foerderlich" | "hinderlich";
+  /** E2: als hilfreich (förderlich) markiert — unabhängig von hindering. */
+  helpful?: boolean;
+  /** E2: als hinderlich markiert — unabhängig von helpful. */
+  hindering?: boolean;
+  /** E2: Notiz „Warum hilfreich, warum hinderlich?“ (bewusst nicht `note`). */
+  comment?: string;
   /**
    * Generic sub-category (additive, MP3): `values` uses the value column
    * ("mensch" | "funktion" | "ziel"); `othersValues` uses "wer" (the people/

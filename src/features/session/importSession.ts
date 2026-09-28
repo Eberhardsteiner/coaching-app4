@@ -77,9 +77,20 @@ export async function importSessionFromFile(file: File): Promise<Session> {
     throw new SessionImportError("Die Sitzungsdaten fehlen in der Datei.");
   }
 
+  // Ältere App-Versionen haben in der Hülle immer ihre eigene Version
+  // gestempelt. Maßgeblich ist daher die kleinere der beiden Angaben, damit
+  // keine Umwandlung übersprungen wird.
+  const meta = isRecord(parsed.session.meta) ? parsed.session.meta : undefined;
+  const sessionVersion =
+    typeof meta?.schemaVersion === "number" ? meta.schemaVersion : undefined;
+  const fromVersion =
+    sessionVersion !== undefined
+      ? Math.min(schemaVersion, sessionVersion)
+      : schemaVersion;
+
   let migrated: Session;
   try {
-    migrated = migrateSession(parsed.session, schemaVersion);
+    migrated = migrateSession(parsed.session, fromVersion);
   } catch {
     throw new SessionImportError(
       "Die Sitzung konnte nicht auf die aktuelle Version aktualisiert werden.",

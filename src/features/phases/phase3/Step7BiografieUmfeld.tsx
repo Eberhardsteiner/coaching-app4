@@ -5,7 +5,11 @@ import { requestDrawer } from "@/components/layout/drawerBus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import { PolarityToggle } from "@/features/phases/phase3/ResourceHarvest";
+import {
+  RatingComment,
+  RatingToggle,
+  type RatingPatch,
+} from "@/features/phases/phase3/ResourceHarvest";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
@@ -92,12 +96,10 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
     setDrafts((d) => ({ ...d, [category]: "" }));
   }
 
-  function setPolarity(
-    id: string,
-    polarity: "foerderlich" | "hinderlich" | undefined,
-  ) {
+  /** E2: Bewertung oder Notiz eines Eintrags ändern. */
+  function rate(id: string, patch: RatingPatch) {
     setExperiential(
-      experiential.map((i) => (i.id === id ? { ...i, polarity } : i)),
+      experiential.map((i) => (i.id === id ? { ...i, ...patch } : i)),
     );
   }
 
@@ -119,22 +121,13 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
           {entries.map((item) => (
             <li
               key={item.id}
-              className="flex flex-col gap-2 rounded-lg border border-subtle bg-background px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+              className="space-y-2 rounded-lg border border-subtle bg-background px-3 py-2"
             >
-              {/* P10/P8a: Text horizontal lesbar, Wertung daneben/darunter. */}
-              <span className="min-w-0 break-words text-base text-foreground">
-                {item.text || "—"}
-              </span>
-              <span className="flex shrink-0 items-center gap-1.5">
-                {withPolarity ? (
-                  <PolarityToggle
-                    value={item.polarity}
-                    onChange={(next) => setPolarity(item.id, next)}
-                    helpLabel="förderlich"
-                    hinderLabel="hinderlich"
-                    ariaContext={`„${item.text || "Eintrag"}“`}
-                  />
-                ) : null}
+              {/* P10/P8a: Text horizontal lesbar, Wertung darunter (E2). */}
+              <div className="flex items-start justify-between gap-2">
+                <span className="min-w-0 flex-1 break-words text-base text-foreground">
+                  {item.text || "—"}
+                </span>
                 <button
                   type="button"
                   onClick={() => remove(item.id)}
@@ -144,7 +137,23 @@ export function Step7BiografieUmfeld({ nav }: { nav: PhaseNavigation }) {
                 >
                   <Trash2 className="size-4" />
                 </button>
-              </span>
+              </div>
+              {withPolarity ? (
+                <>
+                  <RatingToggle
+                    item={item}
+                    onChange={(patch) => rate(item.id, patch)}
+                    helpLabel="förderlich"
+                    hinderLabel="hinderlich"
+                    ariaContext={`„${item.text || "Eintrag"}“`}
+                  />
+                  <RatingComment
+                    item={item}
+                    onChange={(patch) => rate(item.id, patch)}
+                    ariaContext={`„${item.text || "Eintrag"}“`}
+                  />
+                </>
+              ) : null}
             </li>
           ))}
         </ul>

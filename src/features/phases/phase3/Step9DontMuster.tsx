@@ -3,8 +3,13 @@ import { Fragment, useState, type ReactNode } from "react";
 
 import { InfoCallout } from "@/components/method/InfoCallout";
 import { Button } from "@/components/ui/button";
+import { IstSituationDialog } from "@/features/phases/IstZielAnzeige";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import { collectSortableResources } from "@/features/phases/phase3/resourceFields";
+import {
+  collectSortableResources,
+  isHindering,
+  isRatedField,
+} from "@/features/phases/phase3/resourceFields";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
@@ -13,6 +18,10 @@ import type { DontPatternEntry, ResourceItem } from "@/features/session/types";
 import { cn } from "@/lib/utils";
 
 const NO_DONTS: DontPatternEntry[] = [];
+
+/** E5: Einladung im Ist-Fenster, das sich beim Betreten von 3.9 öffnet. */
+const IST_HINWEIS =
+  "Schau dir deine Ist-Situation noch einmal an. Was hast du getan, um in diese Situation zu kommen?";
 
 /**
  * Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: drei Absätze;
@@ -114,6 +123,9 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
     (s) => s.session?.phase3.pastPatterns ?? [],
   );
   const patch = useSessionStore((s) => s.patch);
+  // E5: bei jedem Betreten offen (der Schritt wird je Besuch neu gemountet),
+  // der Nutzer schließt das Fenster selbst.
+  const [istOpen, setIstOpen] = useState(true);
   // Gewählte Einstiegs-Logik — bestimmt die Reihenfolge der Ketten-Felder
   // (reine Darstellung, keine Daten: alle Felder schreiben dieselben Keys).
   const [entryLogic, setEntryLogic] = useState<"ressourcen" | "verhalten">(
@@ -131,7 +143,9 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
     ? [
         ...new Set(
           collectSortableResources(phase3)
-            .filter((entry) => entry.item.polarity === "hinderlich")
+            .filter(
+              (entry) => isRatedField(entry.field) && isHindering(entry.item),
+            )
             .map((entry) => entry.item.text.trim())
             .filter(Boolean),
         ),
@@ -184,6 +198,12 @@ export function Step9DontMuster({ nav }: { nav: PhaseNavigation }) {
 
   return (
     <div className="space-y-6">
+      <IstSituationDialog
+        open={istOpen}
+        onOpenChange={setIstOpen}
+        hinweis={IST_HINWEIS}
+      />
+
       {/* Anmoderation — sichtbar (VOICE-1), K1: drei Absätze. */}
       <div className="max-w-prose space-y-2 text-muted">
         {INTRO_ABSAETZE.map((absatz, index) => (

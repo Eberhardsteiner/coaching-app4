@@ -167,6 +167,12 @@ export function Step4Zielfolgen({ nav }: { nav: PhaseNavigation }) {
             Zurück zu Phase 1
           </Button>
         </div>
+        <StepNav
+          onBack={nav.goPrevStep}
+          canBack={nav.canGoBack}
+          onNext={nav.advance}
+          canNext
+        />
       </div>
     );
   }

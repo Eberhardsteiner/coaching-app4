@@ -1,0 +1,41 @@
+{
+  "hinweis": "‹PLATZHALTER› Diese Datei liefert die Modelle für Schritt 3.6 ‚Ressourcen aus Modellen‘, für den dort erzeugten Prompt und für die Schublade ‚Modelle‘. Die vier Einträge unten sind Platzhalter und werden durch die Modellübersicht der Coaches ersetzt. Jeder Eintrag braucht name, kurzbeschreibung und ressourcen (Liste). Einträge mit \"platzhalter\": true zeigt die App als Platzhalter an. Bei echten Einträgen das Feld weglassen oder auf false setzen.",
+  "modelle": [
+    {
+      "platzhalter": true,
+      "name": "‹PLATZHALTER› Modell 1",
+      "kurzbeschreibung": "‹PLATZHALTER› Kurzbeschreibung in ein bis zwei Sätzen: Worum geht es in dem Modell?",
+      "ressourcen": [
+        "‹PLATZHALTER› Ressource 1a",
+        "‹PLATZHALTER› Ressource 1b"
+      ]
+    },
+    {
+      "platzhalter": true,
+      "name": "‹PLATZHALTER› Modell 2",
+      "kurzbeschreibung": "‹PLATZHALTER› Kurzbeschreibung in ein bis zwei Sätzen: Worum geht es in dem Modell?",
+      "ressourcen": [
+        "‹PLATZHALTER› Ressource 2a",
+        "‹PLATZHALTER› Ressource 2b"
+      ]
+    },
+    {
+      "platzhalter": true,
+      "name": "‹PLATZHALTER› Modell 3",
+      "kurzbeschreibung": "‹PLATZHALTER› Kurzbeschreibung in ein bis zwei Sätzen: Worum geht es in dem Modell?",
+      "ressourcen": [
+        "‹PLATZHALTER› Ressource 3a",
+        "‹PLATZHALTER› Ressource 3b"
+      ]
+    },
+    {
+      "platzhalter": true,
+      "name": "‹PLATZHALTER› Modell 4",
+      "kurzbeschreibung": "‹PLATZHALTER› Kurzbeschreibung in ein bis zwei Sätzen: Worum geht es in dem Modell?",
+      "ressourcen": [
+        "‹PLATZHALTER› Ressource 4a",
+        "‹PLATZHALTER› Ressource 4b"
+      ]
+    }
+  ]
+}
