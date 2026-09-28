@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Boxes, LifeBuoy, NotebookPen, Wrench, X } from "lucide-react";
+import { Boxes, Flag, LifeBuoy, NotebookPen, X } from "lucide-react";
 import { Outlet } from "react-router";
 
 import { CoachConsole } from "@/components/layout/CoachConsole";
@@ -20,17 +20,18 @@ type DrawerId = "tools" | "notebook" | "models" | "help";
 type DrawerDef = {
   id: DrawerId;
   label: string;
-  icon: typeof Wrench;
+  icon: typeof Flag;
   /** Placeholder body for the simple drawers (the Hilfe drawer has rich content). */
   body?: string;
 };
 
 const DRAWERS: DrawerDef[] = [
   {
+    // G1: früher „Werkzeuge“ — enthält den Zielsatz, das Ressourcen-Cockpit
+    // und den Weg zur Zusammenfassung.
     id: "tools",
-    label: "Werkzeuge",
-    icon: Wrench,
-    body: "Hier erscheinen später Werkzeuge für die aktuelle Phase.",
+    label: "Zielsatz",
+    icon: Flag,
   },
   {
     id: "notebook",

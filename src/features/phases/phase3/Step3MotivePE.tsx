@@ -179,7 +179,7 @@ export function Step3MotivePE({ nav }: { nav: PhaseNavigation }) {
 
       <p className="text-sm text-faint">
         Deine übernommenen und gewerteten Einträge erscheinen in deinem
-        Ressourcen-Cockpit (Werkzeuge rechts).
+        Ressourcen-Cockpit (Schublade „Zielsatz“ rechts).
       </p>
 
       <NoPersonalDataHint />

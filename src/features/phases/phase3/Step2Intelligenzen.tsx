@@ -19,7 +19,7 @@ const INTRO_ABSATZ =
 const INTRO_AUFFORDERUNGEN = [
   "Identifiziere mit Hilfe der Beschreibungen, welche Intelligenzarten dich besonders kennzeichnen — womit du dich leicht tust.",
   "Intelligenzen, die mit deinem Ziel nicht in Beziehung stehen, kannst du weglassen.",
-  "Deine übernommenen und gewerteten Einträge erscheinen in deinem Ressourcen-Cockpit (Werkzeuge rechts).",
+  "Deine übernommenen und gewerteten Einträge erscheinen in deinem Ressourcen-Cockpit (Schublade „Zielsatz“ rechts).",
 ];
 
 const BERUFSWAHL_SATZ =

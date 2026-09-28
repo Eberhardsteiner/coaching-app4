@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { ContactCard } from "@/components/ContactCard";
 import { Button } from "@/components/ui/button";
+import { getPhaseDef } from "@/features/phases/phaseConfig";
 import { SafetyNotice } from "@/features/safety/SafetyNotice";
 import { useSessionStore } from "@/features/session/sessionStore";
 
@@ -26,12 +27,12 @@ const BEDIENHILFE: { frage: string; antwort: string }[] = [
   {
     frage: "Was sind die Schubladen rechts?",
     antwort:
-      "Werkzeuge (u. a. Sicherung und Ressourcen-Cockpit), Erkenntnisboard (dein Notizbuch über alle Phasen), Modelle und diese Hilfe. Ein Klick öffnet, Esc oder ✕ schließt.",
+      "Zielsatz (dein Zielsatz, das Ressourcen-Cockpit und die Zusammenfassung), Erkenntnisboard (dein Notizbuch über alle Phasen), Modelle und diese Hilfe. Ein Klick öffnet, Esc oder ✕ schließt.",
   },
   {
     frage: "Wie sichere ich meine Sitzung?",
     antwort:
-      "In der Schublade „Werkzeuge“ kannst du deine Sitzung als Datei exportieren und später wieder importieren — z. B. für ein anderes Gerät.",
+      "Mit dem Speichern-Symbol oben rechts in der Kopfleiste exportierst du deine Sitzung als Datei. Mit dem Import-Symbol daneben liest du sie später wieder ein, zum Beispiel auf einem anderen Gerät.",
   },
   {
     frage: "Wie setze ich eine Sitzung fort?",
@@ -41,7 +42,45 @@ const BEDIENHILFE: { frage: string; antwort: string }[] = [
 ];
 
 /**
- * Content of the Hilfe drawer (P6): FIRST the technical how-to-use help —
+ * G2: Kurz-Hilfe zum aktuellen Schritt (aus phaseConfig), ganz oben in der
+ * Schublade. Nach Abschluss aller Phasen ein Hinweis zum Rückblick.
+ */
+function StepHelp() {
+  const progress = useSessionStore((s) => s.session?.progress);
+  if (!progress) return null;
+  if (progress.completedPhases.includes(5)) {
+    return (
+      <div className="space-y-1.5 rounded-lg border border-accent/30 bg-accent/5 p-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-faint">
+          Hilfe zu diesem Schritt
+        </p>
+        <p className="text-sm text-muted">{HILFE_ABGESCHLOSSEN}</p>
+      </div>
+    );
+  }
+  const phaseDef = getPhaseDef(progress.phase);
+  const index = Math.min(Math.max(progress.step, 0), phaseDef.steps.length - 1);
+  const step = phaseDef.steps[index];
+  return (
+    <div className="space-y-1.5 rounded-lg border border-accent/30 bg-accent/5 p-3">
+      <p className="text-xs font-medium uppercase tracking-wide text-faint">
+        Hilfe zu diesem Schritt
+      </p>
+      <p className="text-sm font-medium text-foreground">
+        {phaseDef.title} · {step.title}
+      </p>
+      <p className="text-sm text-muted">{step.help ?? step.intro}</p>
+    </div>
+  );
+}
+
+/** G2: Hilfe, sobald alle Phasen abgeschlossen sind. */
+const HILFE_ABGESCHLOSSEN =
+  "Du hast alle Phasen abgeschlossen. Über die Phasenleiste oben kannst du jede Phase noch einmal ansehen. Die Zusammenfassung findest du in der Schublade „Zielsatz“.";
+
+/**
+ * Content of the Hilfe drawer (P6): G2 first the help for the current step,
+ * then the technical how-to-use help —
  * methodische Hinweise stehen in den jeweiligen Schritten, nicht hier —
  * then the reusable SafetyNotice (kept permanently reachable), quiet links
  * to the legal pages, and a "restart tour" action.
@@ -51,7 +90,9 @@ export function HelpDrawerContent({ onStartTour }: HelpDrawerContentProps) {
 
   return (
     <div className="space-y-5">
-      {/* P6: technische Bedienhilfe zuerst, eindeutig beschriftet. */}
+      <StepHelp />
+
+      {/* P6: technische Bedienhilfe, eindeutig beschriftet. */}
       <div className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-wide text-faint">
           Bedienung der App

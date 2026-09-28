@@ -50,7 +50,7 @@ const STEPS: TourStep[] = [
   {
     icon: PanelRight,
     title: "Schubladen",
-    text: "Rechts findest du die Schubladen: Werkzeuge, Notizbuch, Modelle und Hilfe. Es ist immer nur eine geöffnet.",
+    text: "Rechts findest du die Schubladen: Zielsatz, Notizbuch, Modelle und Hilfe. Es ist immer nur eine geöffnet.",
     target: "drawers",
   },
   {

@@ -7,7 +7,7 @@ import { RessourcenCockpitOverlay } from "@/features/phases/phase3/RessourcenCoc
 import { useSessionStore } from "@/features/session/sessionStore";
 
 /**
- * Content of the "Werkzeuge" drawer. Once a goal sentence exists (Phase 2),
+ * Content of the "Zielsatz" drawer (G1, formerly "Werkzeuge"). Once a goal sentence exists (Phase 2),
  * it is shown on top as a calm read-only card — keeping the mantra "stets vor
  * Augen". From Phase 3 on, the Ressourcen-Cockpit is one click away (full
  * overlay). Below: the entry point to the session summary / PDF.
@@ -35,8 +35,8 @@ export function ToolsDrawerContent() {
         </div>
       ) : (
         <p className="text-sm text-muted">
-          Hier erscheinen Werkzeuge für die aktuelle Phase — ab Phase 2 zum
-          Beispiel dein Zielsatz.
+          Hier erscheint dein Zielsatz, sobald du ihn in Phase 2 formuliert
+          hast.
         </p>
       )}
 

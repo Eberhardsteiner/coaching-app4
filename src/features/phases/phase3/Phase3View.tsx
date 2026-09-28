@@ -45,7 +45,7 @@ export function Phase3View({ nav }: { nav: PhaseNavigation }) {
     );
 
   // K2: fester Cockpit-Zugriff mit Füllstand — an konsistenter Stelle über
-  // JEDEM Schritt der Phase 3 (zusätzlich zum Werkzeuge-Eintrag).
+  // JEDEM Schritt der Phase 3 (zusätzlich zum Eintrag in der Zielsatz-Schublade).
   return (
     <div>
       <div className="mb-4 flex justify-end">

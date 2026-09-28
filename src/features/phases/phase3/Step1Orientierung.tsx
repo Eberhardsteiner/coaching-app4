@@ -123,7 +123,7 @@ export function Step1Orientierung({ nav }: { nav: PhaseNavigation }) {
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-subtle bg-surface-2 p-4">
         <p className="text-sm text-muted">
           Dein Ressourcen-Cockpit füllt sich in den nächsten Schritten — du
-          findest es jederzeit in den Werkzeugen.
+          findest es jederzeit in der Schublade „Zielsatz“.
         </p>
         <Button
           variant="outline"

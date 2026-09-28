@@ -17,6 +17,14 @@ export const BRANDING = {
   tagline: "‹TAGLINE›", // TODO: Claim / Untertitel später einsetzen
   /** Contact address for the footer / imprint. */
   contactEmail: "‹CONTACT_EMAIL›", // TODO: Kontaktadresse später einsetzen
+  /**
+   * G3: „Kontakt zum Coach-Team“ (Hilfe-Schublade, 5.3, Abschlussseite).
+   * Solange ein Wert noch ein ‹…›-Platzhalter ist, zeigt die Karte ihn
+   * sichtbar als Platzhalter an und bietet keinen E-Mail-Link an.
+   */
+  coachTeamName: "‹COACHTEAM_NAME›", // TODO: Name des Coach-Teams
+  coachTeamEmail: "‹COACHTEAM_EMAIL›", // TODO: E-Mail-Adresse des Coach-Teams
+  coachTeamText: "‹COACHTEAM_TEXT›", // TODO: kurzer Text, z. B. wer ihr seid und wann ihr antwortet
   /** Postal address shown in the Impressum. */
   address: "‹ANSCHRIFT›", // TODO: vor Launch eintragen
   /** Person responsible for the content (Impressum, i. S. d. P.). */

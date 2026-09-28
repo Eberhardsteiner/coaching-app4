@@ -529,7 +529,7 @@ export function RessourcenCockpit({ compact = false }: { compact?: boolean }) {
 }
 
 /**
- * Full-screen overlay presenting the cockpit (opened from the Werkzeuge
+ * Full-screen overlay presenting the cockpit (opened from the Zielsatz
  * drawer and from step 3.1). Accessible dialog: focus moves to the close
  * button and is trapped inside (Tab cycles); Esc closes ONLY this layer —
  * the handler runs in the capture phase and stops propagation so the

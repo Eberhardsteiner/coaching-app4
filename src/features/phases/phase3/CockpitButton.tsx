@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 /**
  * K2 — fester Cockpit-Zugriff: ein sichtbarer Button „Ressourcen-Cockpit" an
  * konsistenter Stelle über jedem Phase-3-Schritt (und 4.1), zusätzlich zum
- * Werkzeuge-Eintrag. Das Füllstand-Badge zeigt die Summe der gesammelten
+ * Eintrag in der Zielsatz-Schublade. Das Füllstand-Badge zeigt die Summe der gesammelten
  * Ressourcen-Einträge (countPolarities — dieselbe Zahl wie die 3.10-Zähler).
  * Self-contained: bringt sein eigenes Overlay mit.
  */
