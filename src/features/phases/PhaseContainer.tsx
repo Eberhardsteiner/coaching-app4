@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { SectionHead } from "@/components/method/SectionHead";
+import { IstZielButtons } from "@/features/phases/IstZielAnzeige";
 import { Phase0View } from "@/features/phases/phase0/Phase0View";
 import { Phase1View } from "@/features/phases/phase1/Phase1View";
 import { Phase2View } from "@/features/phases/phase2/Phase2View";
@@ -66,6 +67,12 @@ export function PhaseContainer() {
     );
   }
 
+  // C1/C2: „Ist-Situation anzeigen" ab dem Start von Phase 2, „Ziel anzeigen"
+  // ab 2.4 „Folgen meines Ziels" (Index 3) in jedem weiteren Schritt.
+  const phaseId = nav.phaseDef.id;
+  const showIst = phaseId >= 2;
+  const showZiel = phaseId >= 3 || (phaseId === 2 && nav.stepIndex >= 3);
+
   // Editorial phase opening screen — shown once when entering the phase.
   if (onStartScreen && startContent && startSeen !== true) {
     if (startSeen === null) {
@@ -73,11 +80,16 @@ export function PhaseContainer() {
       return <div className="h-full w-full" aria-hidden />;
     }
     return (
-      <PhaseStart
-        {...startContent}
-        onStart={markStartSeen}
-        onBack={nav.canGoBack ? nav.goPrevStep : undefined}
-      />
+      <div className="flex h-full w-full flex-col">
+        <div className="mx-auto w-full max-w-2xl">
+          <IstZielButtons showIst={showIst} showZiel={phaseId >= 3} />
+        </div>
+        <PhaseStart
+          {...startContent}
+          onStart={markStartSeen}
+          onBack={nav.canGoBack ? nav.goPrevStep : undefined}
+        />
+      </div>
     );
   }
 
@@ -86,6 +98,7 @@ export function PhaseContainer() {
 
   return (
     <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
+      <IstZielButtons showIst={showIst} showZiel={showZiel} />
       <SectionHead
         phase={phaseDef.id}
         eyebrow={phaseDef.title}
