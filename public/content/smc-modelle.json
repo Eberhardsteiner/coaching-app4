@@ -1,0 +1,1934 @@
+{
+  "quelle": "SMC_Toolbox_Modelle.pptx, 121 Folien, übernommen am 2026-09-30",
+  "hinweis": "Nur Inhalte aus der Vorlage. Wo die Vorlage nur eine Grafik enthält, ist die Elementliste leer und ein Hinweis gesetzt. Beschreibungen sind nur dort gefüllt, wo die Vorlage Text liefert. Offensichtliche Tippfehler der Vorlage wurden korrigiert.",
+  "bereiche": {
+    "1": "Phase 1 – Ist-Situation",
+    "2": "Phase 2 – Ziel",
+    "3": "Phase 3 – Ressourcen (Kompetenzmodell und Teilmodelle)",
+    "3.3": "Phase 3.3 – Hypothesengeleitete Ressourcenidentifikation"
+  },
+  "prompt_bereiche": [
+    "3.3"
+  ],
+  "modelle": [
+    {
+      "id": "rubikon-modell",
+      "name": "Rubikon-Modell",
+      "bereich": "1",
+      "folien": [
+        3
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "st-galler-managementmodell",
+      "name": "Neues St. Galler Managementmodell",
+      "bereich": "1",
+      "folien": [
+        4,
+        5
+      ],
+      "elemente": [
+        "Strategie",
+        "Struktur",
+        "Kultur",
+        "Erneuerung",
+        "Optimierung",
+        "Managementprozesse",
+        "Geschäftsprozesse",
+        "Unterstützungsprozesse",
+        "Gesellschaft",
+        "Natur",
+        "Technologie",
+        "Wirtschaft",
+        "Kapitalgeber",
+        "Kunden",
+        "Mitarbeitende",
+        "Öffentlichkeit / NGOs",
+        "Staat",
+        "Lieferanten",
+        "Konkurrenz",
+        "Normen und Werte",
+        "Anliegen und Interessen",
+        "Ressourcen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "selbsterlebte-gesundheit",
+      "name": "Konstruktivistisches Modell selbsterlebter Gesundheit",
+      "bereich": "1",
+      "folien": [
+        6,
+        7
+      ],
+      "elemente": [
+        "Erfahrungen",
+        "Biographie",
+        "Emotionen",
+        "Zeit",
+        "Kondition",
+        "Konstitution",
+        "Interesse",
+        "Kontakt",
+        "Ernährung",
+        "Sexualität",
+        "Andere Menschen",
+        "Widerstandsfähigkeit",
+        "Alter",
+        "Vertrauen",
+        "Kultur",
+        "Stimmigkeit",
+        "Geschlecht",
+        "Bedeutsamkeit",
+        "Umwelt",
+        "Verstehbarkeit",
+        "Erwartungen",
+        "Bewältigbarkeit"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Selbsterlebte Gesundheit"
+      ]
+    },
+    {
+      "id": "3k-modell",
+      "name": "3K-Modell",
+      "bereich": "1",
+      "folien": [
+        8,
+        9
+      ],
+      "elemente": [
+        "Ich",
+        "Thema",
+        "Die andere Partei",
+        "Dritte",
+        "Erfahrungen",
+        "Emotionen",
+        "Folgen",
+        "Verhalten",
+        "Kultur",
+        "Erwartungen",
+        "Sprache",
+        "Zeit",
+        "Annahmen",
+        "Körper",
+        "Prozesse",
+        "Abhängigkeiten",
+        "Werte"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "10-felder-modell",
+      "name": "Gesundheits-/10-Felder-Modell",
+      "bereich": "1",
+      "folien": [
+        10,
+        11,
+        12
+      ],
+      "elemente": [
+        "Biographie",
+        "Erfahrungen",
+        "Psycho-biologisches Empfinden",
+        "Emotionen",
+        "Arbeitszufriedenheit & Leistungsbereitschaft",
+        "Soziales Netz & Kommunikation",
+        "Materielle Sicherheit",
+        "Zeit & Zukunft",
+        "Sinnhaftigkeit & Orientierung",
+        "Körperlicher Zustand",
+        "Umwelt (Temperatur, Feuchtigkeit, Licht, Lautstärke, Ergonomie, Beschaffenheit)",
+        "Werte / Normen",
+        "Wissen / Annahmen",
+        "Andere / Ich",
+        "Gebote / Verbote",
+        "Kontext"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "10-Felder-Modell",
+        "Gesundheitsmodell"
+      ]
+    },
+    {
+      "id": "wirksames-ziel",
+      "name": "Wirksames Ziel",
+      "bereich": "2",
+      "folien": [
+        14,
+        15
+      ],
+      "elemente": [
+        "Emotional attraktiv (Skala 1 bis 10)",
+        "Selbst erreichbar (ja / nein)",
+        "Bezug zum Cluster 10 (ja / nein)",
+        "Terminiert (ja / nein)",
+        "Adressat (ja / nein)",
+        "Futur II (ja / nein)",
+        "Team-Variante: gemeinsam erreichbar",
+        "Team-Variante: emotional attraktiv + sinnvoll"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Zielkriterien",
+        "Wirksames Ziel individuell",
+        "Wirksames Ziel Team"
+      ]
+    },
+    {
+      "id": "ziel-check",
+      "name": "Ziel-Check",
+      "bereich": "2",
+      "folien": [
+        16
+      ],
+      "elemente": [
+        "Ziel erreicht: Vorteile (+)",
+        "Ziel erreicht: Nachteile (-)",
+        "Ziel nicht erreicht: Vorteile (+)",
+        "Ziel nicht erreicht: Nachteile (-)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "kompetenzmodell",
+      "name": "Kompetenzmodell",
+      "bereich": "3",
+      "folien": [
+        18
+      ],
+      "elemente": [
+        "Intelligenzen",
+        "Fach- & Methodenkompetenz",
+        "Handlungskompetenz",
+        "Selbstorganisation",
+        "Motive",
+        "Sozial-kommunikative Kompetenz",
+        "Feldkompetenz",
+        "Denk- & Bewertungsstrukturen",
+        "Reflektierte Erfahrung",
+        "Persönliche Leitwerte",
+        "Innere Antreiber",
+        "Glaubenssätze",
+        "SOMA (Somatische Marker)",
+        "Persönlichkeitseigenschaften"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "intelligenzarten",
+      "name": "Intelligenzarten",
+      "bereich": "3",
+      "folien": [
+        19
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "big-three",
+      "name": "Big Three (Motive)",
+      "bereich": "3",
+      "folien": [
+        20
+      ],
+      "elemente": [
+        "Motive = \"Was treibt mich an?\"",
+        "Leistung & Erfolg",
+        "Soziale Zugehörigkeit",
+        "Einfluss & Macht",
+        "Richtung \"hin zu\": Herausforderung, Gestalten, Zusammenhalt",
+        "Richtung \"weg von\": Langeweile, Machtverlust, Isolation"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "big-five",
+      "name": "Big Five (Persönlichkeit)",
+      "bereich": "3",
+      "folien": [
+        21
+      ],
+      "elemente": [
+        "Verträglichkeit",
+        "Gewissenhaftigkeit",
+        "Offenheit",
+        "Neurotizismus",
+        "Extraversion",
+        "Facetten: Geselligkeit, Soziale Kompetenz, Erlebnishunger, Ängstlichkeit, Impulsivität, Ästhetisches Bewusstsein, Wissbegier, Neugier, Soziales Bewusstsein, Zwischenmenschliche Wärme, Harmoniebedürfnis, Ordnungsliebe, Pflichtbewusstsein, Leistungsbereitschaft, Verletzlichkeit"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "motive-epp",
+      "name": "Motive aus dem EPP (Emotional Performance Profile)",
+      "bereich": "3",
+      "folien": [
+        22,
+        23
+      ],
+      "elemente": [
+        "Abwechslung: Die Lust auf neue emotionale Erfahrungen",
+        "Aktivität: Die Lust, körperlich aktiv zu sein",
+        "Balance: Die Lust, sich für den Interessensausgleich einzusetzen",
+        "Beziehung: Die Lust, verlässliche Beziehungen zu anderen einzugehen",
+        "Dominanz: Die Lust, sich durchzusetzen",
+        "Einfluss: Die Lust, etwas zu gestalten und zu verantworten",
+        "Erkenntnis: Die Lust auf neue Erkenntnisse und das Verstehen von Zusammenhängen",
+        "Fremdanerkennung: Die Lust, von anderen positive Rückmeldungen zu erhalten",
+        "Selbstanerkennung: Die Lust, stolz auf die eigene Leistungsfähigkeit zu sein",
+        "Status: Die Lust auf öffentliche Beachtung des im Leben Erreichten (work / live / virtual)",
+        "Distanz: Die Lust auf emotionale Distanz zu anderen",
+        "Flexibilität: Die Lust auf flexibles Vorgehen",
+        "Freiheit: Die Lust auf Unabhängigkeit",
+        "Kooperation: Die Lust, Entscheidungen mit anderen zu treffen",
+        "Nähe: Die Lust, anderen die eigenen Gefühle mitzuteilen",
+        "Risiko: Die Lust an Situationen mit offenem Ausgang",
+        "Struktur: Die Lust auf planvolles Vorgehen",
+        "Vorsicht: Die Lust zu wissen, wie etwas endet",
+        "Emotionale Ruhe: Grundsätzliche Orientierung an der Stabilität des eigenen Wohlgefühls",
+        "Gewissenhaftigkeit: Grundsätzliche Orientierung am Genauen",
+        "Prinzipienorientierung: Grundsätzliche Orientierung am Vereinbarten",
+        "Routine: Grundsätzliche Orientierung am gewohnten Verhalten",
+        "Selbstorientierung: Grundsätzliche Orientierung am eigenen Vorteil",
+        "Umgänglichkeit: Grundsätzliches Wohlwollen anderen gegenüber"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "EPP-Motive",
+        "Motive"
+      ]
+    },
+    {
+      "id": "werteliste",
+      "name": "Werteliste",
+      "bereich": "3",
+      "folien": [
+        24
+      ],
+      "elemente": [
+        "Abgrenzung",
+        "Abwechslung",
+        "Achtung",
+        "Ästhetik",
+        "Aktivität",
+        "Akzeptanz",
+        "Ansehen",
+        "Anerkennung",
+        "Aufmerksamkeit",
+        "Ausgeglichenheit",
+        "Ausgleich",
+        "Autarkie",
+        "Authentizität",
+        "Balance",
+        "Beachtung",
+        "Beliebtheit",
+        "Bequemlichkeit",
+        "Bescheidenheit",
+        "Bestätigung",
+        "Bodenständigkeit",
+        "Bildung",
+        "Distanz",
+        "Disziplin",
+        "Effektivität",
+        "Effizienz",
+        "Ehre",
+        "Ehrlichkeit",
+        "Eigennutzen",
+        "Eigentum",
+        "Einfluss",
+        "Einsamkeit",
+        "Emotionalität",
+        "Entspannung",
+        "Erfolg",
+        "Erholung",
+        "Erklärbarkeit",
+        "Ernsthaftigkeit",
+        "Fairness",
+        "Familie",
+        "Flexibilität",
+        "Fitness",
+        "Freigiebigkeit",
+        "Freiheit",
+        "Freiraum",
+        "Freude",
+        "Freundlichkeit",
+        "Freundschaft",
+        "Frieden",
+        "Gastlichkeit",
+        "Gelassenheit",
+        "Gemeinschaft",
+        "Gemütlichkeit",
+        "Genügsamkeit",
+        "Genuss",
+        "Gerechtigkeit",
+        "Geschmack",
+        "Geselligkeit",
+        "Gewissheit",
+        "Gewohnheit",
+        "Gleichheit",
+        "Gesundheit",
+        "Glaube",
+        "Harmonie",
+        "Hedonismus",
+        "Heiterkeit",
+        "Herkunft",
+        "Höflichkeit",
+        "Humor",
+        "Identität",
+        "Individualität",
+        "Innovation",
+        "Integrität",
+        "Kompetenz",
+        "Klugheit",
+        "Kreativität",
+        "Leidenschaft",
+        "Loyalität",
+        "Lust",
+        "Macht",
+        "Menschlichkeit",
+        "Mitgefühl",
+        "Mut",
+        "Nachkommen",
+        "Nachsicht",
+        "Nachhaltigkeit",
+        "Nähe",
+        "Nervenkitzel",
+        "Nüchternheit",
+        "Nutzen",
+        "Objektivität",
+        "Offenheit",
+        "Ordnung",
+        "Originalität",
+        "Phantasie",
+        "Pragmatismus",
+        "Pflichtbewusstsein",
+        "Praxis",
+        "Pünktlichkeit",
+        "Sex",
+        "Rationalität",
+        "Realismus",
+        "Rechtmäßigkeit",
+        "Reserven",
+        "Risikobereitschaft",
+        "Robustheit",
+        "Ruhe",
+        "Ruhm",
+        "Sachorientierung",
+        "Schönheit",
+        "Selbständigkeit",
+        "Selbstbewusstsein",
+        "Selbstsicherheit",
+        "Selbstlosigkeit",
+        "Selbstverwirklichung",
+        "Sensibilität",
+        "Sicherheit",
+        "Sieg",
+        "Souveränität",
+        "Sparen",
+        "Spontanität",
+        "Stabilität",
+        "Schnelligkeit",
+        "Sexualität",
+        "Stärke",
+        "Struktur",
+        "Tapferkeit",
+        "Teamorientierung",
+        "Toleranz",
+        "Tradition",
+        "Trends",
+        "Treue",
+        "Überlegenheit",
+        "Überzeugung",
+        "Unabhängigkeit",
+        "Unterordnung",
+        "Unterstützung",
+        "Verantwortung",
+        "Verbindlichkeit",
+        "Vergnügen",
+        "Verlässlichkeit",
+        "Vernunft",
+        "Vertrauen",
+        "Wachstum",
+        "Wahrheit",
+        "Wechsel",
+        "Weisheit",
+        "Wohlwollen",
+        "Wagnis",
+        "Weitblick",
+        "Zärtlichkeit",
+        "Zeitlosigkeit",
+        "Zugehörigkeit",
+        "Zurückhaltung",
+        "Zusammenhänge",
+        "Zweck"
+      ],
+      "beschreibung": "",
+      "hinweis": "Liste möglicher Werte als Auswahlhilfe. Doppelter Eintrag \"Gleichheit\" und der Fremdkörper \"Parakeet\" aus der Vorlage wurden entfernt."
+    },
+    {
+      "id": "mvwk-modell",
+      "name": "MVWK-Modell (Motiv, Verhalten, Wert, Kontext)",
+      "bereich": "3",
+      "folien": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "elemente": [
+        "Motiv (M)",
+        "Verhalten",
+        "Wert (W)",
+        "Kontext / Kontexte",
+        "HALO-Wert",
+        "Deduktiv-kontextuelle Werte",
+        "Induktiv-personale Werte",
+        "Individuell-personale Werte",
+        "Individuum = Entfaltung"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "MVWK"
+      ]
+    },
+    {
+      "id": "aida-formel",
+      "name": "AIDA-Formel (Marketing)",
+      "bereich": "3.3",
+      "folien": [
+        33
+      ],
+      "elemente": [
+        "Attention: Beobachten, Aufmerksamkeit, Wahrnehmung der Werbebotschaft",
+        "Interest: Interesse der Konsumenten an dem beworbenen Produkt",
+        "Desire: Wunsch nach dem beworbenen Produkt",
+        "Action: Handlung, Kauf des beworbenen Produkts"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "15-aufgaben-der-fuehrung",
+      "name": "15 Aufgaben der Führung",
+      "bereich": "3.3",
+      "folien": [
+        34
+      ],
+      "elemente": [
+        "Agiere systemisch und konstruktivistisch",
+        "Kenne deine Stakeholder / dein System und ermögliche Interessenausgleich",
+        "Reflektiere zukünftige Entwicklungen, denke strategisch",
+        "Berücksichtige deine systemischen Grenzen",
+        "Sorge für Information und Kommunikation",
+        "Führe mit flexiblen Zielen",
+        "Schaffe einen Bewertungsmaßstab und nutze ihn",
+        "Fördere Identifikation und Verantwortung",
+        "Organisiere Entscheidungsprozesse",
+        "Delegiere Verantwortung und Aufgaben",
+        "Stelle deine Mannschaft richtig auf",
+        "Sorge für Motivation",
+        "Entwickle dich und andere",
+        "Gestalte wertschöpfende Prozesse, reduziere Wertverzehr",
+        "Schütze deine Mitarbeiter*innen, erhalte die Gesundheit aller"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "balanced-scorecard",
+      "name": "Balanced Scorecard",
+      "bereich": "3.3",
+      "folien": [
+        35
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "quelle": "www.s-hvc.de",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "beduerfnispyramide-maslow",
+      "name": "Bedürfnispyramide nach Maslow",
+      "bereich": "3.3",
+      "folien": [
+        36,
+        37
+      ],
+      "elemente": [
+        "Physiologische Bedürfnisse (Beispiele: Schlafen, Essen, Trinken)",
+        "Sicherheitsbedürfnisse (Beispiele: Sicherheit Arbeitsplatz, Einkommen)",
+        "Soziale Bedürfnisse (Beispiele: Verhältnis zu Kolleg*innen, Freundschaft, Kommunikation)",
+        "Individualbedürfnisse (Beispiele: Macht, Status, Aufstiegschancen)",
+        "Selbstverwirklichung (Beispiele: Güte, Gerechtigkeit, Talententfaltung)",
+        "Defizitbedürfnisse (untere Stufen)",
+        "Wachstumsbedürfnisse (obere Stufe)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "biographiearbeit",
+      "name": "Biographiearbeit",
+      "bereich": "3.3",
+      "folien": [
+        38
+      ],
+      "elemente": [
+        "Welchen \"roten Faden\" gibt es in der Biografie?",
+        "Welche Wendepunkte gab / gibt es?",
+        "Wo waren / sind Sie erfolgreich?",
+        "Welche Unterstützung gibt / gab es?",
+        "Welche Vorbilder haben / hatten Sie? Was war Ihnen da wichtig?",
+        "Welche Motive wurden angesprochen?",
+        "Haben Sie ein Konfliktlösungsmuster erkannt?",
+        "Welche günstigen Einflüsse gibt / gab es?",
+        "Welche Störungen gab es?",
+        "Welche Werte sind Ihnen wichtig?",
+        "Was ist Ihnen nicht so gut gelungen und was haben Sie daraus gelernt?",
+        "Welche Trends in Ihrer Entwicklung gibt es?",
+        "Wie haben Sie es geschafft bzw. welche Ressourcen haben Sie genutzt?",
+        "Welche Gefühle verbinden Sie damit?",
+        "Was hat Motivation ausgelöst?"
+      ],
+      "beschreibung": "Leitfragen zur Arbeit mit der eigenen Biografie."
+    },
+    {
+      "id": "businessplan",
+      "name": "Businessplan",
+      "bereich": "3.3",
+      "folien": [
+        39
+      ],
+      "elemente": [
+        "Unternehmer",
+        "Geschäftsidee",
+        "Finanzierung",
+        "Organisation",
+        "Markt & Wettbewerb",
+        "Marketing",
+        "Standort",
+        "Rechtsform",
+        "Chancen & Risiken"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-01",
+      "name": "Denkimpuls 1 – emotionale Fokussierung",
+      "bereich": "3.3",
+      "folien": [
+        40
+      ],
+      "elemente": [
+        "Innen: Wie geht es mir?",
+        "Außen: Wie geht es den Anderen?",
+        "Fokussierung",
+        "Balance",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-02",
+      "name": "Denkimpuls 2 – deduktiv / induktiv",
+      "bereich": "3.3",
+      "folien": [
+        41
+      ],
+      "elemente": [
+        "Deduktiv: Aus abstrakten Strukturen auf das Konkrete schließen bzw. die Situation bewerten",
+        "Induktiv: Aus der eigenen (emotionalen) Erfahrung heraus auf Zusammenhänge schließen",
+        "Erkenntnis",
+        "Balance",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-03",
+      "name": "Denkimpuls 3 – dissoziiert / assoziiert",
+      "bereich": "3.3",
+      "folien": [
+        42
+      ],
+      "elemente": [
+        "Assoziiert: Emotional beeinflusste Ressourcenverfügung. Die eigene Wahrnehmung der situativen Zusammenhänge und der verfügbaren Ressourcen ist durch starken Kontakt mit den eigenen Emotionen eingeschränkt (\"Tunnelblick\"). Benötigt Dissoziations-Strategie",
+        "Dissoziiert: Kognitiv-systemische Ressourcenverfügung. Verminderte Beeinflussung der Wahrnehmung durch Emotionen, dadurch bessere Wahrnehmung der situativen Zusammenhänge und der verfügbaren Ressourcen. Benötigt Assoziations-Strategie",
+        "Balance",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-04",
+      "name": "Denkimpuls 4 – systemisches / lineares Denken",
+      "bereich": "3.3",
+      "folien": [
+        43
+      ],
+      "elemente": [
+        "Systemisches Denken: Denken in Zusammenhängen",
+        "Lineares Denken: Denken in direkten Beziehungen zwischen Ursache und Wirkung",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-05",
+      "name": "Denkimpuls 5 – agieren / reagieren",
+      "bereich": "3.3",
+      "folien": [
+        44
+      ],
+      "elemente": [
+        "Agieren",
+        "Reagieren",
+        "Reaktionsmuster",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-06",
+      "name": "Denkimpuls 6 – Problem- / Lösungsfokussierung",
+      "bereich": "3.3",
+      "folien": [
+        45
+      ],
+      "elemente": [
+        "Problemfokussierung",
+        "Lösungsfokussierung",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-07",
+      "name": "Denkimpuls 7 – Detail- / Strukturfokussierung",
+      "bereich": "3.3",
+      "folien": [
+        46
+      ],
+      "elemente": [
+        "Detail-Fokussierung (operative Orientierung)",
+        "Struktur-Fokussierung (strategische Orientierung)",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-08",
+      "name": "Denkimpuls 8 – Wahrnehmung der Zeit",
+      "bereich": "3.3",
+      "folien": [
+        47
+      ],
+      "elemente": [
+        "Vergangenheit (hinderlich / förderlich)",
+        "Gegenwart",
+        "Zukunft (hinderlich / förderlich)",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-09",
+      "name": "Denkimpuls 9 – Schätzstrategien für Zeitbedarf",
+      "bereich": "3.3",
+      "folien": [
+        48
+      ],
+      "elemente": [
+        "Unpacking: Der zu schätzende Vorgang wird in Einzelteile zerlegt (ent-packt) und anschließend der Zeitbedarf geschätzt",
+        "Containering: Der Zeitbedarf eines Vorgangs wird \"als Ganzes\" (Container) direkt geschätzt",
+        "Geschätzter Zeitbedarf"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-10",
+      "name": "Denk- und Bewertungsmuster 10 – kurzfristig / langfristig",
+      "bereich": "3.3",
+      "folien": [
+        49
+      ],
+      "elemente": [
+        "Kurzfristig orientiert: unmittelbare Befriedigung",
+        "Langfristig orientiert: langfristige Befriedigung",
+        "Orientierung",
+        "Kontext"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Denkimpuls 10"
+      ]
+    },
+    {
+      "id": "denkimpuls-11",
+      "name": "Denkimpuls 11 – Empfindung von Verlust und Gewinn",
+      "bereich": "3.3",
+      "folien": [
+        50
+      ],
+      "elemente": [
+        "Gewinn",
+        "Verlust",
+        "Empfindungsintensität (hoch / niedrig)",
+        "Wahrnehmung (Verzerrung)",
+        "Handeln",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-12",
+      "name": "Denkimpuls 12 – Verlustarten",
+      "bereich": "3.3",
+      "folien": [
+        51
+      ],
+      "elemente": [
+        "Autonomie-Verlust (Motiv Freiheit)",
+        "Kontroll-Verlust (Motiv Dominanz)",
+        "Selbstwirksamkeits-Verlust (Motiv Selbstanerkennung)",
+        "Beziehungs-Verlust (Motiv Beziehung)",
+        "Komfort-Verlust (Motiv Routine)",
+        "Gesichts-Verlust (Motiv Fremdanerkennung)",
+        "Informations-Verlust (Motiv Erkenntnis)",
+        "Karriere-Verlust (Motiv Status)",
+        "Unterstützungs-Verlust (Motiv Kooperation)",
+        "Anerkennungs-Verlust (Motiv Akzeptanz)"
+      ],
+      "beschreibung": "Jede Verlustart ist in der Vorlage einem Motiv zugeordnet."
+    },
+    {
+      "id": "denkimpuls-13",
+      "name": "Denkimpuls 13 – Confirmation Bias",
+      "bereich": "3.3",
+      "folien": [
+        52
+      ],
+      "elemente": [
+        "Annahmen bestätigend",
+        "Annahmen überprüfend",
+        "Auseinandersetzung mit den Folgen von Entscheidungen",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-14",
+      "name": "Denkimpuls 14 – aufgaben- / beziehungsorientiert",
+      "bereich": "3.3",
+      "folien": [
+        53
+      ],
+      "elemente": [
+        "Aufgabenorientiert",
+        "Beziehungsorientiert",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-15",
+      "name": "Denkimpuls 15 – fragend und sendend",
+      "bereich": "3.3",
+      "folien": [
+        54
+      ],
+      "elemente": [
+        "Sendend",
+        "Fragend",
+        "(Selbst-)Führungs-Haltung",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-16",
+      "name": "Denkimpuls 16 – gestaltend / verwaltend",
+      "bereich": "3.3",
+      "folien": [
+        55
+      ],
+      "elemente": [
+        "Gestaltend",
+        "Verwaltend",
+        "Folgen?",
+        "(Selbst-)Führungs-Haltung",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-17",
+      "name": "Denkimpuls 17 – Empfinden von Gefahr",
+      "bereich": "3.3",
+      "folien": [
+        56
+      ],
+      "elemente": [
+        "Gefahr wahrnehmend",
+        "Gefahr unterdrückend",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-18",
+      "name": "Denkimpuls 18 – Aufmerksamkeitsfokussierung",
+      "bereich": "3.3",
+      "folien": [
+        57
+      ],
+      "elemente": [
+        "Fokus auf positive Information",
+        "Fokus auf negative Information",
+        "Systemische Folgen?",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "denkimpuls-19",
+      "name": "Denkimpuls 19 – Mindset",
+      "bereich": "3.3",
+      "folien": [
+        58
+      ],
+      "elemente": [
+        "Fixed Mindset (statisch-bewahrende Haltung): \"Ich bin halt so wie ich bin.\" Die eigenen Kompetenzen werden als fix angesehen. Herausforderungen beinhalten Gefahr des Scheiterns",
+        "Growth Mindset (wachstumsorientierte Haltung): Herausfordernde Situationen sind ein Anreiz, die eigenen Kompetenzen so weiterzuentwickeln, dass Handlungskompetenz entsteht",
+        "Wie begegne ich Veränderung?",
+        "Welche Folgen hat das?",
+        "Kontext"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "6-dimensionen-teamarbeit",
+      "name": "6 Dimensionen der Teamarbeit",
+      "bereich": "3.3",
+      "folien": [
+        59
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "drama-dreieck",
+      "name": "Drama-Dreieck",
+      "bereich": "3.3",
+      "folien": [
+        60
+      ],
+      "elemente": [
+        "Retter / Verfolger",
+        "Täter",
+        "Opfer",
+        "Ich bin ok, du bist ok",
+        "Ich bin ok, du bist nicht ok",
+        "Ich bin nicht ok, du bist ok",
+        "Ich bin nicht ok, du bist nicht ok"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "dreieck-der-zusammenarbeit",
+      "name": "Dreieck der Zusammenarbeit",
+      "bereich": "3.3",
+      "folien": [
+        61
+      ],
+      "elemente": [
+        "Vertrauen",
+        "Identifikation",
+        "Strukturen",
+        "Zusammenarbeit (Mitte)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "ok-gitter",
+      "name": "OK-Gitter (Drama-Dreieck)",
+      "bereich": "3.3",
+      "folien": [
+        62
+      ],
+      "elemente": [
+        "Ich bin okay, du bist okay: Parallele Transaktion von Erwachsenen-Ich zu Erwachsenen-Ich. Konfliktverhalten: Kompromiss / Konsens",
+        "Ich bin okay, du bist nicht okay: Kommunikation an das Kind-Ich gerichtet (meist aus kritischem / fürsorglichem Eltern-Ich). Konfliktverhalten: Durchsetzen",
+        "Ich bin nicht okay, du bist nicht okay: Kommunikation ist sinnlos. Konfliktverhalten: Vermeiden",
+        "Ich bin nicht okay, du bist okay: Kommunikation aus dem Kind-Ich. Konfliktverhalten: Nachgeben"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "dsim-modell",
+      "name": "DSIM-Modell (Dynamic Sales Interaction Model)",
+      "bereich": "3.3",
+      "folien": [
+        63
+      ],
+      "elemente": [
+        "Verkäufer",
+        "Kunde",
+        "Kaufentscheider",
+        "Anbieter",
+        "Vertrieb",
+        "Produkt",
+        "Dienstleistung",
+        "Analyse",
+        "Kommunikation",
+        "Angebot",
+        "Vertrag",
+        "Abschluss",
+        "Vorgehen",
+        "Unterstützung",
+        "Strategie",
+        "Prozesse",
+        "Führung",
+        "Beziehung",
+        "Vertrauen",
+        "Identifikation",
+        "Vorteil / Nutzen",
+        "Bedürfnisse",
+        "Emotionen",
+        "Information",
+        "Bedarf",
+        "Fakten",
+        "Budget",
+        "Zukunft",
+        "Eigene Ziele",
+        "Fremde Ziele",
+        "Eigenschaften"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "ecocycle-planning",
+      "name": "Ecocycle Planning",
+      "bereich": "3.3",
+      "folien": [
+        64
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "quelle": "www.s-hvc.de",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "einflusskreis-covey",
+      "name": "Einflusskreis nach Stephen Covey",
+      "bereich": "3.3",
+      "folien": [
+        65,
+        66
+      ],
+      "elemente": [
+        "Einflusskreis (Circle of Influence)",
+        "Betroffenheitsbereich (Circle of Concern)",
+        "Proaktive Einstellung: Optimistisches Denken und Handeln vergrößert deinen Einflussbereich",
+        "Reaktive Einstellung: Pessimistisches Denken und Nicht-Handeln schmälert deinen Einflussbereich",
+        "Direkte Kontrolle: Probleme, die mit meinem eigenen Verhalten zu tun haben",
+        "Indirekte Kontrolle: Probleme, die mit dem Verhalten anderer zu tun haben",
+        "Keine Kontrolle: Probleme, an denen ich nichts ändern kann (Fakten des Kontextes)"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Circle of Influence",
+        "Einflusskreis"
+      ]
+    },
+    {
+      "id": "eisbergmodell",
+      "name": "Eisbergmodell",
+      "bereich": "3.3",
+      "folien": [
+        67
+      ],
+      "elemente": [
+        "Bewusst: Aussagen zu Zahlen, Daten, Fakten, Gefühlen und Wünschen",
+        "Vorbewusst: Ängste, verdrängte Konflikte, Persönlichkeitsmerkmale (Erfahrungen: Neugierde, Sicherheit, Unsicherheit, Vertrauen, Misstrauen)",
+        "Unbewusst: Lustbefriedigung, Triebabfuhr, psychosexuelle Entwicklung, traumatische Erlebnisse, Erbanlagen und Instinkte",
+        "Auslösender Umweltreiz",
+        "Abwehrmechanismus des \"Ich\""
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "eisenhower-matrix",
+      "name": "Eisenhower-Matrix",
+      "bereich": "3.3",
+      "folien": [
+        68
+      ],
+      "elemente": [
+        "Wichtig und dringend: Erledigen",
+        "Wichtig und nicht dringend: Planen",
+        "Nicht wichtig und dringend: Delegieren",
+        "Nicht wichtig und nicht dringend: Löschen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "fahrplan",
+      "name": "Fahrplan",
+      "bereich": "3.3",
+      "folien": [
+        69
+      ],
+      "elemente": [
+        "Ziele",
+        "Unterziele",
+        "Schritte / Aufgaben",
+        "Team / Ressourcen",
+        "Erfolgsfaktoren",
+        "Herausforderungen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "fehlerkultur",
+      "name": "Fehlerkultur",
+      "bereich": "3.3",
+      "folien": [
+        70,
+        71
+      ],
+      "elemente": [
+        "Fehler sind unvermeidlich. Jeder macht Fehler",
+        "Nicht der Fehler ist das Problem, sondern seine Folgen",
+        "Entscheidend ist der Umgang mit Fehlern. Jeder Fehler ist eine Chance zum Lernen",
+        "Fehlerkommunikation macht ein Unternehmen besser und stärker. Das Mindset ist entscheidend. Den positiven Umgang mit Fehlern kann man lernen",
+        "Mindset Führungskraft: Wie geht die Führungskraft mit ihren Fehlern um?",
+        "Mindset Mitarbeiter*in: Wie geht der / die Mitarbeiter*in mit den Fehlern der Führungskraft um? Wie geht er / sie mit eigenen Fehlern (in Richtung Führungskraft) um?",
+        "Bausteine einer verbesserten Fehlerkultur: Mitarbeiter*innen schulen, Sanktionsfreiheit, neutrale Fehlerkommunikation, Fehlerakzeptanz, gemeinsame Fehleranalyse"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "fuehrungsstile",
+      "name": "Führungsstile",
+      "bereich": "3.3",
+      "folien": [
+        72
+      ],
+      "elemente": [
+        "Autoritärer Führungsstil",
+        "Patriarchalischer Führungsstil",
+        "Informierender Führungsstil",
+        "Beratender Führungsstil",
+        "Kooperativer Führungsstil",
+        "Delegativer Führungsstil",
+        "Autonomer Führungsstil",
+        "Achse: direktiv (Einflussnahme auf Entscheidungen durch die Führungskraft) bis partizipativ (Einflussnahme auf Entscheidungen durch Mitarbeitende)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "fuehren-mit-zielen",
+      "name": "Führen mit Zielen",
+      "bereich": "3.3",
+      "folien": [
+        73
+      ],
+      "elemente": [
+        "Anweisung: Ziel steht fest, Weg bekannt / festgelegt (Menge, Güte, Zeit, Anforderungen, Verfahren, Abläufe), Fremdkontrolle. Merkmal: der / die regulierte Mitarbeiter*in",
+        "Weg unbekannt, Variante I: Mitarbeiter*in findet selber den Weg und führt Maßnahmen selber aus",
+        "Weg unbekannt, Variante II: Führungskraft entwickelt mit Mitarbeiter*in den Weg und die Maßnahmen (Trainerfunktion der Führungskraft). Mitarbeiter*in controllt, Führungskraft kontrolliert. Merkmal: Mitarbeiter*in hat Einfluss (Partizipation) auf den Weg, Mischung aus Selbst- und Fremdkontrolle",
+        "Mitarbeiter*in und Führungskraft entwickeln und vereinbaren Ziele, Variante I: Mitarbeiter*in entwickelt selbst Weg und Maßnahmen und führt sie selbst aus",
+        "Mitarbeiter*in und Führungskraft entwickeln und vereinbaren Ziele, Variante III: Führungskraft coacht Mitarbeiter*in bei der Weg- und Maßnahmenentwicklung (Entwicklungsgespräch), Mitarbeiter*in führt Maßnahmen selbst aus. Merkmal: Freiwilligkeit, Selbstüberprüfung der Beteiligten"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "grundthesen-systemischer-fuehrung",
+      "name": "10 Grundthesen systemischer Führung",
+      "bereich": "3.3",
+      "folien": [
+        74
+      ],
+      "elemente": [
+        "Führung ist systemisch",
+        "Die 2 Pole von Führung: Fremdführung / Selbstführung",
+        "Führung ist Loslassen",
+        "Führung und Wertschöpfung",
+        "Führung und Identität",
+        "Führung und Organisation",
+        "Führung und Initiative",
+        "Unternehmerisch denken und planen",
+        "Führung und Grenzen",
+        "Führung und Gesundheit"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "innere-antreiber",
+      "name": "Innere Antreiber",
+      "bereich": "3.3",
+      "folien": [
+        75
+      ],
+      "elemente": [
+        "Sei gefällig",
+        "Sei stark",
+        "Sei perfekt",
+        "Streng dich an",
+        "Beeil dich",
+        "Nimm dich nicht so wichtig",
+        "Antreiber / Blocker",
+        "Erlauber / Verbieter"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "haus-der-veraenderung",
+      "name": "Haus der Veränderung",
+      "bereich": "3.3",
+      "folien": [
+        76
+      ],
+      "elemente": [
+        "Raum der Zufriedenheit / Bequemlichkeit (Sonnenbalkon der Selbstzufriedenheit)",
+        "Raum der Verleugnung / Verweigerung (Keller der Verweigerung / Partykeller)",
+        "Raum der Verunsicherung / Verwirrung (Labyrinth der Verzweiflung, Notausgang der Überforderung, Falltüre des Ausbrennens)",
+        "Raum der Erneuerung / Klarheit (Reflexion / Weitsicht)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "heckhausen-modell",
+      "name": "Heckhausen-Modell (Rubikon-Modell der Handlungsphasen)",
+      "bereich": "3.3",
+      "folien": [
+        77
+      ],
+      "elemente": [
+        "Bedürfnis",
+        "Motiv wählen",
+        "Intentionsbildung",
+        "Entscheidung / Rubikon",
+        "Intention / Volition",
+        "Handlungsvorbereitung / Intentionsrealisierung",
+        "Handlung",
+        "Handlungsbewertung"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Rubikon-Modell der Handlungsphasen"
+      ]
+    },
+    {
+      "id": "johari-fenster",
+      "name": "Johari-Fenster (nach J. Luft und H. Ingham)",
+      "bereich": "3.3",
+      "folien": [
+        78
+      ],
+      "elemente": [
+        "Arena des freien Handelns: dem Ich bekannt, dem Anderen bekannt",
+        "Der blinde Fleck: dem Ich unbekannt, dem Anderen bekannt (Weg: Feedback)",
+        "Geheimer Bereich: dem Ich bekannt, dem Anderen unbekannt (Weg: Offenheit)",
+        "Unbekannter Bereich: dem Ich unbekannt, dem Anderen unbekannt"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "kano-modell",
+      "name": "Kano-Modell",
+      "bereich": "3.3",
+      "folien": [
+        79
+      ],
+      "elemente": [
+        "Basis-Anforderungen",
+        "Leistungseigenschaften",
+        "Begeisterungs-Merkmale",
+        "Achsen: enthalten / nicht enthalten, begeistert / enttäuscht"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "mutiges-fuehrungsverhalten",
+      "name": "Kennzeichen mutigen Führungsverhaltens",
+      "bereich": "3.3",
+      "folien": [
+        80
+      ],
+      "elemente": [
+        "begrüßt kritische Fragen und Feedback",
+        "redet nicht schlecht über andere, sondern offen mit ihnen",
+        "hält eigene Versprechen",
+        "übernimmt Verantwortung für Fehler",
+        "trifft Entscheidungen und steht dazu",
+        "verkündet Unangenehmes, auch auf die Gefahr hin, sich unbeliebt zu machen",
+        "bedient sich einer klaren Sprache",
+        "vertritt die eigene Meinung",
+        "gibt Mitarbeiter*innen ehrliches, kritisches Feedback",
+        "sucht die Konfrontation, statt Missverständnisse hinzunehmen",
+        "stellt sich, wenn nötig, quer zur Sichtweise der Mehrheit oder Höherstehender"
+      ],
+      "beschreibung": "Eine Führungskraft, die Rückgrat zeigt, lässt sich an bestimmten Verhaltensweisen erkennen.",
+      "quelle": "Nach Nicole Pathé: Feigling oder Führungskraft, Gabal, Offenbach, 2017 (Angabe laut Vorlage)"
+    },
+    {
+      "id": "kollegiale-fallberatung",
+      "name": "6 Phasen der kollegialen Fallberatung",
+      "bereich": "3.3",
+      "folien": [
+        81
+      ],
+      "elemente": [
+        "Casting: Die Rollen werden besetzt (Moderator:in, Fallerzähler:in, Berater:in). Ergebnis: Fallerzähler:in und Moderator:in nehmen ihre Rollen ein",
+        "Spontanerzählung: Fallgeber:in gibt Informationen zum eigenen Thema. Ergebnis: Alle haben den Fall in groben Zügen verstanden",
+        "Schlüsselfrage: Die Schlüsselfrage wird gesucht. Ergebnis: Alle haben die Schlüsselfrage verstanden",
+        "Methodenwahl: Ein Beratungsmodul aus dem Methodenpool wird gewählt. Ergebnis: Die Methode zur Bearbeitung der Schlüsselfrage steht fest",
+        "Beratung: Die Berater:innen geben ihre Ideen und Vorschläge im Stil des ausgewählten Beratungsmoduls. Ergebnis: Fallerzähler:in hat Ideen und Anregungen erhalten",
+        "Abschluss: Fallerzähler:in resümiert die Beiträge und nimmt abschließend Stellung. Ergebnis: Die kollegiale Beratung ist abgeschlossen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "komfortzonenmodell",
+      "name": "Komfortzonenmodell",
+      "bereich": "3.3",
+      "folien": [
+        82
+      ],
+      "elemente": [
+        "Komfortzone: Wohlbefinden, Sicherheit",
+        "Lernzone: Herausforderungen, Ziele",
+        "Panikzone: Kontrollverlust, Lähmung"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "kommunikationsmodell",
+      "name": "Kommunikationsmodell",
+      "bereich": "3.3",
+      "folien": [
+        83
+      ],
+      "elemente": [
+        "Sender + Empfänger",
+        "Stimme + körperliche Signale",
+        "Sprachliche Möglichkeiten",
+        "Emotionale Erfahrungen",
+        "Kognitive Erfahrungen",
+        "Reflektiertes Wissen",
+        "Sensorik",
+        "Interpretation",
+        "Konstruktivismus",
+        "Interaktionsmodi",
+        "Kommunikativer Werteaustausch",
+        "Erwartungen",
+        "Thema",
+        "Beziehung",
+        "Folgen",
+        "Zeit",
+        "Handlung / Reaktion",
+        "Emotionen / Gefühle",
+        "Andere / Dritte",
+        "Konventionen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "konfliktloesungsmuster",
+      "name": "Konfliktlösungsmuster",
+      "bereich": "3.3",
+      "folien": [
+        84
+      ],
+      "elemente": [
+        "Biologisch: Anpassen, Erstarren, Flüchten, Kämpfen, Verstecken, Unterordnen, Abschrecken",
+        "Kulturell: Ignorieren, An andere delegieren, Kompromiss finden, Konsens finden"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "konfliktstufen",
+      "name": "Konfliktstufen",
+      "bereich": "3.3",
+      "folien": [
+        85
+      ],
+      "elemente": [
+        "Orientierung win-win: Verhärtung, Polarisierung / Debatte, Taten statt Worte",
+        "Orientierung win-lose: Images / Koalitionen, Gesichtsverlust, Drohungen",
+        "Orientierung lose-lose: Begrenzte Vernichtungsschläge, Zersplitterung, Gemeinsam in den Abgrund",
+        "Interventionen: Selbsthilfe, Moderation, Prozessberatung / -begleitung, Vermittlung, Schiedsverfahren, Machteingriff"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "elemente-eines-konfliktes",
+      "name": "Elemente eines Konfliktes",
+      "bereich": "3.3",
+      "folien": [
+        86
+      ],
+      "elemente": [
+        "Zeit (Vergangenheit: ab wann? bis wann?)",
+        "Abhängigkeit",
+        "Emotionen",
+        "Werte (wieviel?)",
+        "Kompromiss",
+        "Konsens",
+        "Den Beteiligten sind verschiedene Dinge wichtig"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "feedback-3w",
+      "name": "Konstruktives Feedback, 3W-Methode",
+      "bereich": "3.3",
+      "folien": [
+        87
+      ],
+      "elemente": [
+        "Wahrnehmung: Was habe ich wahrgenommen? (konkret, Beispiele, Ich-Formulierungen)",
+        "Wirkung: Wie wirkt das auf mich oder andere? (Emotion)",
+        "Wunsch: Was sind meine Bedürfnisse und Erwartungen an den Gesprächspartner? Warum ist das wichtig? Was wünsche ich mir in Bezug auf das gezeigte Verhalten für die Zukunft?",
+        "Dialog: Was brauchen Sie von mir? Was hindert Sie daran, xy zu machen? Wie sehen Sie das? Welche Lösungsmöglichkeiten sehen Sie? Was passiert, wenn nichts passiert?"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "3W-Methode",
+        "WWW-Feedback"
+      ]
+    },
+    {
+      "id": "magisches-dreieck-pm",
+      "name": "Magisches Dreieck des Projektmanagements",
+      "bereich": "3.3",
+      "folien": [
+        88
+      ],
+      "elemente": [
+        "Leistung",
+        "Kosten",
+        "Zeit",
+        "Qualität (Mitte)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "marketingmix-7p",
+      "name": "Marketingmix – 7 Ps",
+      "bereich": "3.3",
+      "folien": [
+        89
+      ],
+      "elemente": [
+        "Product (Produktpolitik)",
+        "Price (Preispolitik)",
+        "Place (Vertriebspolitik)",
+        "Promotion (Kommunikationspolitik)",
+        "People (Personalpolitik)",
+        "Processes (Dienstleistungsprozess)",
+        "Physical Evidence (Erscheinungsbild)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "5-ms",
+      "name": "Die 5 M's (Werbekampagne)",
+      "bereich": "3.3",
+      "folien": [
+        90
+      ],
+      "elemente": [
+        "Mission: Was sind die Ziele der Werbekampagne?",
+        "Budget (money): Wieviel Geld steht zur Verfügung?",
+        "Botschaft (message): Wie lautet die Werbebotschaft?",
+        "Medium (media): Welche(s) Medium (Medien) soll(en) benutzt werden?",
+        "Messung (measurement): Wie kann der Erfolg gemessen und beurteilt werden?"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "motivationsfaktoren-herzberg",
+      "name": "Motivationsfaktoren nach Herzberg",
+      "bereich": "3.3",
+      "folien": [
+        91
+      ],
+      "elemente": [],
+      "beschreibung": "",
+      "hinweis": "In der Vorlage nur als Grafik enthalten, keine Textelemente."
+    },
+    {
+      "id": "qualitaetsarten",
+      "name": "Qualitätsarten",
+      "bereich": "3.3",
+      "folien": [
+        92
+      ],
+      "elemente": [
+        "Strukturqualität: Personal, Qualifikation, Maschinen, Ausrüstung, Anlagen, Umgebung",
+        "Prozessqualität: Gesamtheit aller Aktivitäten zur Erstellung eines Produktes (alles, was wir tun, um ein Ergebnis zu erzielen)",
+        "Ergebnisqualität: Das Produkt oder die Dienstleistung"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "raci-modell",
+      "name": "RACI-Modell",
+      "bereich": "3.3",
+      "folien": [
+        93,
+        94
+      ],
+      "elemente": [
+        "Responsible (führt aus): Wer ist für die Durchführung der Aufgabe verantwortlich? Üblicherweise eine Person, die weitere Personen hinzuziehen kann",
+        "Accountable (\"zahlt\", hält Kopf hin): Wer entscheidet, ob die Aufgabe korrekt durchgeführt wurde? Delegiert oft an die responsible Person und prüft die Ergebnisse",
+        "Consulted: Wer wird zur Durchführung der Aufgabe befragt? Oft Fachexperten oder Dritte, die beratend zur Seite stehen",
+        "Informed: Wer wird über die Ergebnisse informiert? In der Regel keine zweiseitige Kommunikation",
+        "Matrix: Aufgaben (Task A, B, C) gegen Positionen (1 bis 4)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "reifegradmodell",
+      "name": "Reifegradmodell",
+      "bereich": "3.3",
+      "folien": [
+        95
+      ],
+      "elemente": [
+        "kann & will",
+        "kann nicht, will aber",
+        "kann & will nicht (mehr)",
+        "kann nicht & will nicht (mehr)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "reiz-reaktionsmodell",
+      "name": "Reiz-Reaktions-Modell",
+      "bereich": "3.3",
+      "folien": [
+        96
+      ],
+      "elemente": [
+        "Reiz",
+        "Automatische Reaktion (Denk-, Fühl-, Verhaltensmuster)",
+        "STOP: Präsenz, Bewusstheit",
+        "Bewusst gewählte Reaktion"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "7-saeulen-resilienz",
+      "name": "7 Säulen der Resilienz",
+      "bereich": "3.3",
+      "folien": [
+        97
+      ],
+      "elemente": [
+        "Optimismus",
+        "Akzeptanz",
+        "Orientierung auf die Lösung",
+        "Verlassen der Opferrolle",
+        "Übernehmen der Verantwortung fürs eigene Leben",
+        "Neue Netzwerke aufbauen",
+        "Zukunft planen und gestalten"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Resilienz",
+        "Sieben Säulen der Resilienz"
+      ]
+    },
+    {
+      "id": "seligman-matrix",
+      "name": "Seligman-Matrix",
+      "bereich": "3.3",
+      "folien": [
+        98
+      ],
+      "elemente": [
+        "Aktiv-konstruktiv: Interesse zeigen, wertschätzen, Gefühle zeigen, Anteil nehmen",
+        "Passiv-konstruktiv: Non-verbale Signale des Zustimmens / Zuhörens, aktiv zuhören",
+        "Aktiv-destruktiv: kränken, negative Gefühle als Angriff herauslassen",
+        "Passiv-destruktiv: abwenden, Thema wechseln, ignorieren"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Seligmann-Matrix"
+      ]
+    },
+    {
+      "id": "servqual-modell",
+      "name": "SERVQUAL-Modell (Dienstleistungsqualität)",
+      "bereich": "3.3",
+      "folien": [
+        99
+      ],
+      "elemente": [
+        "Zuverlässigkeit: Zuverlässigkeit eines Betriebs, versprochene Leistungen zeitlich und qualitativ zu erfüllen (Termine eingehalten, Interesse an Problemlösung, Service beim ersten Mal richtig, Dienste zum versprochenen Zeitpunkt, fehlerfreie Abrechnung)",
+        "Leistungs- und Fachkompetenz: Die in Aussicht gestellte Leistung wird fachgerecht und rasch erbracht (Verhalten weckt Vertrauen, Kunde fühlt sich sicher, gleichbleibend höflich, Fachwissen)",
+        "Entgegenkommen: Fähigkeit, auf Kundenwünsche einzugehen und diese zu erfüllen (Auskunft über Zeitpunkte, prompte Bedienung, Hilfsbereitschaft, nie zu beschäftigt)",
+        "Einfühlungsvermögen: Fähigkeit, sich in Kunden einzufühlen und deren Erwartungen / Bedürfnisse zu erkennen (individuelle Aufmerksamkeit, passende Zeiten, persönliche Betreuung, Interessen des Kunden, spezifischer Servicebedarf)",
+        "Physisches Umfeld: Erscheinungsbild und Ausstattung des Betriebs (moderne Ausstattung, angenehme Einrichtung, gekleidete Mitarbeiter, gut gestaltete Broschüren und Mitteilungen)"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "SERQUAL-Modell"
+      ],
+      "hinweis": "In der Vorlage als \"SERQUAL\" geschrieben, üblich ist SERVQUAL."
+    },
+    {
+      "id": "somatische-marker",
+      "name": "Somatische Marker – Feedbacksystem des Körpers",
+      "bereich": "3.3",
+      "folien": [
+        100
+      ],
+      "elemente": [
+        "Emotion (Mitte)",
+        "Erfahrung",
+        "Kontext",
+        "Thema",
+        "Verhalten",
+        "Signale: Atmung, Stimme, Mimik, Geschmack, Geräusche, Appetit, Haltung, Druck, Gestik, Müdigkeit, Schmerzen, Geruch, Blutdruck, Temperatur, Gleichgewicht",
+        "Körperregionen: Kopf, Augen, Ohren, Mundhöhle, Zunge, Hals, Haut, Muskeln, Herz- und Kreislaufsystem, Darm, Innere Organe, Füße, Arme, Hände, Beine, Bauch"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "SOMA",
+        "Körpersignale"
+      ]
+    },
+    {
+      "id": "strategische-pyramide",
+      "name": "Strategische Pyramide",
+      "bereich": "3.3",
+      "folien": [
+        101,
+        102
+      ],
+      "elemente": [
+        "Identität (Ist / Soll)",
+        "Werte",
+        "Soziale Glaubenssätze",
+        "Vision",
+        "Strategische Ziele",
+        "Operative Ziele",
+        "Prämissen",
+        "Kontext (wieso? wie?)",
+        "Leitbild (sehr langfristig stabil): Vision (Was wollen wir erreichen?), Mission (Warum gibt es uns?), Werte (Wofür stehen wir?), Grundsätze (Was sind unsere Prinzipien?)",
+        "Strategisch & operativ (mittel- bis kurzfristig, ändert sich öfters): Strategie (Was ist unser Plan?), Ziele und Maßnahmen (Was machen wir bis wann?)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "swot-analyse",
+      "name": "SWOT-Analyse",
+      "bereich": "3.3",
+      "folien": [
+        103
+      ],
+      "elemente": [
+        "Strengths / Stärken (eigen / innen, nützlich)",
+        "Weaknesses / Schwächen (eigen / innen, schädlich)",
+        "Opportunities / Chancen (fremd / außen, nützlich)",
+        "Threats / Risiken (fremd / außen, schädlich)",
+        "Bewertung aus der Sicht des Unternehmens für die Ziele des Unternehmens"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "systemisches-karrieremodell",
+      "name": "Systemisches Karrieremodell",
+      "bereich": "3.3",
+      "folien": [
+        104
+      ],
+      "elemente": [
+        "Ist-Zustand Karriere (Mitte)",
+        "Innen: Zukunft, Netzwerke, Planung, Qualifikation, Stärken, Lernen, Wissen, Gesundheit, Sinn, eigene Werte, Privatleben, Geld, Abhängigkeiten, Emotionen, Zeit, Familie",
+        "Außen: Konkurrenz, Chef*in, Vertrag, eigene Funktion, Kolleg*innen, Kultur, Unternehmensgröße / -art, Branche, Ort"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "teamphasen",
+      "name": "Teamphasen (Forming, Storming, Norming, Performing)",
+      "bereich": "3.3",
+      "folien": [
+        105
+      ],
+      "elemente": [
+        "Forming / Findungsphase (\"Wer sind die anderen?\"): Fachliche Leistung eher gering, Suche nach Orientierung, Abhängigkeit von Führung, Annähern / Ausweichen, Rollen und Ziele unklar",
+        "Storming / Streitphase (\"Die Anderen sind ja anders!\"): Cliquenbildung, unterschiedliche Konflikte, Hinterfragen von Normen, Teammitglieder realisieren, dass die Aufgabe nicht so einfach ist wie angenommen",
+        "Norming / Organisationsphase (\"Wie machen wir weiter?\"): Neue Umgangsformen werden geklärt, Rollen und Befugnisse klar, intensive persönliche Beteiligung, Prozesse und Strukturen definiert, offener Austausch von Meinungen und Gefühlen, Identifikation mit dem Team",
+        "Performing / Leistungsphase (\"Wie können wir noch besser werden?\"): Kooperation und Rücksichtnahme, leistungsfähig, flexibel, Wir-Gefühl, Vertrautheit, Streben nach Erfolg"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "Teamuhr",
+        "Tuckman"
+      ]
+    },
+    {
+      "id": "teamrollen-epp",
+      "name": "Teamrollen nach EPP",
+      "bereich": "3.3",
+      "folien": [
+        106,
+        107
+      ],
+      "elemente": [
+        "Entscheider*in (Macher*in)",
+        "Koordinator*in",
+        "Teamworker*in",
+        "Spezialist*in",
+        "Netzwerker*in (Wegbereiter*in)",
+        "Umsetzer*in",
+        "Perfektionist*in",
+        "Erfinder*in (Neuerer*in)",
+        "Kontroller*in (Beobachter*in)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "teamrollen-belbin",
+      "name": "Teamrollen nach Belbin",
+      "bereich": "3.3",
+      "folien": [
+        108
+      ],
+      "elemente": [
+        "Entscheider (Macher): Formuliert Ziele und fordert das Team zu Leistung und Überwindung von Hindernissen heraus",
+        "Umsetzer: Setzt Ideen in Arbeitspläne um und organisiert die Umsetzung",
+        "Perfektionist: Findet Fehler oder Versäumnisse und perfektioniert das Arbeitsergebnis",
+        "Erfinder (Neuerer): Entwickelt Ideen (pflanzt den Samen) und löst kreativ schwierige Probleme",
+        "Kontroller (Beobachter): Bewertet kritisch und nüchtern den Nutzen sämtlicher Ideen und Vorschläge",
+        "Koordinator: Verdeutlicht dem Team die Ziele und koordiniert die Teamaktivitäten",
+        "Teamworker: Gleicht Spannungen im Team aus und fördert Teamgeist",
+        "Netzwerker (Wegbereiter): Untersucht und entwickelt nützliche Kontakte",
+        "Spezialist: Stellt Fachwissen und Fertigkeiten für spezielle Aufgaben bereit"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "15-teambuilding-aufgaben",
+      "name": "Die 15 Teambuilding-Aufgaben jedes Teammitglieds",
+      "bereich": "3.3",
+      "folien": [
+        109
+      ],
+      "elemente": [
+        "Werte verhandeln, Verhaltensregeln festlegen und die Einhaltung kontrollieren",
+        "Sanktionen für Fehlverhalten definieren und bei Bedarf ausüben",
+        "Machtverteilung und Entscheidungsfindung regeln",
+        "Menschliche Nähe und Zusammengehörigkeit schaffen",
+        "Leitbild und positive Zukunftshoffnung schaffen",
+        "Feedbackkultur schaffen und leben",
+        "Vertrauen schaffen und für emotionales Wohlbefinden sorgen",
+        "Konflikte schnell und aktiv bearbeiten und lösen",
+        "Selbstreflexion im eigenen Verhalten und Perspektivwechsel im Umgang mit Teammitgliedern praktizieren",
+        "Offen sein für Veränderungen und Veränderungen als Lernchancen begreifen",
+        "Fehler im Lernen tolerieren",
+        "Kreativität zur Problemlösung, zur Konfliktlösung und zur Weiterentwicklung nutzen",
+        "Menschen verbinden",
+        "Aufgaben verbinden",
+        "Schnittstellen managen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "transaktionsanalyse",
+      "name": "Transaktionsanalyse",
+      "bereich": "3.3",
+      "folien": [
+        110
+      ],
+      "elemente": [
+        "Kritisches Eltern-Ich",
+        "Fürsorgliches Eltern-Ich",
+        "Erwachsenen-Ich",
+        "Freiheitliches Kindheits-Ich",
+        "Angepasstes Kindheits-Ich",
+        "Rebellisches Kindheits-Ich",
+        "Parallele Transaktion",
+        "Gekreuzte Transaktion"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "tetra-k-modell",
+      "name": "Tetra-K-Modell",
+      "bereich": "3.3",
+      "folien": [
+        111
+      ],
+      "elemente": [
+        "Zeit",
+        "Abhängigkeit",
+        "Emotion",
+        "Werte"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "rollen-im-veraenderungsprozess",
+      "name": "Typische Rollen im Veränderungsprozess",
+      "bereich": "3.3",
+      "folien": [
+        112,
+        113
+      ],
+      "elemente": [
+        "Promotoren (sachliche Risiken niedrig, persönliche Risiken niedrig): Machtpromotoren, Prozesspromotoren, Fachpromotoren",
+        "Skeptiker",
+        "Bremser",
+        "Widerständler",
+        "Achsen: sachliche Risiken (hoch / niedrig), persönliche Risiken (hoch / niedrig)",
+        "Leitfrage je Rolle: Wer? Was kann ich tun?"
+      ],
+      "beschreibung": "",
+      "hinweis": "Die Zuordnung von Skeptiker, Bremser und Widerständler zu den Achsenfeldern ist in der Vorlage nur grafisch dargestellt."
+    },
+    {
+      "id": "turtle-modell",
+      "name": "Turtle-Modell",
+      "bereich": "3.3",
+      "folien": [
+        114
+      ],
+      "elemente": [
+        "Prozess (Mitte)",
+        "Input",
+        "Output",
+        "Womit bzw. mit welchen Mitteln? Equipment / Material",
+        "Mit wem? Zuständigkeiten, Fähigkeiten, Wissen",
+        "Wie? Anweisungen, Verfahren, Dokumente, Schnittstellen",
+        "Leistungsindikatoren / Kennzahlen",
+        "Risiken",
+        "Chancen"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "veraenderung-verstehen",
+      "name": "Veränderung verstehen",
+      "bereich": "3.3",
+      "folien": [
+        115
+      ],
+      "elemente": [
+        "Warum brauchen wir überhaupt eine Veränderung?",
+        "Warum brauchen wir genau diese Veränderung?",
+        "Gibt es Alternativen?",
+        "Was ist das Ziel der Veränderung?",
+        "Wird mir noch etwas verschwiegen?",
+        "Will ich diese Veränderung?",
+        "Was bringt mir die Veränderung?",
+        "Was bedeutet die Veränderung für meinen Status und meine Karriere?",
+        "Was verliere ich durch die Veränderung?",
+        "Kann ich die Veränderung schaffen?",
+        "Bin ich den Veränderungsanforderungen gewachsen?"
+      ],
+      "beschreibung": "Leitfragen, die sich Betroffene in Veränderungsprozessen stellen."
+    },
+    {
+      "id": "veraenderungskurve-kuebler-ross",
+      "name": "Veränderungskurve nach Kübler-Ross",
+      "bereich": "3.3",
+      "folien": [
+        116
+      ],
+      "elemente": [
+        "Schock: Erkenntnis, Veränderung betrifft mich, Unsicherheit",
+        "Verneinung: Verleugnung der Betroffenheit, Selbstüberschätzung",
+        "Bewusstsein: eigene Erwartungen scheinen nicht erfüllbar (\"Tal der Tränen\")",
+        "Akzeptanz: Veränderung, alte Muster aufgeben",
+        "Ausprobieren: neue Muster bringen Erfolg und Misserfolg",
+        "Verstehen: Ursache / Wirkung von Misserfolgen",
+        "Integration: Veränderung ist der neue Normalzustand",
+        "Achsen: wahrgenommene Kompetenz, die Veränderung zu beeinflussen, über die Zeit"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "vertrauen",
+      "name": "Vertrauen",
+      "bereich": "3.3",
+      "folien": [
+        117
+      ],
+      "elemente": [
+        "Verlässlichkeit",
+        "Akzeptanz",
+        "Offenheit",
+        "Kongruenz",
+        "Vertrauen (Mitte)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "7-verschwendungsarten-muda",
+      "name": "Die 7 Verschwendungsarten (MUDA)",
+      "bereich": "3.3",
+      "folien": [
+        118,
+        119
+      ],
+      "elemente": [
+        "Überproduktion (Beispiele: Detailangebot für eine vorläufige Anfrage, übertriebene Verfahrensanweisungen, Ein-Jahres-Forecast für C-Produkte, Überkapazitäten für seltene Bedarfsspitzen)",
+        "Bestände (Beispiele: Auftragsvorräte, Fakturavorräte, Mehrfachablagen, volles E-Mail-Postfach)",
+        "Warte- / Liegezeiten (Beispiele: liegen gebliebene Informationen, Warten auf Genehmigungen, Wartezeiten bei Rückfragen, Rückdelegation)",
+        "Unnötige Wege / Bewegung (Beispiele: Reisetätigkeit, Laufwege zu räumlich getrennten Mitarbeiter*innen oder Büroausstattung, Ergonomie am Arbeitsplatz)",
+        "Unnötiger Informationsfluss / Transport (Beispiele: überflüssige Meetings, große E-Mail-Verteiler, umfangreiche Hauspost)",
+        "Unnötige / fehlerhafte Prozesse, Technologie (Beispiele: unklare Zuständigkeiten, veraltete Ausstattung, redundant vorgehaltene Auswertungstools, wiederholte manuelle Dateneingabe, unnötiges Kopieren)",
+        "Qualitätsprobleme, Nacharbeit + Ausschuss (Beispiele: fehlende oder falsche Informationen führen zu Rückfragen, Korrekturschleifen, unnötige Genehmigungen, Medienbrüche, Ergebnisse treffen nicht die Aufgabenstellung)",
+        "Verschwendung = Werteverzehr"
+      ],
+      "beschreibung": "",
+      "aliases": [
+        "MUDA",
+        "Verschwendungsarten"
+      ]
+    },
+    {
+      "id": "wasserfall-agil",
+      "name": "Wasserfallmethode / Agile Methode",
+      "bereich": "3.3",
+      "folien": [
+        120
+      ],
+      "elemente": [
+        "Wasserfall: Business Requirements, Technical Design, Coding & Testing, Client OK & Launch",
+        "Agil: Discover, Design, Develop, Test (iterativ)"
+      ],
+      "beschreibung": ""
+    },
+    {
+      "id": "golden-circle",
+      "name": "Golden Circle",
+      "bereich": "3.3",
+      "folien": [
+        121
+      ],
+      "elemente": [
+        "Why?",
+        "How?",
+        "What?"
+      ],
+      "beschreibung": ""
+    }
+  ]
+}

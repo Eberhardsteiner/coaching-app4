@@ -1,19 +1,21 @@
+import { Boxes } from "lucide-react";
+
+import { requestDrawer } from "@/components/layout/drawerBus";
+import { Button } from "@/components/ui/button";
 import { KiImpuls } from "@/features/ai/KiImpuls";
-import {
-  useRessourcenModelle,
-  type RessourcenModell,
-} from "@/features/content/ressourcenModelle";
+import { ContentLoadState } from "@/features/content/ContentLoadState";
+import { promptModelle, useSmcKatalog } from "@/features/content/smcModelle";
 import { NoPersonalDataHint } from "@/features/phases/NoPersonalDataHint";
-import {
-  coreThemeLabel,
-  useCoreTheme,
-} from "@/features/phases/phase2/useCoreTheme";
+import { buildModellPrompt } from "@/features/phases/phase3/modellPrompt";
 import { ResourceListEditor } from "@/features/phases/phase3/ResourceListEditor";
-import { RessourcenModellListe } from "@/features/phases/phase3/RessourcenModellListe";
 import { StepNav } from "@/features/phases/StepNav";
 import type { PhaseNavigation } from "@/features/phases/usePhaseNavigation";
 import { useSessionStore } from "@/features/session/sessionStore";
-import type { ResourceItem } from "@/features/session/types";
+import type { Card, Cluster, ResourceItem } from "@/features/session/types";
+
+/** Stable empty defaults for the store selectors. */
+const NO_CARDS: Card[] = [];
+const NO_CLUSTERS: Cluster[] = [];
 
 /** Anmoderation — sichtbar (VOICE-1, Methodik-Wortlaut), K1: drei Absätze. */
 const INTRO_ABSAETZE = [
@@ -30,79 +32,54 @@ const LEITFRAGEN = [
   "Ist etwas aus dem Modell — oder das ganze Modell — eine Ressource für mein Ziel? Schreibe auf!",
 ];
 
-/** E3: die Modellliste als nummerierter Block für den Prompt. */
-function modellBlock(modelle: RessourcenModell[]): string {
-  return modelle
-    .map((modell, index) => {
-      const teile = [
-        modell.kurzbeschreibung
-          ? `${index + 1}. ${modell.name}: ${modell.kurzbeschreibung}`
-          : `${index + 1}. ${modell.name}.`,
-      ];
-      if (modell.ressourcen.length > 0) {
-        teile.push(
-          `Ressourcen aus dem Modell: ${modell.ressourcen.join(", ")}.`,
-        );
-      }
-      return teile.join(" ");
-    })
-    .join("\n");
-}
-
-/**
- * Copyable prompt asking for at most five fitting models. E3: nur aus der
- * Modellliste der Datendatei, ausdrücklich ohne andere Modelle, ohne Deutung
- * der Person und ohne Ratschläge.
- */
-function buildPrompt(
-  coreLabel: string,
-  goalText: string,
-  vision: string,
-  modelle: RessourcenModell[],
-): string {
-  const goal = goalText.trim() || "(noch offen)";
-  const visionPart = vision.trim()
-    ? ` Meine Vorstellung des Zielzustands: «${vision.trim()}».`
-    : "";
-  return (
-    `Ich arbeite in einem Selbstcoaching an einem persönlichen Ziel und suche ` +
-    `wissenschaftliche Modelle als neue Perspektive. Mein Kernthema: ` +
-    `«${coreLabel}». Mein Zielsatz: «${goal}».${visionPart}\n\n` +
-    `Verwende ausschließlich die folgenden Modelle und schlage keine anderen ` +
-    `vor:\n${modellBlock(modelle)}\n\n` +
-    `Bitte wähle aus dieser Liste maximal 5 Modelle aus, die zu Thema und Ziel ` +
-    `passen — mit je 1–2 Sätzen Erklärung, worum es in dem Modell geht. Passt ` +
-    `keines, sag mir das offen. Wichtig: keine Deutung meiner Person, keine ` +
-    `Ratschläge und keine Lösungen — nur Modelle mit kurzer, neutraler ` +
-    `Erklärung. Antworte auf Deutsch.`
-  );
-}
-
 /**
  * Phase 3, Step 3.6 — Ressourcen aus Modellen (die KI-Vogelperspektive).
  * Replaces the old free hypotheses step on the SAME field (contract:
  * phase3.hypotheses — `note` = model name, `text` = insight/resource). Self
- * branch: KiImpuls with the model-suggestion prompt (max 5, no
- * interpretation); coached branch: the coach guides, same capture. Old
- * entries without a note stay valid (shown without a model badge).
+ * branch: KiImpuls with the model prompt from modellPrompt.ts (only the
+ * models of the SMC catalog in `prompt_bereiche`, max 5); coached branch: the
+ * coach guides, same capture. Both show the hint that only the catalog models
+ * are used and a link that opens the Modelle drawer. Old entries without a
+ * note stay valid (shown without a model badge).
  */
 export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
   const branch = useSessionStore((s) => s.session?.meta.branch);
   const goalText = useSessionStore((s) => s.session?.phase2.goalText ?? "");
   const vision = useSessionStore((s) => s.session?.phase2.vision ?? "");
+  const istWord = useSessionStore((s) => s.session?.phase1.istWord ?? "");
+  const cards = useSessionStore((s) => s.session?.phase1.cards) ?? NO_CARDS;
+  const clusters =
+    useSessionStore((s) => s.session?.phase1.clusters) ?? NO_CLUSTERS;
+  const phase3 = useSessionStore((s) => s.session?.phase3);
   const hypotheses = useSessionStore((s) => s.session?.phase3.hypotheses ?? []);
   const patch = useSessionStore((s) => s.patch);
-  const core = useCoreTheme();
-  const label = coreThemeLabel(core);
-  const modelle = useRessourcenModelle();
-  // E3: ohne geladene Modellliste gibt es keinen Prompt (sonst schlüge das
-  // Sprachmodell wieder beliebige Modelle vor).
+  const katalog = useSmcKatalog();
+  const modelle = katalog.katalog ? promptModelle(katalog.katalog) : [];
+  // Die Gruppen der Schublade, deren Modelle im Prompt stehen.
+  const promptGruppen = katalog.katalog
+    ? katalog.katalog.bereiche
+        .filter((b) => katalog.katalog?.promptBereiche.includes(b.id))
+        .map((b) => `„${b.label}“`)
+        .join(" und ")
+    : "";
+  // Ohne geladenen Katalog gibt es keinen Prompt, sonst schlüge das
+  // Sprachmodell wieder beliebige Modelle vor.
   const promptText =
-    modelle.status === "ready" && modelle.modelle.length > 0
-      ? buildPrompt(label, goalText, vision, modelle.modelle)
-      : modelle.status === "loading"
-        ? "Die Modellliste wird geladen …"
-        : "Die Modellliste ist gerade nicht verfügbar. Lade sie oben erneut, dann erscheint hier dein Prompt.";
+    katalog.status === "loading"
+      ? "Der Modellkatalog wird geladen …"
+      : katalog.status === "error"
+        ? "Der Modellkatalog ist gerade nicht verfügbar. Lade ihn oben erneut, dann erscheint hier dein Prompt."
+        : modelle.length === 0
+          ? "Im Modellkatalog ist für diesen Schritt kein Modell hinterlegt."
+          : buildModellPrompt({
+              istWord,
+              clusters,
+              cards,
+              goalText,
+              vision,
+              phase3,
+              modelle,
+            });
 
   function setHypotheses(next: ResourceItem[]) {
     patch((s) => ({ ...s, phase3: { ...s.phase3, hypotheses: next } }));
@@ -122,17 +99,32 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
         einfach beiseite.
       </p>
 
-      {/* E3: Modellübersicht aus der Datendatei (dieselbe Quelle wie der
-          Prompt und die Schublade „Modelle“). */}
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-foreground">
-          Die Modelle für diesen Schritt
-        </h3>
-        <p className="text-sm text-muted">
-          Tippe ein Modell an, um die Kurzbeschreibung und seine Ressourcen zu
-          sehen.
+      {/* Teil 1.3 e: nur die hinterlegten Modelle, Link zur Schublade. */}
+      <div className="space-y-3 rounded-xl border border-subtle bg-surface-2 p-4">
+        <p className="text-sm text-foreground">
+          {branch === "coached"
+            ? "Ihr arbeitet mit den Modellen, die in der App hinterlegt sind."
+            : `Die KI darf nur die Modelle verwenden, die in der App hinterlegt sind. ${
+                promptGruppen
+                  ? `Dein Prompt enthält alle Modelle der Gruppe ${promptGruppen}, in der Übersicht mit „im Prompt“ gekennzeichnet.`
+                  : "Dein Prompt enthält die Modellliste für diesen Schritt."
+              }`}
         </p>
-        <RessourcenModellListe loaded={modelle} />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => requestDrawer("models")}
+        >
+          <Boxes />
+          Modelle anzeigen
+        </Button>
+        {katalog.status === "error" ? (
+          <ContentLoadState
+            status="error"
+            error={katalog.error}
+            onRetry={katalog.retry}
+          />
+        ) : null}
       </div>
 
       {/* Die vier Leitfragen */}
@@ -182,6 +174,12 @@ export function Step6ModellRessourcen({ nav }: { nav: PhaseNavigation }) {
             captureWithPolarity
           />
           <div className="space-y-1 rounded-lg border border-subtle bg-surface-2 p-3 text-xs text-muted">
+            <p>
+              So überträgst du die Antwort: Den Namen aus der Zeile „Modell“
+              schreibst du in das Feld „Modellname“, den Text aus der Zeile
+              „Ressource“ in das Feld daneben. Impuls und Frage kannst du im
+              Erkenntnisboard festhalten.
+            </p>
             <p>
               Die Vorschläge beruhen ausschließlich auf deinen Aussagen und sind
               keine Deutung. Wenn dir ein Modell unpassend erscheint, lege es

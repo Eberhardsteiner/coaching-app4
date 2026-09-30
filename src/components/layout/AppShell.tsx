@@ -46,6 +46,17 @@ const DRAWERS: DrawerDef[] = [
   { id: "help", label: "Hilfe", icon: LifeBuoy },
 ];
 
+/** Fokus nach dem Schließen: zum Auslöser in der Bühne, sonst zum Tab. */
+function focusBack(
+  returnFocus: { current: HTMLElement | null },
+  tab: HTMLButtonElement | null | undefined,
+) {
+  const target = returnFocus.current;
+  returnFocus.current = null;
+  if (target && target.isConnected) target.focus();
+  else tab?.focus();
+}
+
 /**
  * AppShell — „Bühne mit Schubladen".
  *
@@ -68,6 +79,9 @@ export function AppShell() {
     {},
   );
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  // Auslöser aus dem Bühnen-Inhalt (requestDrawer), der beim Schließen den
+  // Fokus zurückbekommt. Bei Öffnen über die Leiste bleibt er leer.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   // Auto-start the tour the first time the work view is visible (once per kv flag).
   useEffect(() => {
@@ -82,7 +96,17 @@ export function AppShell() {
 
   // K2: Öffnen-Anfragen aus dem Bühnen-Inhalt (z. B. „Erkenntnisboard
   // öffnen" in 2.5/3.7) — die Schublade bleibt lokaler AppShell-Zustand.
-  useEffect(() => onDrawerRequest((id) => setOpenId(id)), []);
+  useEffect(
+    () =>
+      onDrawerRequest((id) => {
+        returnFocusRef.current =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        setOpenId(id);
+      }),
+    [],
+  );
 
   // Esc closes the open drawer and returns focus to its tab.
   useEffect(() => {
@@ -90,7 +114,7 @@ export function AppShell() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpenId(null);
-        tabRefs.current[openId]?.focus();
+        focusBack(returnFocusRef, tabRefs.current[openId]);
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -107,11 +131,12 @@ export function AppShell() {
     : undefined;
 
   function toggle(id: DrawerId) {
+    returnFocusRef.current = null;
     setOpenId((prev) => (prev === id ? null : id));
   }
 
   function close() {
-    if (openId) tabRefs.current[openId]?.focus();
+    if (openId) focusBack(returnFocusRef, tabRefs.current[openId]);
     setOpenId(null);
   }
 
