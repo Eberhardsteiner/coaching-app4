@@ -1,8 +1,6 @@
 import { CircleHelp, FileDown, Save } from "lucide-react";
 import { Link } from "react-router";
 
-import { requestDrawer } from "@/components/layout/drawerBus";
-
 import { PhaseBar } from "@/features/phases/PhaseBar";
 import { downloadSession } from "@/features/session/exportSession";
 import { ImportButton } from "@/features/session/ImportButton";
@@ -10,10 +8,10 @@ import { useSessionStore } from "@/features/session/sessionStore";
 
 /**
  * Top bar of the AppShell: the real phase indicator (left) and action icons
- * (right). Export and Import are wired up; Hilfe opens the Hilfe drawer
- * with the help for the current step (G2).
+ * (right). Export and Import are wired up; the „?“ opens the general
+ * Bedienungshilfe (Teil 2.1 — the rail „Hilfe“ shows the help for the step).
  */
-export function TopBar() {
+export function TopBar({ onOpenHelp }: { onOpenHelp?: () => void }) {
   const session = useSessionStore((s) => s.session);
   const compact = session?.meta.branch === "coached";
 
@@ -56,12 +54,12 @@ export function TopBar() {
           <ImportButton iconOnly label="Sitzung importieren" />
         </span>
 
-        {/* G2: öffnet die Hilfe-Schublade mit der Hilfe zum Schritt. */}
+        {/* Teil 2.1: allgemeine Bedienungshilfe zur App. */}
         <button
           type="button"
-          onClick={() => requestDrawer("help")}
-          aria-label="Hilfe"
-          title="Hilfe"
+          onClick={onOpenHelp}
+          aria-label="Bedienungshilfe"
+          title="Bedienungshilfe"
           className="flex size-9 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
         >
           <CircleHelp className="size-5" />

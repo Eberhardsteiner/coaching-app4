@@ -68,7 +68,7 @@ const STEPS: TourStep[] = [
   {
     icon: LifeBuoy,
     title: "Hilfe & Sicherheit",
-    text: "In der Hilfe-Schublade findest du jederzeit Sicherheitshinweise — und kannst diesen Rundgang erneut starten.",
+    text: "In der Hilfe-Schublade findest du die Hilfe zum aktuellen Schritt und die Sicherheitshinweise. Das Fragezeichen oben öffnet die Bedienungshilfe, dort startest du diesen Rundgang erneut.",
     target: "help",
   },
 ];

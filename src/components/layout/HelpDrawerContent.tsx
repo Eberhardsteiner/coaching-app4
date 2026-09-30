@@ -1,162 +1,126 @@
-import { Map, RotateCcw } from "lucide-react";
-import { Link } from "react-router";
+import { CircleHelp } from "lucide-react";
 
 import { ContactCard } from "@/components/ContactCard";
 import { Button } from "@/components/ui/button";
+import { ContentLoadState } from "@/features/content/ContentLoadState";
+import {
+  useSchrittHilfen,
+  type SchrittHilfe,
+} from "@/features/content/schrittHilfe";
 import { getPhaseDef } from "@/features/phases/phaseConfig";
 import { SafetyNotice } from "@/features/safety/SafetyNotice";
 import { useSessionStore } from "@/features/session/sessionStore";
 
 type HelpDrawerContentProps = {
-  /** Re-open the onboarding tour. */
-  onStartTour: () => void;
+  /** Opens the general Bedienungshilfe (same as the „?“ in the top bar). */
+  onOpenBedienhilfe: () => void;
 };
 
-/** P6: technische Bedienhilfe — wie die App funktioniert (kein Methodik-Inhalt). */
-const BEDIENHILFE: { frage: string; antwort: string }[] = [
-  {
-    frage: "Wie speichere ich?",
-    antwort:
-      "Gar nicht nötig — jede Eingabe wird automatisch auf deinem Gerät gespeichert. Du kannst den Browser jederzeit schließen und später weitermachen.",
-  },
-  {
-    frage: "Wie navigiere ich?",
-    antwort:
-      "Mit „Weiter“ und „Zurück“ unten in jedem Schritt. Über die Phasenleiste oben springst du frei in bereits abgeschlossene Phasen.",
-  },
-  {
-    frage: "Was sind die Schubladen rechts?",
-    antwort:
-      "Zielsatz (dein Zielsatz, das Ressourcen-Cockpit und die Zusammenfassung), Erkenntnisboard (dein Notizbuch über alle Phasen), Modelle und diese Hilfe. Ein Klick öffnet, Esc oder ✕ schließt.",
-  },
-  {
-    frage: "Wie sichere ich meine Sitzung?",
-    antwort:
-      "Mit dem Speichern-Symbol oben rechts in der Kopfleiste exportierst du deine Sitzung als Datei. Mit dem Import-Symbol daneben liest du sie später wieder ein, zum Beispiel auf einem anderen Gerät.",
-  },
-  {
-    frage: "Wie setze ich eine Sitzung fort?",
-    antwort:
-      "Die App öffnet automatisch deine letzte Sitzung. Alle Sitzungen findest du über die Startseite unter „Sitzung fortsetzen“.",
-  },
+/** Teil 2.2: die fünf Abschnitte jedes Hilfetexts in fester Reihenfolge. */
+const ABSCHNITTE: { feld: keyof SchrittHilfe; titel: string }[] = [
+  { feld: "worum", titel: "Worum es geht" },
+  { feld: "eintragen", titel: "Was du einträgst" },
+  { feld: "beispiel", titel: "Beispiel" },
+  { feld: "fehler", titel: "Typische Fehler" },
+  { feld: "weiter", titel: "Wie es weitergeht" },
 ];
 
-/**
- * G2: Kurz-Hilfe zum aktuellen Schritt (aus phaseConfig), ganz oben in der
- * Schublade. Nach Abschluss aller Phasen ein Hinweis zum Rückblick.
- */
-function StepHelp() {
-  const progress = useSessionStore((s) => s.session?.progress);
-  if (!progress) return null;
-  if (progress.completedPhases.includes(5)) {
-    return (
-      <div className="space-y-1.5 rounded-lg border border-accent/30 bg-accent/5 p-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-faint">
-          Hilfe zu diesem Schritt
-        </p>
-        <p className="text-sm text-muted">{HILFE_ABGESCHLOSSEN}</p>
-      </div>
-    );
-  }
-  const phaseDef = getPhaseDef(progress.phase);
-  const index = Math.min(Math.max(progress.step, 0), phaseDef.steps.length - 1);
-  const step = phaseDef.steps[index];
-  return (
-    <div className="space-y-1.5 rounded-lg border border-accent/30 bg-accent/5 p-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-faint">
-        Hilfe zu diesem Schritt
-      </p>
-      <p className="text-sm font-medium text-foreground">
-        {phaseDef.title} · {step.title}
-      </p>
-      <p className="text-sm text-muted">{step.help ?? step.intro}</p>
-    </div>
-  );
-}
-
-/** G2: Hilfe, sobald alle Phasen abgeschlossen sind. */
+/** Hilfe, sobald alle Phasen abgeschlossen sind. */
 const HILFE_ABGESCHLOSSEN =
   "Du hast alle Phasen abgeschlossen. Über die Phasenleiste oben kannst du jede Phase noch einmal ansehen. Die Zusammenfassung findest du in der Schublade „Zielsatz“.";
 
 /**
- * Content of the Hilfe drawer (P6): G2 first the help for the current step,
- * then the technical how-to-use help —
- * methodische Hinweise stehen in den jeweiligen Schritten, nicht hier —
- * then the reusable SafetyNotice (kept permanently reachable), quiet links
- * to the legal pages, and a "restart tour" action.
+ * Teil 2.1/2.2: die Hilfe zum aktuellen Schritt aus
+ * public/content/hilfe-schritte.json. Fehlt ein Eintrag oder lädt die Datei
+ * nicht, steht die Kurzbeschreibung des Schritts aus phaseConfig da.
  */
-export function HelpDrawerContent({ onStartTour }: HelpDrawerContentProps) {
-  const isSelf = useSessionStore((s) => s.session?.meta.branch === "self");
+function StepHelp() {
+  const progress = useSessionStore((s) => s.session?.progress);
+  const loaded = useSchrittHilfen();
+  if (!progress) return null;
 
+  // Nach dem Abschluss steht in Phase 5 zusätzlich ein Hinweis, die Hilfe
+  // zum angezeigten Schritt bleibt in jeder Phase erreichbar.
+  const abgeschlossen =
+    progress.completedPhases.includes(5) && progress.phase === 5;
+
+  const phaseDef = getPhaseDef(progress.phase);
+  const index = Math.min(Math.max(progress.step, 0), phaseDef.steps.length - 1);
+  const step = phaseDef.steps[index];
+  const eintrag = loaded.hilfen?.[step.id];
+  // Ein Eintrag ohne jeden Text (z. B. Tippfehler im Feldnamen) zählt nicht.
+  const hilfe =
+    eintrag && ABSCHNITTE.some(({ feld }) => eintrag[feld]) ? eintrag : null;
+
+  return (
+    <section aria-label="Hilfe zu diesem Schritt" className="space-y-3">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wide text-faint">
+          Hilfe zu diesem Schritt
+        </p>
+        <p className="mt-0.5 font-medium text-foreground">
+          {step.id} {step.title}
+        </p>
+        <p className="text-xs text-faint">{phaseDef.title}</p>
+      </div>
+      {abgeschlossen ? (
+        <p className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm text-muted">
+          {HILFE_ABGESCHLOSSEN}
+        </p>
+      ) : null}
+      {loaded.status === "loading" ? (
+        <ContentLoadState
+          status="loading"
+          onRetry={loaded.retry}
+          loadingLabel="Hilfe wird geladen …"
+        />
+      ) : hilfe ? (
+        ABSCHNITTE.filter(({ feld }) => hilfe[feld]).map(({ feld, titel }) => (
+          <div key={feld} className="space-y-0.5">
+            <h3 className="text-sm font-semibold text-foreground">{titel}</h3>
+            <p className="text-sm text-muted">{hilfe[feld]}</p>
+          </div>
+        ))
+      ) : (
+        <>
+          {step.intro ? (
+            <p className="text-sm text-muted">{step.intro}</p>
+          ) : null}
+          {loaded.status === "error" ? (
+            <ContentLoadState
+              status="error"
+              error={loaded.error}
+              onRetry={loaded.retry}
+            />
+          ) : null}
+        </>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Content of the Hilfe drawer (rail „Hilfe“, Teil 2.1): the help for the
+ * current step first, then the way to the general Bedienungshilfe, the
+ * reusable SafetyNotice (kept permanently reachable) and the contact card.
+ */
+export function HelpDrawerContent({
+  onOpenBedienhilfe,
+}: HelpDrawerContentProps) {
   return (
     <div className="space-y-5">
       <StepHelp />
 
-      {/* P6: technische Bedienhilfe, eindeutig beschriftet. */}
-      <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-faint">
-          Bedienung der App
-        </p>
-        <dl className="space-y-3">
-          {BEDIENHILFE.map((eintrag) => (
-            <div key={eintrag.frage}>
-              <dt className="text-sm font-medium text-foreground">
-                {eintrag.frage}
-              </dt>
-              <dd className="mt-0.5 text-sm text-muted">{eintrag.antwort}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <Button variant="outline" size="sm" onClick={onOpenBedienhilfe}>
+        <CircleHelp />
+        Bedienungshilfe zur App
+      </Button>
 
       <div className="border-t border-subtle pt-4">
         <SafetyNotice />
       </div>
 
       <ContactCard />
-
-      <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-faint">
-          Rechtliches
-        </p>
-        <ul className="space-y-1.5 text-sm">
-          <li>
-            <Link
-              to="/rechtliches"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent underline-offset-4 hover:underline"
-            >
-              Rechtliches &amp; Sicherheit
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/datenschutz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent underline-offset-4 hover:underline"
-            >
-              Datenschutz
-            </Link>
-          </li>
-        </ul>
-      </div>
-
-      {isSelf ? (
-        <Link
-          to="/einfuehrung"
-          className="inline-flex items-center gap-2 text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <Map className="size-4" />
-          Einführung ansehen
-        </Link>
-      ) : null}
-
-      <Button variant="outline" size="sm" onClick={onStartTour}>
-        <RotateCcw />
-        Tour erneut starten
-      </Button>
     </div>
   );
 }

@@ -1,0 +1,237 @@
+{
+  "hinweis": "Hilfetexte zu den Schritten der App. Die Hilfe-Schublade rechts zeigt den Eintrag des aktuellen Schritts. Je Schritt fünf Felder: worum (worum es geht), eintragen (was du einträgst), beispiel, fehler (typische Fehler) und weiter (wie es danach weitergeht). Der titel dient nur der Orientierung, angezeigt wird der Schritttitel der App. Nach einer Änderung die App neu laden.",
+  "schritte": {
+    "0.1": {
+      "titel": "Vereinbarung",
+      "worum": "Hier klärst du, wie dein Selbstcoaching gedacht ist. Die App stellt dir die Werte und die Rollen vor und zeigt dir den groben Weg durch die Phasen. Mit einem Haken bestätigst du das kurz.",
+      "eintragen": "Zu schreiben gibt es hier nichts. Lies in Ruhe die vier Werte „Vertraulichkeit“, „Freiheit“, „Ressourcenverfügbarkeit“ und „Selbststeuerung“ und die beiden Kästen „Du steuerst und entscheidest“ und „Die App hält die Struktur“. Setz dann den Haken bei „Ich verstehe das Coachingverständnis und stimme zu“. Erst danach wird „Weiter“ aktiv.",
+      "beispiel": "Stell dir vor, du möchtest nur an deiner Rolle im Team arbeiten. Gemäß dem Wert „Freiheit“ entscheidest du das selbst, und die App gibt dir keinen Ratschlag dazu.",
+      "fehler": "Ein häufiger Fehler ist, den Haken schnell zu setzen und die Werte nur zu überfliegen, dabei tragen sie das ganze Coaching. Vielleicht erwartest du von der App auch Ratschläge. Sie stellt dir Fragen, die Entscheidungen triffst du selbst.",
+      "weiter": "Mit „Weiter“ kommst du zu Schritt 0.2 „Dein Thema“, wo du dein Anliegen kurz skizzierst."
+    },
+    "0.2": {
+      "titel": "Dein Thema",
+      "worum": "Bevor der eigentliche Coachingprozess startet, skizzierst du hier kurz dein Thema. Mit dieser Notiz kannst du später prüfen, ob alle deine Aspekte in deiner Beschreibung der Ist-Situation vorkommen.",
+      "eintragen": "Schreib ein paar Sätze in das Feld „Dein Thema“. Die Fragen im Kasten „Diese Fragen können dir helfen“, etwa „Was ist dein Thema?“ oder „Was treibt dich um?“, geben dir einen Einstieg. Wenige Fakten zu dir und deinem Anliegen genügen.",
+      "beispiel": "Eine Skizze könnte so lauten: „Ich leite seit einem Jahr ein Team in der Produktentwicklung und fühle mich seit der Umstrukturierung ständig getrieben. Ich möchte wieder mehr Ruhe in meine Führungsrolle bringen.“",
+      "fehler": "Oft wird die Skizze zu ausführlich, dabei kommt die Tiefe erst in den folgenden Phasen. Leicht rutschen auch besonders sensible Angaben hinein. Lass sie weg und nenne andere Personen nur, soweit nötig, am besten in ihrer Rolle.",
+      "weiter": "Mit „Weiter“ geht es zu Phase 1 „IST verstehen“. Nach dem Startbildschirm mit „Los geht’s“ folgt Schritt 1.1 „Gefühl benennen“."
+    },
+    "1.1": {
+      "titel": "Gefühl benennen",
+      "worum": "Hier findest du ein einziges Wort für deinen IST-Zustand. Dein Ausgangsgefühl steht danach im Mittelpunkt deiner weiteren Reflexion.",
+      "eintragen": "Dein Wort gehört ins Feld „Was ist dein Gefühl?“. Fällt dir keins ein, öffne „Nicht sicher? Wähle ein Gefühl aus der Liste“ und tippe bis zu zwei Gefühle an. Darunter wählst du bei „Wie sehr belastet dich das gerade?“ eine Zahl von 1 bis 10. Bei einem niedrigen Wert fragt die App, ob du dein Thema noch einmal anschauen möchtest.",
+      "beispiel": "„Unentschlossen“ ist ein gedanklicher Zustand. „Zerrissenheit“ dagegen ist ein Gefühl.",
+      "fehler": "Oft landet ein gedanklicher Zustand im Feld statt eines Gefühls. Manche schreiben einen ganzen Satz, obwohl ein Wort genügt. Spürst du mehrere Gefühle, fällt die Wahl leicht beliebig aus, gemeint ist das stärkste und häufigste. Manchmal fehlt der Bezug zum Thema, dabei lautet die Frage „Wie fühlst du dich in Bezug auf dein Thema?“",
+      "weiter": "Nach einer kurzen Überleitung folgt 1.2 „Zusammenhänge sammeln“. Dort bildet dein Gefühl als rosa Karte den Startpunkt deiner Ist-Analyse."
+    },
+    "1.2": {
+      "titel": "Zusammenhänge sammeln",
+      "worum": "Hier schreibst du einmal alles herunter, wer oder was mit deinem Gefühl zusammenhängt. So entsteht ein möglichst klares Bild deiner Ist-Situation.",
+      "eintragen": "Geh die farbig markierten Leitfragen der Reihe nach durch. Für jede Person und jede Sache legst du mit „Zusammenhang“ eine eigene Karte an. Über „Konkretisierung“ und „Beitrag“ ergänzt du, was du genau damit meinst und wie es zu deinem Gefühl beiträgt. „Schritt für Schritt“ erklärt dir die Fragen einzeln.",
+      "beispiel": "Nimm an, dein Gefühl wäre „Genervt“. Ein Zusammenhang ist „Familie“, konkret gemeint sind „Ehemann, Schwiegervater“. Der Ehemann macht keine Hausarbeit, und der Schwiegervater gibt unerwünschte Ratschläge.",
+      "fehler": "Ein typischer Fehler sind Lösungen auf den Karten. Fällt dir eine ein, frag dich, wie es aktuell ist. Oft landen mehrere Zusammenhänge auf einer Karte, dabei bekommt jeder eine eigene. Manchmal fehlen Konkretisierung und Beitrag, oder die Sammlung endet, bevor dir wirklich nichts mehr einfällt.",
+      "weiter": "Danach folgt 1.3 „Perspektive wechseln“, wo du deinen Blick mit einem Modell weitest."
+    },
+    "1.3": {
+      "titel": "Perspektive wechseln",
+      "worum": "Bisher hast du aus deiner eigenen Perspektive gesammelt. Jetzt prüfst du aus der „Vogelperspektive“ eines Modells, ob weitere Aspekte zu deinem Gefühl beitragen.",
+      "eintragen": "Entscheide dich unter „Wähle dein Modell“ für eines der vier Modelle. Passt ein Begriff aus „Begriffe durchgehen“ zu deiner Situation, legt „Übernehmen“ ihn als Zusammenhang-Karte auf dein Karten-Feld. Ergänze dann wie in 1.2 eine „Konkretisierung“ und einen „Beitrag“. Du kannst auch ohne Modell weitergehen.",
+      "beispiel": "Beim 3K-Modell fragst du dich etwa „Was haben Abhängigkeiten mit deinem IST-Zustand zu tun?“",
+      "fehler": "Oft werden mehrere Modelle nacheinander durchgegangen, die App sieht nur eins vor. Langes Grübeln über die Wahl ist unnötig, du kannst nichts falsch machen. Manchmal fehlt zu einem übernommenen Begriff, was du damit meinst und wie er beiträgt. Beim 3K-Modell werden die vier Kategorien aus „Achtung Besonderheit“ leicht übergangen, dabei sind sie in jedem Konflikt relevant.",
+      "weiter": "Weiter geht es mit 1.4 „Clustern & gewichten“, wo du dein Kernthema bestimmst."
+    },
+    "1.4": {
+      "titel": "Clustern & gewichten",
+      "worum": "Jetzt gibst du deinem Thema eine bearbeitbare Struktur. Du bündelst verwandte Karten zu Clustern und gewichtest sie, bis dein Kernthema feststeht.",
+      "eintragen": "Prüfe zuerst, ob jede Karte die Ist-Situation beschreibt. Leg dann mit „Cluster hinzufügen“ bis zu fünf Cluster mit Überschrift an und ordne ihnen deine Karten zu, per Ziehen oder über die Auswahl an der Karte. Auf der Schmerzskala bekommt das Cluster die 10, das am meisten zu deinem Gefühl beiträgt. Die anderen erhalten Werte von 1 bis 9, jeden nur einmal.",
+      "beispiel": "Gute Überschriften für Cluster sind etwa „Team“, „Chefin“, „Ich“ oder „Prozesse“.",
+      "fehler": "Oft stecken im Ist noch Lösungen oder Maßnahmen, ersetze sie durch den aktuellen Zustand. Mischst du zu Verschiedenes in ein Cluster, wird der Handlungsplan später schwer. Manchmal verbirgt sich auch in einer Überschrift eine Lösung. Bei der Bewertung rutscht leicht die Frage hinein, was du zuerst lösen musst, dabei zählt allein der Beitrag zu deinem Gefühl.",
+      "weiter": "Danach folgt 1.5 „Abschluss & Check“, mit dem du Phase 1 abrundest."
+    },
+    "1.5": {
+      "titel": "Abschluss & Check",
+      "worum": "Du hast deine Situation sortiert und gewichtet. Hier hältst du kurz fest, was du aus Phase 1 mitnimmst, bevor es zur Zielphase geht.",
+      "eintragen": "Über den vier Feldern steht dein Kernthema aus 1.4. Beantworte in „Ergebnis“, „Prozess“, „Erkenntnis“ und „Transfer“ jeweils die Frage unter der Überschrift, kurze Sätze genügen. Alle Felder sind freiwillig, „Phase abschließen“ beendet Phase 1.",
+      "beispiel": "Unter „Erkenntnis“ könnte etwa stehen „Am meisten drückt der Schuh im Cluster Team, auch wenn ich dort wenig ändern kann“.",
+      "fehler": "Manchmal rutschen Klarnamen in die Felder, schreib stattdessen etwa „meine Kollegin“. Auch Lösungen schleichen sich leicht ein, Maßnahmen entwickelst du erst im Handlungsplan in Phase 4. Im Feld „Prozess“ landet oft noch einmal das Ergebnis, gemeint ist, wie es dir beim Bearbeiten ergangen ist. Fehlt oben „Dein Kernthema“, hast du in 1.4 noch kein Cluster bewertet.",
+      "weiter": "„Phase abschließen“ führt dich zu Phase 2 „Ziel finden“. Nach dem Startbildschirm mit „Los geht’s“ wartet dort 2.1 „Was strebe ich an?“ auf dich."
+    },
+    "2.1": {
+      "titel": "Was strebe ich an?",
+      "worum": "Stell dir vor, es geht dir mit deinem Thema aus Phase 1 richtig gut. Du beschreibst diesen neuen Zustand und lässt die Frage nach dem Wie beiseite. Am Anfang steht das Gefühl, das sich dann einstellt.",
+      "eintragen": "Nach der Übung „Neue Perspektive einnehmen“ assoziierst du frei im Feld „Dein Brainstorming“. Darunter schreibst du die Gefühlswörter aus deinem Text heraus. Bei „Welches Gefühl ist es genau?“ benennst du dann dein Gefühl als Substantiv. Spürst du mehrere, nimm das stärkste, zwei sind auch ok. Fehlt dir das Wort, hilft die Liste unter „Dir fällt nichts ein?“.",
+      "beispiel": "Aus deinem Brainstorming schreibst du etwa „entspannt, erleichtert“ heraus. Als Gefühl benennst du dann „Gelassenheit“ statt „gelassen“.",
+      "fehler": "Oft beschreibt das Brainstorming schon den Weg zum Ziel. Bleib beim neuen Zustand. Ein zweiter Fehler ist das Gefühl als Adjektiv, etwa „gelassen“. In deinen Zielsatz gehört das Substantiv.",
+      "weiter": "Danach geht es zu Schritt 2.2 „Mein Zielsatz“. Dort steht dein Gefühl schon als Baustein bereit."
+    },
+    "2.2": {
+      "titel": "Mein Zielsatz",
+      "worum": "Hier legst du dir einen Satz zurecht, der dir wie eine Art Mantra dient. Er beschreibt im Futur II, wonach du strebst.",
+      "eintragen": "Füll die Bausteine „Satzanfang“, „Datum“, „werde ich als“, „Gefühl“ und „in Bezug auf“ aus, die Rolle ist optional. Im Feld „Dein Zielsatz“ kannst du den fertigen Satz frei ändern. Lies ihn dir laut vor und spüre, ob er in dir ein gutes Gefühl auslöst. Beim ersten „Weiter“ fragt die App, ob sich dein Ziel auf dein am höchsten bewertetes Cluster bezieht.",
+      "beispiel": "„Ab dem 01.06.2027 werde ich als Teamleiterin Gelassenheit in Bezug auf die Zusammenarbeit in meinem Team erreicht haben.“",
+      "fehler": "Beim freien Umformulieren geht leicht das Futur II verloren, dann endet der Satz nicht mehr mit „erreicht haben“. Oft verfehlt auch der Bezug dein Kernthema. Sagst du bei der Rückfrage „Nein“, prüf noch einmal, ob dieses Cluster wirklich dein Hauptproblem ist.",
+      "weiter": "Weiter geht es mit Schritt 2.3 „Zielprüfung“. Dort prüfst du deinen Satz an sechs Qualitätskriterien."
+    },
+    "2.3": {
+      "titel": "Zielprüfung",
+      "worum": "Damit dein Zielsatz für dich gut funktioniert, prüfst du ihn an sechs Kriterien. Der 10/10-Check zeigt, ob dein Ziel dich wirklich zieht und ob du es selbst erreichen kannst.",
+      "eintragen": "Bewerte „Emotional attraktiv“ und „Selbst erreichbar“ auf der Skala von 1 bis 10. Unter 10 bekommst du eine Frage zum Nachschärfen, bei „Selbst erreichbar“ dazu den Knopf „Ziel anpassen“. „Bezug zum Kernthema“, „Terminiert“, „Adressat“ und „Futur II“ hakst du mit „erfüllt“ ab. „Worauf achten?“ erklärt jedes Kriterium. Die App empfiehlt, erst weiterzugehen, wenn beide Skalen auf 10 stehen.",
+      "beispiel": "Bei „Zufriedenheit mit meiner erfolgreichen Bewerbung auf einen neuen Arbeitsplatz“ entscheiden andere, ob du eingestellt wirst. Dieses Ziel ist nicht selbst erreichbar.",
+      "fehler": "Beim Nachschärfen wird oft der ganze Satz umgebaut. Such lieber andere Worte und lass seine Struktur stehen. Viele geben sich beim Termin zu wenig Zeit oder zu viel.",
+      "weiter": "Danach folgt Schritt 2.4 „Folgen meines Ziels“, in dem du dich mit den Augen deiner Cluster betrachtest."
+    },
+    "2.4": {
+      "titel": "Folgen meines Ziels",
+      "worum": "Du klärst hier, woher du Rückenwind und woher du Gegenwind erwarten kannst. So prüfst du, ob du zu deinem Ziel stehen kannst, und berücksichtigst die Einstellungen deines Umfelds später bei deinen Maßnahmen.",
+      "eintragen": "Geh nacheinander durch alle deine Cluster, dein Kernthema steht vorn. Beschreib je Cluster in der dritten Person die konkrete Handlung, an der es erkennt, dass du dein Ziel erreicht hast. Bewerte dann mit den Knöpfen darunter, wie das Cluster dein neues Verhalten findet. Passt dein Ziel danach nicht mehr, änderst du es über „Ziel anpassen“.",
+      "beispiel": "„Peter geht nach 8 Stunden Arbeitszeit nach Hause.“ Das ist beobachtbares Verhalten in der dritten Person.",
+      "fehler": "Viele schreiben aus der Ich-Perspektive. Häufig schleicht sich eine Verneinung ein, die kein Verhalten beschreibt. Manche nennen ein Gefühl, wo eine sichtbare Handlung gefragt ist. Oft rutscht auch deine eigene Sicht hinein, dabei zählt der Blick deiner Cluster.",
+      "weiter": "Danach kommt Schritt 2.5 „Abschluss & Check“ mit deinem Rückblick auf Phase 2."
+    },
+    "2.5": {
+      "titel": "Abschluss & Check",
+      "worum": "Du hast die Koordinaten für deine Veränderungsreise bestimmt und weißt, wo du stehst und wo du hin möchtest. Jetzt hältst du kurz fest, was du aus dieser Phase mitnimmst.",
+      "eintragen": "Vergegenwärtige dir noch einmal die Schritte, die dich bis hierher geführt haben. Erkenntnisse notierst du auf deinem Erkenntnisboard, das du mit „Erkenntnisboard öffnen“ aufrufst. Unter deinem Zielsatz folgen die vier Felder „Ergebnis“, „Prozess“, „Erkenntnis“ und „Transfer“, jedes mit einer Leitfrage. Ob du sie ausfüllst, entscheidest du selbst.",
+      "beispiel": "Im Feld „Ergebnis“ könntest du schreiben „Mein Zielsatz steht, und bei der Zielprüfung habe ich beide Skalen auf 10 gebracht.“",
+      "fehler": "Ein häufiger Fehler ist, sofort auf „Phase abschließen“ zu tippen, ohne auf deinen Weg zurückzuschauen. Der zweite betrifft Einsichten, die nur im Kopf bleiben. Notiere sie auf dem Erkenntnisboard, denn in Schritt 5.2 „Erkenntnisse“ übernimmst du sie von dort.",
+      "weiter": "Mit „Phase abschließen“ geht es zu Phase 3 „Ressourcen erkennen“. Nach dem Startbildschirm öffnet 3.1 „Orientierung: Ressourcen & Cockpit“ die Suche nach den Ressourcen, die du auf dem Weg zu deinem Ziel brauchst."
+    },
+    "3.1": {
+      "titel": "Orientierung: Ressourcen & Cockpit",
+      "worum": "In Phase 3 sammelst du, was du schon mitbringst. Zuallererst sind das deine inneren Ressourcen wie Fähigkeiten, Kompetenzen, Motive und Werte. Das Kompetenzmodell ist deine Landkarte von innen nach außen.",
+      "eintragen": "Hier trägst du nichts ein. Halte deinen Zielsatz bereit, die App zeigt ihn oben als Bewertungsmaßstab. Tippe in der Grafik ein Element an, darunter erscheint seine Beschreibung. „Alle Elemente als Liste“ zeigt alle auf einmal. „Cockpit ansehen“ öffnet dein Ressourcen-Cockpit, das du jederzeit auch oben über „Ressourcen-Cockpit“ erreichst.",
+      "beispiel": "Tippst du auf den Kern „SOMA“, erscheint „unser Körper als Träger unserer Fähigkeiten“. Tippst du den Kreis „Motive“ darüber an, liest du „Innerer emotionaler Antrieb“.",
+      "fehler": "Oft liegt der Zielsatz nicht bereit, dabei misst du alles an ihm. Manche suchen Ressourcen zuerst im Außen, hier beginnst du innen. Leicht wird das Kompetenzmodell übersprungen, sieh es dir einmal an. Andere wollen das Cockpit schon jetzt füllen, das geschieht erst in den nächsten Schritten.",
+      "weiter": "Mit „Weiter“ geht es zu 3.2 „Meine Intelligenzen“, wo du innen im Modell mit deinen Begabungen beginnst."
+    },
+    "3.2": {
+      "titel": "Meine Intelligenzen",
+      "worum": "Du beginnst mit deinen Begabungen, den Intelligenzarten. Sie bestimmen, welche Aufgaben dir leichtfallen und welche eher schwer. Hier prüfst du, welche dich kennzeichnen und ob sie dir Richtung Ziel helfen.",
+      "eintragen": "Klapp die „Beschreibung“ einer Intelligenz auf und tippe „Übernehmen“, wenn sie auf dich zutrifft. Fehlt dir etwas, nutzt du „Eigene Ergänzung“. Bewerte deine Einträge mit den Schaltern „hilfreich“ oder „hinderlich“, beide zugleich sind möglich. Im Feld „Warum hilfreich, warum hinderlich?“ notierst du kurz den Grund.",
+      "beispiel": "Bei „Räumliche Intelligenz“ steht „Räumliche Zusammenhänge erkennen und gedanklich umformen“. Erkennst du dich darin, übernimmst du sie und prüfst sie an deinem Ziel.",
+      "fehler": "Manche übernehmen alles, was irgendwie passt, dabei darfst du Intelligenzen ohne Zielbezug weglassen. Andere wählen Begabungen, die sie gern hätten, und übersehen, womit sie sich leicht tun. Oft wird allgemein bewertet, obwohl die Wertung nur für dein Ziel gilt. Und manchmal bleibt ein Schalter leer, obwohl beides zutrifft.",
+      "weiter": "Weiter geht es mit 3.3 „Motive & Persönlichkeitseigenschaften“, wo du nach demselben Muster vorgehst."
+    },
+    "3.3": {
+      "titel": "Motive & Persönlichkeitseigenschaften",
+      "worum": "Hier geht es um das, was dich antreibt und ausmacht. Du identifizierst deine stärksten Motive und Persönlichkeitseigenschaften und bewertest sie an deinem Ziel.",
+      "eintragen": "Hast du den Motivtest EPP gemacht, nimm deine Ergebnisse zur Hand und achte auf hohe Werte. Zur ersten Orientierung helfen dir die kurzen Beschreibungen. Übernimm in der „Liste mit Motiven“ und der „Liste mit Persönlichkeitseigenschaften“, was dich am stärksten kennzeichnet. Was in den Listen fehlt, trägst du unter „Eigenes Motiv“ oder „Eigene Eigenschaft“ ein. Bewertet wird wie in 3.2.",
+      "beispiel": "„Hast du z. B. wenige Punkte bei ‚Status‘ und musst mit sehr statusorientierten Menschen arbeiten, kann der niedrige Wert hinderlich sein.“ Dann übernimmst du „Status“ und markierst es als „hinderlich“.",
+      "fehler": "Leicht übersiehst du sehr schwache Motive, obwohl auch sie wirken können. Oft bleiben Motive ohne Zielbezug stehen, die du weglassen darfst. Manche bewerten allgemein, dabei kann „Dominanz“ hier helfen und in einem anderen Kontext im Weg stehen. Trifft beides zu, setz ruhig beide Markierungen.",
+      "weiter": "Danach folgt 3.4 „Meine Werte“ mit drei Spalten."
+    },
+    "3.4": {
+      "titel": "Meine Werte",
+      "worum": "Deine Werte steuern gemeinsam mit deinen Motiven deine Entscheidungen und dein Verhalten, deshalb sind sie wichtige Ressourcen. Hier findest du heraus, welche Werte dir am meisten bedeuten, und prüfst sie an deinem Ziel.",
+      "eintragen": "Schreib unter jede Spaltenfrage deine Werte und tippe auf das Plus, höchstens fünf je Spalte. Werte aus „Werteliste ansehen“ landen zunächst unter „als Mensch“. Über „Wichtig als“ ordnest du sie weiteren Spalten zu. Bewerte jeden Wert mit „zielförderlich“ oder „zielhinderlich“, beides ist möglich. Werte für dein Ziel sind als zielförderlich vorbelegt.",
+      "beispiel": "Für die Spalte „Was ist mir wichtig in meiner Funktion?“ nennt die App „Compliance oder Kennzahlen als Führungskraft“.",
+      "fehler": "Viele zwingen sich zu fünf Werten je Spalte, dabei gilt „weniger ist ok!“. Manche legen einen Wert doppelt an, ein Eintrag mit „Wichtig als“ reicht. In der Ziel-Spalte landet leicht ein bremsender Wert, obwohl diese Werte alle förderlich sein müssen. Oft stehen auch Werte da, die sich in deinem Verhalten nicht zeigen.",
+      "weiter": "Weiter geht es mit 3.5 „Werte der Anderen“, dem Blick auf deine Mitspieler."
+    },
+    "3.5": {
+      "titel": "Werte der Anderen",
+      "worum": "Jetzt wechselst du die Perspektive. Deine systemischen Mitspieler orientieren sich an ihren eigenen Werten. Je nachdem, wie gut diese zu deinen passen, laufen die Dinge besser oder eben nicht.",
+      "eintragen": "Wähle oben ein Cluster und leg mit „+ Person“ an, wer darin vorkommt. Trag je Person bis zu drei Werte ein, die „Werteliste als Anregung“ hilft dabei. Passt ein Cluster nicht, etwa ein Ich-Cluster, tippst du „Überspringen“. Zum Schluss notierst du unter „Deine Erkenntnisse aus dem Abgleich“, was dir auffällt.",
+      "beispiel": "Steckt im Cluster „Arbeit“ deine Chefin, gehst du in ihre Perspektive. Ist das Cluster ganz abstrakt wie „Prozesse“, frag dich, was diesem Cluster wichtig ist.",
+      "fehler": "Manche tragen Klarnamen ein, schreib besser „meine Chefin“. Oft werden Werte vermutet, ohne dass du sie im Alltag wahrnimmst, halte dich an Verhalten und Entscheidungen. Abstrakte Cluster werden leicht übersprungen, obwohl sie sich genauso befragen lassen. Bei einem Ich-Cluster wiederholst du schnell deine Werte aus 3.4.",
+      "weiter": "Mit „Weiter“ kommst du zu 3.6 „Ressourcen aus Modellen“ und damit in die Vogelperspektive."
+    },
+    "3.6": {
+      "titel": "Ressourcen aus Modellen",
+      "worum": "Hier betrachtest du dein Thema und dein Ziel aus der Vogelperspektive, also aus wissenschaftlicher Sicht. Ein Blick durch die Brille eines Modells kann dir neue Erkenntnisse bis hin zu Impulsen für neues Verhalten liefern.",
+      "eintragen": "Im Selbstcoaching tippst du „Prompt kopieren“ an und fügst den Text in ein KI-Tool deiner Wahl ein. Die KI darf nur die hinterlegten Modelle verwenden und wählt höchstens fünf aus. Die Schaltfläche „Modelle anzeigen“ öffnet die Schublade „Modelle“, für deinen Prompt gilt dort die Gruppe mit dem Zeichen „im Prompt“. Prüfe jeden Vorschlag mit den vier Leitfragen. Was passt, überträgst du in eine neue Zeile, die du über „Erkenntnis / Ressource“ anlegst. Der Name aus der Zeile „Modell“ kommt in das Feld „Modellname“, der Text aus der Zeile „Ressource“ in das Feld daneben. Mit „förderlich“ und „hinderlich“ bewertest du den Eintrag, in der Notiz hältst du kurz fest, warum. Begleitet dich ein Coach, gibt es hier keinen Prompt. Ihr wählt die Modelle gemeinsam aus, und du hältst Modellname und Erkenntnis direkt in der Liste fest.",
+      "beispiel": "Im Feld „Modellname“ steht etwa „Einflusskreis nach Stephen Covey“, daneben „Ich konzentriere mich auf das, was ich in den Teamrunden selbst steuern kann“, bewertet als „förderlich“. Impuls und Frage aus der Antwort hältst du im Erkenntnisboard fest.",
+      "fehler": "Oft landen auch unpassende Vorschläge in der Liste. Leg sie beiseite, und passt keines, kopierst du den Prompt erneut und bittest um eine neue Auswahl. Nennt die KI ein Modell, das nicht in der hinterlegten Liste steht, lässt du es weg.",
+      "weiter": "Als Nächstes führt dich 3.7 „Biografie & Umfeld“ zu deinen Erfahrungen und zu äußeren Ressourcen."
+    },
+    "3.7": {
+      "titel": "Biografie & Umfeld",
+      "worum": "Hier sammelst du Situationen, die du schon gemeistert hast, und äußere Ressourcen. Die Frage, wer oder was dir damals geholfen hat, führt dich zu Ressourcen, auf die du zurückgreifen kannst.",
+      "eintragen": "Schreib in „In meinem Inneren?“ und „Von außen?“, was dich damals unterstützt hat, und tippe „Hinzufügen“ an. Deine Schlussfolgerung gehört in das Feld „Was leite ich daraus ab?“. Unter „Äußere Ressourcen“ sammelst du, was dein Umfeld bietet, etwa Unternehmensunterlagen oder Menschen mit hilfreichen Fähigkeiten. Bis auf die Schlussfolgerung bewertest du jeden Eintrag mit den Schaltern „förderlich“ und „hinderlich“ und notierst kurz, warum.",
+      "beispiel": "Unter „Von außen?“ steht etwa „der Rückhalt einer Kollegin damals“, unter „Was leite ich daraus ab?“ dann „Ich bewältige so etwas, wenn ich früh um Rat frage“.",
+      "fehler": "Viele warten auf eine Situation, die ihrer heutigen genau gleicht, dabei genügen Ähnlichkeiten. Oft endet es beim Sammeln, und das Feld „Was leite ich daraus ab?“ bleibt leer, obwohl gerade dort deine Erkenntnis entsteht.",
+      "weiter": "Danach kommt 3.8 „Körpersignale“ mit deinen bekannten Signalgebern."
+    },
+    "3.8": {
+      "titel": "Körpersignale",
+      "worum": "Dein Körper ist der erste Signalgeber für dein Wohlbefinden und zeigt dir an, wenn etwas nicht stimmt. Hier hältst du fest, welche Stellen oder Bereiche du bei dir schon kennst. Es geht um deine Wahrnehmung.",
+      "eintragen": "Tippe unter „Anregungen“ an, was du als Signalgeber kennst, der Begriff wandert in deine Liste. Über „Körpersignal“ legst du eine eigene Zeile an und beschreibst dein Signal in deinen Worten. Eine Bewertung gibt es hier nicht. Deine Signale stehen dir in Phase 4 und 5 wieder zur Verfügung.",
+      "beispiel": "Du tippst „Nacken“ an oder schreibst in eine eigene Zeile „Druck im Nacken, wenn es eng wird“.",
+      "fehler": "Manche schreiben Symptome auf. Frag dich lieber, wo sich dein Körper bei dir zuerst meldet. Oft werden viele Anregungen angetippt, ohne dass sie als Signal vertraut sind. Halte dich an deine bekannten Signalgeber.",
+      "weiter": "Im nächsten Schritt, 3.9 „Bisheriges Muster“, suchst du die Ressourcenkombination, die dich in deine jetzige Lage hineinführt."
+    },
+    "3.9": {
+      "titel": "Bisheriges Muster — Don’t!",
+      "worum": "Hier erkennst du, was du selbst zu deiner derzeitigen Lage beigetragen hast. Eine bestimmte, wiederkehrende Auswahl deiner Ressourcen führt dich dort hinein. Kennst du dieses Muster, kannst du dein Verhalten künftig aus einer anderen Kombination speisen.",
+      "eintragen": "Zu Beginn öffnet sich deine Ist-Situation, das Fenster schließt du selbst. Wähle dann „Einstieg über die Ressourcen“ oder „Einstieg über das Verhalten“, danach richtet sich die Reihenfolge der Felder. Über „Muster“ legst du eine Kette an und füllst sie Feld für Feld. Tippst du darunter eine hinderliche Ressource an, wandert sie ins Ressourcen-Feld deines letzten Musters.",
+      "beispiel": "Im Ressourcen-Feld steht „Gewissenhaftigkeit + Vorsicht“, im Feld „Gezeigtes Verhalten“ folgt „alles selbst kontrollieren“.",
+      "fehler": "Manche füllen nur einen Teil der Kette aus, dabei zählt der Blick auf alle Bereiche. Oft gelten die Ressourcen im Giftschrank danach als schlecht. Sie führen dich nur in dieser Kombination und in diesem Kontext in die gleiche unerwünschte Situation.",
+      "weiter": "Zum Schluss der Phase folgt 3.10 „Abschluss & Check“ mit deinem Ressourcen-Cockpit im Überblick."
+    },
+    "3.10": {
+      "titel": "Abschluss & Check",
+      "worum": "Du bist am Ende deiner Ressourcenerkundung angelangt. Hier verschaffst du dir einen Überblick über dein Ressourcen-Cockpit, bevor du in Phase 4 Maßnahmen entwickelst. Deine Ressourcen sind die Bausteine, aus denen du deine Maßnahmen baust.",
+      "eintragen": "Die Zähler zeigen deine Bewertungen, „offen“ zählt die Einträge ohne Bewertung. Darunter liegt dein Cockpit in kompakter Form. Halte dann in den Feldern „Ergebnis“, „Prozess“, „Erkenntnis“ und „Transfer“ fest, was du aus Phase 3 mitnimmst. Keines der Felder ist Pflicht.",
+      "beispiel": "Im Feld „Erkenntnis“ könnte stehen „Meine Gewissenhaftigkeit hilft mir, gepaart mit Vorsicht hält sie mich im alten Muster“.",
+      "fehler": "Oft wird das Cockpit nur überflogen, obwohl du in Phase 4 daraus schöpfst. Manche übersehen die Zahl bei „offen“. Dabei erscheinen in 4.1 unter „Eingesetzte Ressourcen“ neben deinen Körpersignalen nur Ressourcen, die du als förderlich markiert hast. Mit „Zurück“ gelangst du in den jeweiligen Schritt und bewertest dort nach.",
+      "weiter": "„Phase abschließen“ führt dich zu Phase 4 „Handlungsplan“. Nach dem Startbildschirm mit „Los geht’s“ beginnst du mit 4.1 „Maßnahmen je Cluster“."
+    },
+    "4.1": {
+      "titel": "Maßnahmen je Cluster",
+      "worum": "Hier machst du aus deinen förderlichen Ressourcen konkrete Ich-Sätze, Cluster für Cluster. Orientiere dich dabei an deinem Wirkindikator aus Phase 2, also dem neuen Verhalten, das dein erreichtes Ziel anzeigt.",
+      "eintragen": "Wähle ein Cluster. Das hellblaue Kästchen „Woran du erkennst, dass dein Ziel erreicht ist“ zeigt deine Zielfolge aus 2.4. Tippe unter „Eingesetzte Ressourcen“ an, was passt. Leg unter „Deine Maßnahmen“ mit „+ Maßnahme“ einen Ich-Satz an und beantworte „Hast du deine Ressourcen eingesetzt?“ mit „ja“ oder „nein“. Empfohlen sind bis zu drei Maßnahmen je Cluster.",
+      "beispiel": "Ein gelungener Ich-Satz lautet „Ich begrüße täglich meine Kollegen freundlich und frage sie, wie ich sie unterstützen kann“.",
+      "fehler": "Häufig beschreibt eine Maßnahme ein Gefühl, etwa „Ich bin fröhlich, wenn ich in die Arbeit gehe“. Beschreib lieber ein konkretes, wahrnehmbares Verhalten. Auch Verneinungen kommen oft vor, dann hilft die Frage „Was tue ich stattdessen?“",
+      "weiter": "Mit „Weiter“ gelangst du zu 4.2 „Qualitätsprüfung“, wo deine Maßnahmen auf den Prüfstand kommen."
+    },
+    "4.2": {
+      "titel": "Qualitätsprüfung",
+      "worum": "Hier prüfst du je Cluster, ob deine Maßnahmen die vier Kriterien für Wirksamkeit erfüllen. So findest du die Stellen, an denen du noch ansetzen kannst.",
+      "eintragen": "Deine Maßnahmen stehen oben im Cluster und lassen sich direkt nachschärfen. Darunter beantwortest du die Frage „Treffen die Kriterien auf die Maßnahmen dieses Clusters zu?“ für „Zahlt in mein Ziel ein“, „Beruht auf meinen gewählten Ressourcen“, „Ganzer Ich-Satz“ und „Neu“ mit „ja“ oder „nein“. Ein „nein“ ist erlaubt und zeigt dir, wo du nacharbeiten kannst.",
+      "beispiel": "Unter „Beispiel ansehen“ steht ein Fall, in dem dir Führungswissen fehlt. Daraus wird die Maßnahme „Ich bewerbe mich in der Personalabteilung um Teilnahme an einem Führungstraining ab dem nächsten Quartal“.",
+      "fehler": "Leicht übersiehst du Ressourcen, die dir fehlen, aber erforderlich sind. Der Hinweis „Fehlende Ressourcen?“ erinnert dich, auch sie in Maßnahmen zu übersetzen. Manche verneinen „Neu“ vorschnell. Es genügt, wenn eine Maßnahme qualitativ oder quantitativ neu ist.",
+      "weiter": "Weiter geht es mit 4.3 „Maßnahmenplan“. Dort ergänzt du zu jeder Maßnahme einen Termin und einen Plan B."
+    },
+    "4.3": {
+      "titel": "Maßnahmenplan",
+      "worum": "In diesem Schritt siehst du deine Maßnahmen der besseren Übersicht halber als Tabelle. Du planst, bis wann du sie umsetzt, und legst dir für Hindernisse einen Plan B zurecht.",
+      "eintragen": "„Handlungsfeld“ und „Maßnahme“ übernimmt die App aus den vorigen Schritten. Unter „Bis wann“ trägst du deinen Termin ein. Fällt dir etwas ein, das dazwischenkommen kann, notiere es unter „Mögliche Hindernisse“ und schreib deinen Plan B daneben in „Ressourcen & Alternativen“.",
+      "beispiel": "Unter „Bis wann“ darfst du frei formulieren, etwa „Q4 2026“. Das hilft bei Maßnahmen, die sich nicht auf einen Tag festlegen lassen.",
+      "fehler": "Oft steht ein Hindernis in der Tabelle, während die Spalte „Ressourcen & Alternativen“ daneben leer bleibt. Überleg dir am besten gleich einen Plan B dazu. Manchmal geht er an deinen Ressourcen vorbei. Bau ihn ressourcenbasiert, dein Ressourcen-Cockpit findest du dafür in der Schublade „Zielsatz“.",
+      "weiter": "Danach folgt 4.4 „Abschluss & Check“ mit deinem Handlungsplan im Überblick."
+    },
+    "4.4": {
+      "titel": "Abschluss & Check",
+      "worum": "Mit diesem Schritt schließt du Phase 4 ab. Du siehst deinen Handlungsplan auf einen Blick und hältst kurz fest, was du aus dieser Phase mitnimmst.",
+      "eintragen": "Im Kasten „Dein Handlungsplan“ stehen deine Maßnahmen je Cluster, mit Termin, sofern du einen eingetragen hast. Darunter beantwortest du in den Feldern „Ergebnis“, „Prozess“, „Erkenntnis“ und „Transfer“ jeweils die Frage, die dort steht. Ein paar Worte je Feld genügen. Zum Schluss tippst du auf „Phase abschließen“.",
+      "beispiel": "Im Feld „Transfer“ könnte stehen „Ich formuliere meine Vorhaben künftig als ganze Ich-Sätze mit konkreter Handlung“.",
+      "fehler": "Im Feld „Prozess“ wiederholen viele ihre Maßnahmen, gefragt ist dort „Wie ist es dir beim Bearbeiten ergangen?“ Ein zweiter Irrtum ist der Eindruck, mit dem Plan sei schon alles getan. In der äußeren Welt hast du noch nichts verändert. Phase 5 hilft dir, deinen Plan wirklich werden zu lassen.",
+      "weiter": "Mit „Phase abschließen“ geht es in Phase 5 „Nachhaltigkeit“. Nach dem Startbildschirm beginnst du dort mit 5.1 „Dranbleiben“."
+    },
+    "5.1": {
+      "titel": "Dranbleiben",
+      "worum": "Dein Plan steht, jetzt geht es ums Dranbleiben. Du überlegst, wer oder was dich beim Umsetzen unterstützt, und legst pro Ressource eine konkrete Strategie fest.",
+      "eintragen": "Tippe unter den Anregungen an, was zu dir passt, dann entsteht eine neue Zeile mit dieser Strategie. Über „+ Strategie“ legst du eine eigene Zeile an. Unter „Eingesetzte Ressource“ schlägt dir das Feld beim Schreiben Ressourcen vor, die du als förderlich markiert oder in Phase 4 eingesetzt hast. Trag unter „Konkrete Strategien“ ein, wie du sie nutzt und woran du prüfst, ob es wirkt.",
+      "beispiel": "Du tippst „Eine Eintragung deiner Maßnahmen in deinen Kalender“ an und trägst in der neuen Zeile als Ressource etwa „Freiheit“ ein.",
+      "fehler": "Oft fehlt in einer Zeile die Ressource, dann hängt die Strategie in der Luft. Manche Strategie bleibt so allgemein, dass sich ihre Wirkung nicht überprüfen lässt.",
+      "weiter": "Danach geht es weiter mit 5.2 „Erkenntnisse“, deinem Blick auf den ganzen Prozess."
+    },
+    "5.2": {
+      "titel": "Erkenntnisse",
+      "worum": "Hier sammelst du die wichtigsten Erkenntnisse aus allen Phasen, auch aus deinem Erkenntnisboard. Die App erinnert dich daran, dass dieser Prozess erlernbar und wiederholbar ist.",
+      "eintragen": "Schreib in das Feld „Deine Erkenntnisse“, was sich verändert hat und was du dir merken möchtest. Hast du im Erkenntnisboard Notizen gesammelt, zeigt die App sie hier in der Karte „Dein Erkenntnisboard“. Mit „In die Erkenntnisse übernehmen“ hängst du diesen Text an dein Feld an und kannst ihn dort weiter bearbeiten. Dein Erkenntnisboard bleibt dabei erhalten.",
+      "beispiel": "Ein Eintrag könnte so lauten: „Ich weiß jetzt, welche Ressourcen mir helfen, und kann den Weg von der Ist-Situation zum Ziel jederzeit wieder selbst gehen.“",
+      "fehler": "Oft fällt der Blick nur auf die letzte Phase. Geh in Gedanken den ganzen Weg zurück, von der Ist-Situation über Ziel und Ressourcen bis zum Handlungsplan. Klarnamen lässt du besser weg und nennst Personen in ihrer Rolle.",
+      "weiter": "Danach folgt 5.3 „Abschluss & Check“, der letzte Schritt deiner Sitzung."
+    },
+    "5.3": {
+      "titel": "Abschluss & Check",
+      "worum": "Mit diesem Schritt endet dein Coachingprozess. Du hältst kurz fest, was du aus Phase 5 mitnimmst, und schließt danach die Sitzung ab.",
+      "eintragen": "Lies zuerst den Abschlusstext. Hast du noch Zweifel, findest du direkt darunter die Karte „Kontakt zum Coach-Team“. Weiter unten stehen die Felder „Ergebnis“, „Prozess“, „Erkenntnis“ und „Transfer“, jedes mit einer kurzen Frage, beim „Transfer“ etwa „Was davon möchtest du behalten oder mitnehmen?“. Du füllst sie nach Belieben aus.",
+      "beispiel": "Im Feld „Ergebnis“ könnte stehen: „Für meine wichtigsten Ressourcen habe ich je eine Strategie, mit der ich dranbleibe.“",
+      "fehler": "Oft wird hier noch einmal der ganze Prozess bilanziert. Die vier Felder gelten Phase 5, dein Gesamtrückblick gehört in 5.2. Ungünstig ist auch ein Abschluss mit offenen Zweifeln. Wende dich dann vorher an das Coach-Team.",
+      "weiter": "Nach „Sitzung abschließen“ erscheint deine Abschlussseite. Über „Ansehen & als PDF speichern“ öffnest du dort deine Zusammenfassung, mit „Sicherungsdatei herunterladen“ sicherst du deine Sitzung."
+    }
+  }
+}

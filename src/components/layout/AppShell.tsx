@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Boxes, Flag, LifeBuoy, NotebookPen, X } from "lucide-react";
 import { Outlet } from "react-router";
 
+import { BedienhilfeDialog } from "@/components/layout/BedienhilfeDialog";
 import { CoachConsole } from "@/components/layout/CoachConsole";
 import { onDrawerRequest } from "@/components/layout/drawerBus";
 import { HelpDrawerContent } from "@/components/layout/HelpDrawerContent";
@@ -75,6 +76,10 @@ export function AppShell() {
   );
   const [openId, setOpenId] = useState<DrawerId | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
+  // Teil 2.1: das „?“ in der Kopfleiste öffnet die allgemeine Bedienungshilfe.
+  const [bedienhilfeOpen, setBedienhilfeOpen] = useState(false);
+  // Wohin der Fokus nach dem Schließen der Bedienungshilfe zurückkehrt.
+  const bedienhilfeReturnRef = useRef<HTMLElement | null>(null);
   const tabRefs = useRef<Partial<Record<DrawerId, HTMLButtonElement | null>>>(
     {},
   );
@@ -142,7 +147,37 @@ export function AppShell() {
 
   function startTour() {
     setOpenId(null); // close any open drawer first
+    setBedienhilfeOpen(false);
     setTourOpen(true);
+  }
+
+  function openBedienhilfe() {
+    // Aus der Schublade geöffnet: zurück zum Tab „Hilfe“ (die Schublade
+    // schließt sich), sonst zum Auslöser, dem „?“ in der Kopfleiste.
+    bedienhilfeReturnRef.current =
+      openId === "help"
+        ? (tabRefs.current.help ?? null)
+        : document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+    setOpenId(null);
+    setBedienhilfeOpen(true);
+  }
+
+  function openStepHelp() {
+    bedienhilfeReturnRef.current = null;
+    setBedienhilfeOpen(false);
+    setOpenId("help");
+  }
+
+  function focusAfterBedienhilfe() {
+    const target = bedienhilfeReturnRef.current;
+    bedienhilfeReturnRef.current = null;
+    // Nur wenn der Fokus sonst verloren ginge (nicht bei Tour oder Schublade).
+    const active = document.activeElement;
+    if (target?.isConnected && (!active || active === document.body)) {
+      target.focus();
+    }
   }
 
   function handleTourClose(dontShowAgain: boolean) {
@@ -157,7 +192,7 @@ export function AppShell() {
     >
       {/* Main column: top bar + stage (+ coach console in the coached branch) */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar onOpenHelp={openBedienhilfe} />
         <div className="flex min-h-0 flex-1">
           <main data-tour="stage" className="min-w-0 flex-1 overflow-y-auto">
             {/* Mobil: schlanke, feste Polsterung, damit der Inhalt nicht auf
@@ -210,7 +245,7 @@ export function AppShell() {
           </div>
           <div className="flex-1 overflow-y-auto p-4">
             {openDrawer.id === "help" ? (
-              <HelpDrawerContent onStartTour={startTour} />
+              <HelpDrawerContent onOpenBedienhilfe={openBedienhilfe} />
             ) : openDrawer.id === "tools" ? (
               <ToolsDrawerContent />
             ) : openDrawer.id === "notebook" ? (
@@ -266,6 +301,13 @@ export function AppShell() {
         })}
       </nav>
 
+      <BedienhilfeDialog
+        open={bedienhilfeOpen}
+        onOpenChange={setBedienhilfeOpen}
+        onStartTour={startTour}
+        onOpenStepHelp={openStepHelp}
+        onCloseFocus={focusAfterBedienhilfe}
+      />
       <Tour open={tourOpen} onClose={handleTourClose} />
     </div>
   );
